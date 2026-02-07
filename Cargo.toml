@@ -1,0 +1,17 @@
+[package]
+name = "formate-js"
+version = "0.0.0"
+edition = "2024"
+description = 'Formate plugin for reformatting JavaScript and TypeScript files with dprint.'
+license = "MIT"
+homepage = "https://github.com/python-formate/formate-js"
+repository = "https://github.com/python-formate/formate-js"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+name = "formate_js"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.27.2", features = ["extension-module", "experimental-inspect", ] }
+dprint-plugin-typescript = "0.95.15"

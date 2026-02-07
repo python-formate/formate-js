@@ -71,3 +71,7 @@ reformat = true
 [tool.snippet-fmt.languages.ini]
 
 [tool.snippet-fmt.languages.json]
+
+[tool.maturin]
+python-source = "python"
+module-name = "formate_js._formate_js"
