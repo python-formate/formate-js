@@ -308,6 +308,7 @@ dependencies = [
 name = "formate-js"
 version = "0.0.0"
 dependencies = [
+ "dprint-core",
  "dprint-plugin-typescript",
  "pyo3",
 ]
