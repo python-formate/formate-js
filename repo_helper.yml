@@ -1,0 +1,36 @@
+# Configuration for 'repo_helper' (https://github.com/repo-helper/repo_helper)
+---
+modname: 'formate-js'
+copyright_years: '2026'
+author: 'Dominic Davis-Foster'
+email: 'dominic@davis-foster.co.uk'
+username: 'python-formate'
+assignee: 'domdfcoding'
+version: '0.0.0'
+license: 'MIT'
+short_desc: 'Formate plugin for reformatting JavaScript and TypeScript files with dprint.'
+
+enable_conda: false
+enable_tests: false
+enable_docs: false
+use_maturin: true
+
+python_versions:
+  - 3.8
+  - 3.9
+  - '3.10'
+  - '3.11'
+  - '3.12'
+  - '3.13'
+
+classifiers:
+  - "Programming Language :: Rust"
+
+extra_lint_paths:
+  - python/formate_js
+
+exclude_files:
+ - actions
+
+tox_unmanaged:
+  - testenv:build
