@@ -31,6 +31,20 @@ impl From<PyConfigurationBuilder> for ConfigurationBuilder {
 }
 
 macro_rules! wrap_fn {
+	($name:tt, $rust_type:ty, $py_type:literal) => {
+		#[pymethods]
+		impl PyConfigurationBuilder {
+			#[pyo3(signature = (value: $py_type) -> "ConfigurationBuilder")]
+			fn $name<'a>(
+				mut slf: PyRefMut<'a, Self>,
+				value: $rust_type,
+			) -> PyResult<PyRefMut<'a, Self>> {
+				slf.0.$name(value);
+				Ok(slf)
+			}
+		}
+	};
+
 	($name:tt, $rust_type:ty, $py_type:literal, $doc:literal) => {
 		#[pymethods]
 		impl PyConfigurationBuilder {
@@ -48,6 +62,19 @@ macro_rules! wrap_fn {
 }
 
 macro_rules! wrap_enum_fn {
+	($name:tt, $rust_type:ty) => {
+		#[pymethods]
+		impl PyConfigurationBuilder {
+			#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
+			fn $name<'a>(mut slf: PyRefMut<'a, Self>, value: &str) -> PyResult<PyRefMut<'a, Self>> {
+				slf.0.$name(
+					<$rust_type>::from_str(value)
+						.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
+				);
+				Ok(slf)
+			}
+		}
+	};
 	($name:tt, $rust_type:ty, $doc:literal) => {
 		#[pymethods]
 		impl PyConfigurationBuilder {
@@ -80,7 +107,7 @@ impl PyConfigurationBuilder {
 	// 	Ok(slf)
 	// }
 
-	/// Helper method to set the configuration to what’s used for Deno.
+	/// Helper method to set the configuration to what's used for Deno.
 	#[pyo3(signature = () -> "ConfigurationBuilder")]
 	fn deno<'a>(mut slf: PyRefMut<'a, Self>) -> PyResult<PyRefMut<'a, Self>> {
 		slf.0.deno();
@@ -503,7 +530,7 @@ wrap_enum_fn!(
 wrap_enum_fn!(
 	import_declaration_sort_named_imports,
 	SortOrder,
-	"Alphabetically sorts the import declaration’s named imports.\n\nDefault: Case insensitive"
+	"Alphabetically sorts the import declaration's named imports.\n\nDefault: Case insensitive"
 );
 
 wrap_enum_fn!(
@@ -515,7 +542,7 @@ wrap_enum_fn!(
 wrap_enum_fn!(
 	export_declaration_sort_named_exports,
 	SortOrder,
-	"Alphabetically sorts the export declaration’s named exports.\n\nDefault: Case insensitive"
+	"Alphabetically sorts the export declaration's named exports.\n\nDefault: Case insensitive"
 );
 
 wrap_enum_fn!(
@@ -538,126 +565,100 @@ wrap_fn!(
 	"The text to use for a file ignore comment (ex. ``\"dprint-ignore-file\"``).\n\nDefault: \"dprint-ignore-file\""
 );
 
-wrap_enum_fn!(arrow_function_brace_position, BracePosition, "");
-wrap_enum_fn!(class_declaration_brace_position, BracePosition, "");
-wrap_enum_fn!(class_expression_brace_position, BracePosition, "");
-wrap_enum_fn!(constructor_brace_position, BracePosition, "");
-wrap_enum_fn!(do_while_statement_brace_position, BracePosition, "");
-wrap_enum_fn!(enum_declaration_brace_position, BracePosition, "");
-wrap_enum_fn!(for_statement_brace_position, BracePosition, "");
-wrap_enum_fn!(for_in_statement_brace_position, BracePosition, "");
-wrap_enum_fn!(for_of_statement_brace_position, BracePosition, "");
-wrap_enum_fn!(get_accessor_brace_position, BracePosition, "");
-wrap_enum_fn!(if_statement_brace_position, BracePosition, "");
-wrap_enum_fn!(interface_declaration_brace_position, BracePosition, "");
-wrap_enum_fn!(function_declaration_brace_position, BracePosition, "");
-wrap_enum_fn!(function_expression_brace_position, BracePosition, "");
-wrap_enum_fn!(method_brace_position, BracePosition, "");
-wrap_enum_fn!(module_declaration_brace_position, BracePosition, "");
-wrap_enum_fn!(set_accessor_brace_position, BracePosition, "");
-wrap_enum_fn!(static_block_brace_position, BracePosition, "");
-wrap_enum_fn!(switch_case_brace_position, BracePosition, "");
-wrap_enum_fn!(switch_statement_brace_position, BracePosition, "");
-wrap_enum_fn!(try_statement_brace_position, BracePosition, "");
-wrap_enum_fn!(while_statement_brace_position, BracePosition, "");
-wrap_enum_fn!(arguments_prefer_hanging, PreferHanging, "");
-wrap_enum_fn!(array_expression_prefer_hanging, PreferHanging, "");
-wrap_fn!(array_pattern_prefer_hanging, bool, "bool", "");
-wrap_fn!(do_while_statement_prefer_hanging, bool, "bool", "");
-wrap_fn!(export_declaration_prefer_hanging, bool, "bool", "");
-wrap_fn!(extends_clause_prefer_hanging, bool, "bool", "");
-wrap_fn!(for_in_statement_prefer_hanging, bool, "bool", "");
-wrap_fn!(for_of_statement_prefer_hanging, bool, "bool", "");
-wrap_fn!(for_statement_prefer_hanging, bool, "bool", "");
-wrap_fn!(if_statement_prefer_hanging, bool, "bool", "");
-wrap_fn!(implements_clause_prefer_hanging, bool, "bool", "");
-wrap_fn!(import_declaration_prefer_hanging, bool, "bool", "");
-wrap_fn!(jsx_attributes_prefer_hanging, bool, "bool", "");
-wrap_fn!(object_expression_prefer_hanging, bool, "bool", "");
-wrap_fn!(object_pattern_prefer_hanging, bool, "bool", "");
-wrap_enum_fn!(parameters_prefer_hanging, PreferHanging, "");
-wrap_fn!(sequence_expression_prefer_hanging, bool, "bool", "");
-wrap_fn!(switch_statement_prefer_hanging, bool, "bool", "");
-wrap_enum_fn!(tuple_type_prefer_hanging, PreferHanging, "");
-wrap_fn!(type_literal_prefer_hanging, bool, "bool", "");
-wrap_enum_fn!(type_parameters_prefer_hanging, PreferHanging, "");
-wrap_fn!(union_and_intersection_type_prefer_hanging, bool, "bool", "");
-wrap_fn!(variable_statement_prefer_hanging, bool, "bool", "");
-wrap_fn!(while_statement_prefer_hanging, bool, "bool", "");
-wrap_fn!(export_declaration_force_single_line, bool, "bool", "");
-wrap_fn!(import_declaration_force_single_line, bool, "bool", "");
-wrap_enum_fn!(export_declaration_force_multi_line, ForceMultiLine, "");
-wrap_enum_fn!(import_declaration_force_multi_line, ForceMultiLine, "");
-wrap_enum_fn!(enum_declaration_member_spacing, MemberSpacing, "");
+wrap_enum_fn!(arrow_function_brace_position, BracePosition);
+wrap_enum_fn!(class_declaration_brace_position, BracePosition);
+wrap_enum_fn!(class_expression_brace_position, BracePosition);
+wrap_enum_fn!(constructor_brace_position, BracePosition);
+wrap_enum_fn!(do_while_statement_brace_position, BracePosition);
+wrap_enum_fn!(enum_declaration_brace_position, BracePosition);
+wrap_enum_fn!(for_statement_brace_position, BracePosition);
+wrap_enum_fn!(for_in_statement_brace_position, BracePosition);
+wrap_enum_fn!(for_of_statement_brace_position, BracePosition);
+wrap_enum_fn!(get_accessor_brace_position, BracePosition);
+wrap_enum_fn!(if_statement_brace_position, BracePosition);
+wrap_enum_fn!(interface_declaration_brace_position, BracePosition);
+wrap_enum_fn!(function_declaration_brace_position, BracePosition);
+wrap_enum_fn!(function_expression_brace_position, BracePosition);
+wrap_enum_fn!(method_brace_position, BracePosition);
+wrap_enum_fn!(module_declaration_brace_position, BracePosition);
+wrap_enum_fn!(set_accessor_brace_position, BracePosition);
+wrap_enum_fn!(static_block_brace_position, BracePosition);
+wrap_enum_fn!(switch_case_brace_position, BracePosition);
+wrap_enum_fn!(switch_statement_brace_position, BracePosition);
+wrap_enum_fn!(try_statement_brace_position, BracePosition);
+wrap_enum_fn!(while_statement_brace_position, BracePosition);
+wrap_enum_fn!(arguments_prefer_hanging, PreferHanging);
+wrap_enum_fn!(array_expression_prefer_hanging, PreferHanging);
+wrap_fn!(array_pattern_prefer_hanging, bool, "bool");
+wrap_fn!(do_while_statement_prefer_hanging, bool, "bool");
+wrap_fn!(export_declaration_prefer_hanging, bool, "bool");
+wrap_fn!(extends_clause_prefer_hanging, bool, "bool");
+wrap_fn!(for_in_statement_prefer_hanging, bool, "bool");
+wrap_fn!(for_of_statement_prefer_hanging, bool, "bool");
+wrap_fn!(for_statement_prefer_hanging, bool, "bool");
+wrap_fn!(if_statement_prefer_hanging, bool, "bool");
+wrap_fn!(implements_clause_prefer_hanging, bool, "bool");
+wrap_fn!(import_declaration_prefer_hanging, bool, "bool");
+wrap_fn!(jsx_attributes_prefer_hanging, bool, "bool");
+wrap_fn!(object_expression_prefer_hanging, bool, "bool");
+wrap_fn!(object_pattern_prefer_hanging, bool, "bool");
+wrap_enum_fn!(parameters_prefer_hanging, PreferHanging);
+wrap_fn!(sequence_expression_prefer_hanging, bool, "bool");
+wrap_fn!(switch_statement_prefer_hanging, bool, "bool");
+wrap_enum_fn!(tuple_type_prefer_hanging, PreferHanging);
+wrap_fn!(type_literal_prefer_hanging, bool, "bool");
+wrap_enum_fn!(type_parameters_prefer_hanging, PreferHanging);
+wrap_fn!(union_and_intersection_type_prefer_hanging, bool, "bool");
+wrap_fn!(variable_statement_prefer_hanging, bool, "bool");
+wrap_fn!(while_statement_prefer_hanging, bool, "bool");
+wrap_fn!(export_declaration_force_single_line, bool, "bool");
+wrap_fn!(import_declaration_force_single_line, bool, "bool");
+wrap_enum_fn!(export_declaration_force_multi_line, ForceMultiLine);
+wrap_enum_fn!(import_declaration_force_multi_line, ForceMultiLine);
+wrap_enum_fn!(enum_declaration_member_spacing, MemberSpacing);
 
 wrap_enum_fn!(
 	if_statement_next_control_flow_position,
-	NextControlFlowPosition,
-	""
+	NextControlFlowPosition
 );
 
 wrap_enum_fn!(
 	try_statement_next_control_flow_position,
-	NextControlFlowPosition,
-	""
+	NextControlFlowPosition
 );
 
 wrap_enum_fn!(
 	do_while_statement_next_control_flow_position,
-	NextControlFlowPosition,
-	""
+	NextControlFlowPosition
 );
 
-wrap_enum_fn!(binary_expression_operator_position, OperatorPosition, "");
-
-wrap_enum_fn!(
-	conditional_expression_operator_position,
-	OperatorPosition,
-	""
-);
-
-wrap_enum_fn!(conditional_type_operator_position, OperatorPosition, "");
-
-wrap_enum_fn!(
-	if_statement_single_body_position,
-	SameOrNextLinePosition,
-	""
-);
-
-wrap_enum_fn!(
-	for_statement_single_body_position,
-	SameOrNextLinePosition,
-	""
-);
+wrap_enum_fn!(binary_expression_operator_position, OperatorPosition);
+wrap_enum_fn!(conditional_expression_operator_position, OperatorPosition);
+wrap_enum_fn!(conditional_type_operator_position, OperatorPosition);
+wrap_enum_fn!(if_statement_single_body_position, SameOrNextLinePosition);
+wrap_enum_fn!(for_statement_single_body_position, SameOrNextLinePosition);
 
 wrap_enum_fn!(
 	for_in_statement_single_body_position,
-	SameOrNextLinePosition,
-	""
+	SameOrNextLinePosition
 );
 
 wrap_enum_fn!(
 	for_of_statement_single_body_position,
-	SameOrNextLinePosition,
-	""
+	SameOrNextLinePosition
 );
 
-wrap_enum_fn!(
-	while_statement_single_body_position,
-	SameOrNextLinePosition,
-	""
-);
-
-wrap_enum_fn!(arguments_trailing_commas, TrailingCommas, "");
-wrap_enum_fn!(parameters_trailing_commas, TrailingCommas, "");
-wrap_enum_fn!(array_expression_trailing_commas, TrailingCommas, "");
-wrap_enum_fn!(array_pattern_trailing_commas, TrailingCommas, "");
-wrap_enum_fn!(enum_declaration_trailing_commas, TrailingCommas, "");
-wrap_enum_fn!(export_declaration_trailing_commas, TrailingCommas, "");
-wrap_enum_fn!(import_declaration_trailing_commas, TrailingCommas, "");
-wrap_enum_fn!(object_expression_trailing_commas, TrailingCommas, "");
-wrap_enum_fn!(object_pattern_trailing_commas, TrailingCommas, "");
-wrap_enum_fn!(tuple_type_trailing_commas, TrailingCommas, "");
+wrap_enum_fn!(while_statement_single_body_position, SameOrNextLinePosition);
+wrap_enum_fn!(arguments_trailing_commas, TrailingCommas);
+wrap_enum_fn!(parameters_trailing_commas, TrailingCommas);
+wrap_enum_fn!(array_expression_trailing_commas, TrailingCommas);
+wrap_enum_fn!(array_pattern_trailing_commas, TrailingCommas);
+wrap_enum_fn!(enum_declaration_trailing_commas, TrailingCommas);
+wrap_enum_fn!(export_declaration_trailing_commas, TrailingCommas);
+wrap_enum_fn!(import_declaration_trailing_commas, TrailingCommas);
+wrap_enum_fn!(object_expression_trailing_commas, TrailingCommas);
+wrap_enum_fn!(object_pattern_trailing_commas, TrailingCommas);
+wrap_enum_fn!(tuple_type_trailing_commas, TrailingCommas);
 
 wrap_enum_fn!(
 	type_literal_trailing_commas,
@@ -665,54 +666,47 @@ wrap_enum_fn!(
 	"Only applies when using commas on type literals."
 );
 
-wrap_enum_fn!(type_parameters_trailing_commas, TrailingCommas, "");
-wrap_enum_fn!(if_statement_use_braces, UseBraces, "");
-wrap_enum_fn!(for_statement_use_braces, UseBraces, "");
-wrap_enum_fn!(for_in_statement_use_braces, UseBraces, "");
-wrap_enum_fn!(for_of_statement_use_braces, UseBraces, "");
-wrap_enum_fn!(while_statement_use_braces, UseBraces, "");
-wrap_fn!(array_expression_prefer_single_line, bool, "bool", "");
-wrap_fn!(array_pattern_prefer_single_line, bool, "bool", "");
-wrap_fn!(arguments_prefer_single_line, bool, "bool", "");
-wrap_fn!(binary_expression_prefer_single_line, bool, "bool", "");
-wrap_fn!(computed_prefer_single_line, bool, "bool", "");
-wrap_fn!(conditional_expression_prefer_single_line, bool, "bool", "");
-wrap_fn!(conditional_type_prefer_single_line, bool, "bool", "");
-wrap_fn!(decorators_prefer_single_line, bool, "bool", "");
-wrap_fn!(export_declaration_prefer_single_line, bool, "bool", "");
-wrap_fn!(for_statement_prefer_single_line, bool, "bool", "");
-wrap_fn!(import_declaration_prefer_single_line, bool, "bool", "");
-wrap_fn!(jsx_attributes_prefer_single_line, bool, "bool", "");
-wrap_fn!(jsx_element_prefer_single_line, bool, "bool", "");
-wrap_fn!(mapped_type_prefer_single_line, bool, "bool", "");
-wrap_fn!(member_expression_prefer_single_line, bool, "bool", "");
-wrap_fn!(object_expression_prefer_single_line, bool, "bool", "");
-wrap_fn!(object_pattern_prefer_single_line, bool, "bool", "");
-wrap_fn!(parameters_prefer_single_line, bool, "bool", "");
-wrap_fn!(parentheses_prefer_single_line, bool, "bool", "");
-wrap_fn!(tuple_type_prefer_single_line, bool, "bool", "");
-wrap_fn!(type_literal_prefer_single_line, bool, "bool", "");
-wrap_fn!(type_parameters_prefer_single_line, bool, "bool", "");
-
-wrap_fn!(
-	union_and_intersection_type_prefer_single_line,
-	bool,
-	"bool",
-	""
-);
-
-wrap_fn!(variable_statement_prefer_single_line, bool, "bool", "");
-wrap_fn!(arguments_space_around, bool, "bool", "");
-wrap_fn!(array_expression_space_around, bool, "bool", "");
-wrap_fn!(array_pattern_space_around, bool, "bool", "");
-wrap_fn!(catch_clause_space_around, bool, "bool", "");
-wrap_fn!(do_while_statement_space_around, bool, "bool", "");
-wrap_fn!(for_in_statement_space_around, bool, "bool", "");
-wrap_fn!(for_of_statement_space_around, bool, "bool", "");
-wrap_fn!(for_statement_space_around, bool, "bool", "");
-wrap_fn!(if_statement_space_around, bool, "bool", "");
-wrap_fn!(parameters_space_around, bool, "bool", "");
-wrap_fn!(paren_expression_space_around, bool, "bool", "");
-wrap_fn!(switch_statement_space_around, bool, "bool", "");
-wrap_fn!(tuple_type_space_around, bool, "bool", "");
-wrap_fn!(while_statement_space_around, bool, "bool", "");
+wrap_enum_fn!(type_parameters_trailing_commas, TrailingCommas);
+wrap_enum_fn!(if_statement_use_braces, UseBraces);
+wrap_enum_fn!(for_statement_use_braces, UseBraces);
+wrap_enum_fn!(for_in_statement_use_braces, UseBraces);
+wrap_enum_fn!(for_of_statement_use_braces, UseBraces);
+wrap_enum_fn!(while_statement_use_braces, UseBraces);
+wrap_fn!(array_expression_prefer_single_line, bool, "bool");
+wrap_fn!(array_pattern_prefer_single_line, bool, "bool");
+wrap_fn!(arguments_prefer_single_line, bool, "bool");
+wrap_fn!(binary_expression_prefer_single_line, bool, "bool");
+wrap_fn!(computed_prefer_single_line, bool, "bool");
+wrap_fn!(conditional_expression_prefer_single_line, bool, "bool");
+wrap_fn!(conditional_type_prefer_single_line, bool, "bool");
+wrap_fn!(decorators_prefer_single_line, bool, "bool");
+wrap_fn!(export_declaration_prefer_single_line, bool, "bool");
+wrap_fn!(for_statement_prefer_single_line, bool, "bool");
+wrap_fn!(import_declaration_prefer_single_line, bool, "bool");
+wrap_fn!(jsx_attributes_prefer_single_line, bool, "bool");
+wrap_fn!(jsx_element_prefer_single_line, bool, "bool");
+wrap_fn!(mapped_type_prefer_single_line, bool, "bool");
+wrap_fn!(member_expression_prefer_single_line, bool, "bool");
+wrap_fn!(object_expression_prefer_single_line, bool, "bool");
+wrap_fn!(object_pattern_prefer_single_line, bool, "bool");
+wrap_fn!(parameters_prefer_single_line, bool, "bool");
+wrap_fn!(parentheses_prefer_single_line, bool, "bool");
+wrap_fn!(tuple_type_prefer_single_line, bool, "bool");
+wrap_fn!(type_literal_prefer_single_line, bool, "bool");
+wrap_fn!(type_parameters_prefer_single_line, bool, "bool");
+wrap_fn!(union_and_intersection_type_prefer_single_line, bool, "bool");
+wrap_fn!(variable_statement_prefer_single_line, bool, "bool");
+wrap_fn!(arguments_space_around, bool, "bool");
+wrap_fn!(array_expression_space_around, bool, "bool");
+wrap_fn!(array_pattern_space_around, bool, "bool");
+wrap_fn!(catch_clause_space_around, bool, "bool");
+wrap_fn!(do_while_statement_space_around, bool, "bool");
+wrap_fn!(for_in_statement_space_around, bool, "bool");
+wrap_fn!(for_of_statement_space_around, bool, "bool");
+wrap_fn!(for_statement_space_around, bool, "bool");
+wrap_fn!(if_statement_space_around, bool, "bool");
+wrap_fn!(parameters_space_around, bool, "bool");
+wrap_fn!(paren_expression_space_around, bool, "bool");
+wrap_fn!(switch_statement_space_around, bool, "bool");
+wrap_fn!(tuple_type_space_around, bool, "bool");
+wrap_fn!(while_statement_space_around, bool, "bool");
