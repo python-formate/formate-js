@@ -30,6 +30,40 @@ impl From<PyConfigurationBuilder> for ConfigurationBuilder {
 	}
 }
 
+macro_rules! wrap_fn {
+	($name:tt, $rust_type:ty, $py_type:literal, $doc:literal) => {
+		#[pymethods]
+		impl PyConfigurationBuilder {
+			#[doc = $doc]
+			#[pyo3(signature = (value: $py_type) -> "ConfigurationBuilder")]
+			fn $name<'a>(
+				mut slf: PyRefMut<'a, Self>,
+				value: $rust_type,
+			) -> PyResult<PyRefMut<'a, Self>> {
+				slf.0.$name(value);
+				Ok(slf)
+			}
+		}
+	};
+}
+
+macro_rules! wrap_enum_fn {
+	($name:tt, $rust_type:ty, $doc:literal) => {
+		#[pymethods]
+		impl PyConfigurationBuilder {
+			#[doc = $doc]
+			#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
+			fn $name<'a>(mut slf: PyRefMut<'a, Self>, value: &str) -> PyResult<PyRefMut<'a, Self>> {
+				slf.0.$name(
+					<$rust_type>::from_str(value)
+						.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
+				);
+				Ok(slf)
+			}
+		}
+	};
+}
+
 #[pymethods]
 impl PyConfigurationBuilder {
 	#[new]
@@ -53,1996 +87,632 @@ impl PyConfigurationBuilder {
 		Ok(slf)
 	}
 
-	/// The width of a line the printer will try to stay under. Note that the printer may exceed this width in certain cases.
-	///
-	/// Default: 120
-	#[pyo3(signature = (value: "int") -> "ConfigurationBuilder")]
-	fn line_width<'a>(mut slf: PyRefMut<'a, Self>, value: u32) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.line_width(value);
-		Ok(slf)
-	}
-
-	/// Whether to use tabs (true) or spaces (false).
-	///
-	/// Default: false
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn use_tabs<'a>(mut slf: PyRefMut<'a, Self>, value: bool) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.use_tabs(value);
-		Ok(slf)
-	}
-
-	/// The number of columns for an indent.
-	///
-	/// Default: 4
-	#[pyo3(signature = (value: "int") -> "ConfigurationBuilder")]
-	fn indent_width<'a>(mut slf: PyRefMut<'a, Self>, value: u8) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.indent_width(value);
-		Ok(slf)
-	}
-
-	/// /// The kind of newline to use.
-	///
-	/// Default: NewLineKind::LineFeed
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn new_line_kind<'a>(mut slf: PyRefMut<'a, Self>, value: &str) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.new_line_kind(
-			NewLineKind::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	/// The quote style to use.
-	///
-	/// Default: QuoteStyle::AlwaysDouble
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn quote_style<'a>(mut slf: PyRefMut<'a, Self>, value: &str) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.quote_style(
-			QuoteStyle::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	/// The JSX quote style to use for string literals in JSX attributes.
-	///
-	/// Default: JsxQuoteStyle::PreferDouble
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn jsx_quote_style<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.jsx_quote_style(
-			JsxQuoteStyle::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	/// Whether to surround a JSX element or fragment with parentheses when it’s the top JSX node and it spans multiple lines.
-	///
-	/// Default: JsxMultiLineParens::Prefer
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn jsx_multi_line_parens<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.jsx_multi_line_parens(
-			JsxMultiLineParens::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	/// Forces newlines surrounding the content of JSX elements.
-	///
-	/// Default: false
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn jsx_force_new_lines_surrounding_content<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.jsx_force_new_lines_surrounding_content(value);
-		Ok(slf)
-	}
-
-	/// If the end angle bracket of a jsx opening element or self closing element should be on the same or next line when the attributes span multiple lines.
-	///
-	/// Default: nextLine
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn jsx_bracket_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.jsx_bracket_position(
-			SameOrNextLinePosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	/// If the end angle bracket of a jsx opening element should be on the same or next line when the attributes span multiple lines.
-	///
-	/// Default: nextLine
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn jsx_opening_element_bracket_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.jsx_opening_element_bracket_position(
-			SameOrNextLinePosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	/// If the end angle bracket of a jsx self closing element should be on the same or next line when the attributes span multiple lines.
-	///
-	/// Default: nextLine
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn jsx_self_closing_element_bracket_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.jsx_self_closing_element_bracket_position(
-			SameOrNextLinePosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	/// Whether statements should end in a semi-colon.
-	///
-	/// Default: SemiColons::Prefer
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn semi_colons<'a>(mut slf: PyRefMut<'a, Self>, value: &str) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.semi_colons(
-			SemiColons::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	/// Set to prefer hanging indentation when exceeding the line width.
-	///
-	/// Default: false
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn prefer_hanging<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.prefer_hanging(value);
-		Ok(slf)
-	}
-
-	/// Behaviour to use for quotes on property names.
-	///
-	/// Default: preserve
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn quote_props<'a>(mut slf: PyRefMut<'a, Self>, value: &str) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.quote_props(
-			QuoteProps::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	/// Where to place the opening brace.
-	///
-	/// Default: BracePosition::SameLineUnlessHanging
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn brace_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.brace_position(
-			BracePosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	/// Where to place the next control flow within a control flow statement.
-	///
-	/// Default: NextControlFlowPosition::NextLine
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn next_control_flow_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.next_control_flow_position(
-			NextControlFlowPosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	/// Where to place the operator for expressions that span multiple lines.
-	///
-	/// Default: OperatorPosition::NextLine
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn operator_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.operator_position(
-			OperatorPosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	/// Where to place the expression of a statement that could possibly be on one line (ex. if (true) console.log(5);).
-	///
-	/// Default: SameOrNextLinePosition::Maintain
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn single_body_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.single_body_position(
-			SameOrNextLinePosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	/// Amount of indents to use for the whole file.
-	///
-	/// This should only be set by tools that need to indent all the code in the file.
-	///
-	/// Default: 0
-	#[pyo3(signature = (value: "int") -> "ConfigurationBuilder")]
-	fn file_indent_level<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: u16,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.file_indent_level(value);
-		Ok(slf)
-	}
-
-	/// If trailing commas should be used.
-	///
-	/// Default: TrailingCommas::OnlyMultiLine
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn trailing_commas<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.trailing_commas(
-			TrailingCommas::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	/// If braces should be used or not.
-	///
-	/// Default: UseBraces::WhenNotSingleLine
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn use_braces<'a>(mut slf: PyRefMut<'a, Self>, value: &str) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.use_braces(
-			UseBraces::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	/// If code should revert back from being on multiple lines to being on a single line when able.
-	///
-	/// Default: false
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn prefer_single_line<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.prefer_single_line(value);
-		Ok(slf)
-	}
-
-	/// Whether to surround bitwise and arithmetic operators in a binary expression with spaces.
-	///
-	/// 	true (default) - Ex. 1 + 2
-	/// 	false - Ex. 1+2
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn binary_expression_space_surrounding_bitwise_and_arithmetic_operator<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0
-			.binary_expression_space_surrounding_bitwise_and_arithmetic_operator(value);
-		Ok(slf)
-	}
-
-	/// Forces a space after the double slash in a comment line.
-	///
-	/// true (default) - Ex. //test -> // test false - Ex. //test -> //test
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn comment_line_force_space_after_slashes<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.comment_line_force_space_after_slashes(value);
-		Ok(slf)
-	}
-
-	/// Whether to add a space after the new keyword in a construct signature.
-	///
-	/// true - Ex. new (): MyClass; false (default) - Ex. new(): MyClass;
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn construct_signature_space_after_new_keyword<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.construct_signature_space_after_new_keyword(value);
-		Ok(slf)
-	}
-
-	/// Whether to add a space before the parentheses of a constructor.
-	///
-	/// true - Ex. constructor () false (false) - Ex. constructor()
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn constructor_space_before_parentheses<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.constructor_space_before_parentheses(value);
-		Ok(slf)
-	}
-
-	/// Whether to add a space after the new keyword in a constructor type.
-	///
-	/// true - Ex. type MyClassCtor = new () => MyClass; false (default) - Ex. type MyClassCtor = new() => MyClass;
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn constructor_type_space_after_new_keyword<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.constructor_type_space_after_new_keyword(value);
-		Ok(slf)
-	}
-
-	/// Whether to add a space after the while keyword in a do while statement.
-	///
-	/// true (true) - Ex. do {\n} while (condition); false - Ex. do {\n} while(condition);
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn do_while_statement_space_after_while_keyword<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.do_while_statement_space_after_while_keyword(value);
-		Ok(slf)
-	}
-
-	/// Whether to add spaces around named exports in an export declaration.
-	///
-	/// 	true (default) - Ex. export { SomeExport, OtherExport };
-	/// 	false - Ex. export {SomeExport, OtherExport};
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn export_declaration_space_surrounding_named_exports<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0
-			.export_declaration_space_surrounding_named_exports(value);
-		Ok(slf)
-	}
-
-	/// Whether to add a space after the for keyword in a “for” statement.
-	///
-	/// 	true (default) - Ex. for (let i = 0; i < 5; i++)
-	/// 	false - Ex. for(let i = 0; i < 5; i++)
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn for_statement_space_after_for_keyword<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.for_statement_space_after_for_keyword(value);
-		Ok(slf)
-	}
-
-	/// Whether to add a space after the semi-colons in a “for” statement.
-	///
-	/// 	true (default) - Ex. for (let i = 0; i < 5; i++)
-	/// 	false - Ex. for (let i = 0;i < 5;i++)
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn for_statement_space_after_semi_colons<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.for_statement_space_after_semi_colons(value);
-		Ok(slf)
-	}
-
-	/// Whether to add a space after the for keyword in a “for in” statement.
-	///
-	/// 	true (default) - Ex. for (const prop in obj)
-	/// 	false - Ex. for(const prop in obj)
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn for_in_statement_space_after_for_keyword<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.for_in_statement_space_after_for_keyword(value);
-		Ok(slf)
-	}
-
-	/// Whether to add a space after the for keyword in a “for of” statement.
-	///
-	/// 	true (default) - Ex. for (const value of myArray)
-	/// 	false - Ex. for(const value of myArray)
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn for_of_statement_space_after_for_keyword<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.for_of_statement_space_after_for_keyword(value);
-		Ok(slf)
-	}
-
-	/// Whether to add a space before the parentheses of a function declaration.
-	///
-	/// 	true - Ex. function myFunction ()
-	/// 	false (default) - Ex. function myFunction()
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn function_declaration_space_before_parentheses<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.function_declaration_space_before_parentheses(value);
-		Ok(slf)
-	}
-
-	/// Whether to add a space before the parentheses of a function expression.
-	///
-	/// true - Ex. function<T> () false (default) - Ex. function<T> ()
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn function_expression_space_before_parentheses<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.function_expression_space_before_parentheses(value);
-		Ok(slf)
-	}
-
-	/// Whether to add a space after the function keyword of a function expression.
-	///
-	/// true - Ex. function <T>(). false (default) - Ex. function<T>()
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn function_expression_space_after_function_keyword<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0
-			.function_expression_space_after_function_keyword(value);
-		Ok(slf)
-	}
-
-	/// Whether to add a space before the parentheses of a get accessor.
-	///
-	/// true - Ex. get myProp () false (false) - Ex. get myProp()
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn get_accessor_space_before_parentheses<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.get_accessor_space_before_parentheses(value);
-		Ok(slf)
-	}
-
-	/// Whether to add a space after the if keyword in an “if” statement.
-	///
-	/// true (default) - Ex. if (true) false - Ex. if(true)
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn if_statement_space_after_if_keyword<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.if_statement_space_after_if_keyword(value);
-		Ok(slf)
-	}
-
-	/// Whether to add spaces around named imports in an import declaration.
-	///
-	/// 	true (default) - Ex. import { SomeExport, OtherExport } from "my-module";
-	/// 	false - Ex. import {SomeExport, OtherExport} from "my-module";
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn import_declaration_space_surrounding_named_imports<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0
-			.import_declaration_space_surrounding_named_imports(value);
-		Ok(slf)
-	}
-
-	/// Whether to add a space surrounding the expression of a JSX container.
-	///
-	/// 	true - Ex. { myValue }
-	/// 	false (default) - Ex. {myValue}
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn jsx_expression_container_space_surrounding_expression<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0
-			.jsx_expression_container_space_surrounding_expression(value);
-		Ok(slf)
-	}
-
-	/// Whether to add a space before the slash in a self closing tag for a JSX element.
-	///
-	/// 	true (default) - Ex. <Test />
-	/// 	false - Ex. <Test/>
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn jsx_self_closing_element_space_before_slash<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.jsx_self_closing_element_space_before_slash(value);
-		Ok(slf)
-	}
-
-	/// Whether to add a space surrounding the properties of an object expression.
-	///
-	/// 	true (default) - Ex. { key: value }
-	/// 	false - Ex. {key: value}
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn object_expression_space_surrounding_properties<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.object_expression_space_surrounding_properties(value);
-		Ok(slf)
-	}
-
-	/// Whether to add a space surrounding the properties of an object pattern.
-	///
-	/// 	true (default) - Ex. { key: value } = obj
-	/// 	false - Ex. {key: value} = obj
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn object_pattern_space_surrounding_properties<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.object_pattern_space_surrounding_properties(value);
-		Ok(slf)
-	}
-
-	/// Whether to add a space before the parentheses of a method.
-	///
-	/// true - Ex. myMethod () false - Ex. myMethod()
-	///
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn method_space_before_parentheses<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.method_space_before_parentheses(value);
-		Ok(slf)
-	}
-
-	/// Whether to add a space before the parentheses of a set accessor.
-	///
-	/// true - Ex. set myProp (value: string) false (default) - Ex. set myProp(value: string)
-	///
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn set_accessor_space_before_parentheses<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.set_accessor_space_before_parentheses(value);
-		Ok(slf)
-	}
-
-	/// Whether to add a space surrounding the properties of object-like nodes.
-	///
-	/// 	true (default) - Ex. { key: value }
-	/// 	false - Ex. {key: value}
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn space_surrounding_properties<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.space_surrounding_properties(value);
-		Ok(slf)
-	}
-
-	/// Whether to add a space before the literal in a tagged template.
-	///
-	/// 	true (default) - Ex. html \``
-	/// 	false - Ex. html\``
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn tagged_template_space_before_literal<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.tagged_template_space_before_literal(value);
-		Ok(slf)
-	}
-
-	/// Whether to add a space before the colon of a type annotation.
-	///
-	/// 	true - Ex. function myFunction() : string
-	/// 	false (default) - Ex. function myFunction(): string
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn type_annotation_space_before_colon<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.type_annotation_space_before_colon(value);
-		Ok(slf)
-	}
-
-	/// Whether to add a space before the expression in a type assertion.
-	///
-	/// 	true (default) - Ex. <string> myValue
-	/// 	false - Ex. <string>myValue
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn type_assertion_space_before_expression<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.type_assertion_space_before_expression(value);
-		Ok(slf)
-	}
-
-	/// Whether to add a space surrounding the properties of a type literal.
-	///
-	/// 	true (default) - Ex. value: { key: Type }
-	/// 	false - Ex. value: {key: Type}
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn type_literal_space_surrounding_properties<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.type_literal_space_surrounding_properties(value);
-		Ok(slf)
-	}
-
-	/// Whether to add a space after the while keyword in a while statement.
-	///
-	/// 	true (default) - Ex. while (true)
-	/// 	false - Ex. while(true)
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn while_statement_space_after_while_keyword<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.while_statement_space_after_while_keyword(value);
-		Ok(slf)
-	}
-
-	/// Whether to place spaces around enclosed expressions.
-	///
-	/// 	true - Ex. myFunction( true )
-	/// 	false (default) - Ex. myFunction(true)
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn space_around<'a>(mut slf: PyRefMut<'a, Self>, value: bool) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.space_around(value);
-		Ok(slf)
-	}
-
-	/// Whether to use parentheses for arrow functions.
-	///
-	/// Default: UseParentheses::Maintain
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn arrow_function_use_parentheses<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.arrow_function_use_parentheses(
-			UseParentheses::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	/// Whether to force a line per expression when spanning multiple lines.
-	///
-	/// 	true - Formats with each part on a new line.
-	/// 	false (default) - Maintains the line breaks as written by the programmer.
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn binary_expression_line_per_expression<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.binary_expression_line_per_expression(value);
-		Ok(slf)
-	}
-
-	/// Whether to force a line per expression when spanning multiple lines.
-	///
-	/// 	true - Formats with each part on a new line.
-	/// 	false (default) - Maintains the line breaks as written by the programmer.
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn conditional_expression_line_per_expression<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.conditional_expression_line_per_expression(value);
-		Ok(slf)
-	}
-
-	/// Whether to force a line per expression when spanning multiple lines.
-	///
-	/// 	true - Formats with each part on a new line.
-	/// 	false (default) - Maintains the line breaks as written by the programmer.
-	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
-	fn member_expression_line_per_expression<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.member_expression_line_per_expression(value);
-		Ok(slf)
-	}
-
-	/// The kind of separator to use in type literals.
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn type_literal_separator_kind<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.type_literal_separator_kind(
-			SemiColonOrComma::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	/// The kind of separator to use in type literals when single line.
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn type_literal_separator_kind_single_line<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.type_literal_separator_kind_single_line(
-			SemiColonOrComma::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	/// The kind of separator to use in type literals when multi-line.
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn type_literal_separator_kind_multi_line<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.type_literal_separator_kind_multi_line(
-			SemiColonOrComma::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	/// Alphabetically sorts the import declarations based on their module specifiers.
-	///
-	/// Default: Case insensitive
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn module_sort_import_declarations<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.module_sort_import_declarations(
-			SortOrder::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	/// Alphabetically sorts the export declarations based on their module specifiers.
-	///
-	/// Default: Case insensitive
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn module_sort_export_declarations<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.module_sort_export_declarations(
-			SortOrder::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	/// Alphabetically sorts the import declaration’s named imports.
-	///
-	/// Default: Case insensitive
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn import_declaration_sort_named_imports<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.import_declaration_sort_named_imports(
-			SortOrder::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	/// Sorts type-only named imports first, last, or none (no sorting).
-	///
-	/// Default: Last
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn import_declaration_sort_type_only_imports<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.import_declaration_sort_type_only_imports(
-			NamedTypeImportsExportsOrder::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	/// Alphabetically sorts the export declaration’s named exports.
-	///
-	/// Default: Case insensitive
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn export_declaration_sort_named_exports<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.export_declaration_sort_named_exports(
-			SortOrder::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	/// Sorts type-only named exports first, last, or none (no sorting).
-	///
-	/// Default: Last
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn export_declaration_sort_type_only_exports<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.export_declaration_sort_type_only_exports(
-			NamedTypeImportsExportsOrder::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	/// The text to use for an ignore comment (ex. // dprint-ignore).
-	///
-	/// Default: "dprint-ignore"
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn ignore_node_comment_text<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.ignore_node_comment_text(value);
-		Ok(slf)
-	}
-
-	/// The text to use for a file ignore comment (ex. // dprint-ignore-file).
-	///
-	/// Default: "dprint-ignore-file"
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn ignore_file_comment_text<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.ignore_file_comment_text(value);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn arrow_function_brace_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.arrow_function_brace_position(
-			BracePosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn class_declaration_brace_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.class_declaration_brace_position(
-			BracePosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn class_expression_brace_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.class_expression_brace_position(
-			BracePosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn constructor_brace_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.constructor_brace_position(
-			BracePosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn do_while_statement_brace_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.do_while_statement_brace_position(
-			BracePosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn enum_declaration_brace_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.enum_declaration_brace_position(
-			BracePosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn for_statement_brace_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.for_statement_brace_position(
-			BracePosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn for_in_statement_brace_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.for_in_statement_brace_position(
-			BracePosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn for_of_statement_brace_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.for_of_statement_brace_position(
-			BracePosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn get_accessor_brace_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.get_accessor_brace_position(
-			BracePosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn if_statement_brace_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.if_statement_brace_position(
-			BracePosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn interface_declaration_brace_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.interface_declaration_brace_position(
-			BracePosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn function_declaration_brace_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.function_declaration_brace_position(
-			BracePosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn function_expression_brace_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.function_expression_brace_position(
-			BracePosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn method_brace_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.method_brace_position(
-			BracePosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn module_declaration_brace_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.module_declaration_brace_position(
-			BracePosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn set_accessor_brace_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.set_accessor_brace_position(
-			BracePosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn static_block_brace_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.static_block_brace_position(
-			BracePosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn switch_case_brace_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.switch_case_brace_position(
-			BracePosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn switch_statement_brace_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.switch_statement_brace_position(
-			BracePosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn try_statement_brace_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.try_statement_brace_position(
-			BracePosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn while_statement_brace_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.while_statement_brace_position(
-			BracePosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn arguments_prefer_hanging<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.arguments_prefer_hanging(
-			PreferHanging::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn array_expression_prefer_hanging<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.array_expression_prefer_hanging(
-			PreferHanging::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-	fn array_pattern_prefer_hanging<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.array_pattern_prefer_hanging(value);
-		Ok(slf)
-	}
-	fn do_while_statement_prefer_hanging<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.do_while_statement_prefer_hanging(value);
-		Ok(slf)
-	}
-	fn export_declaration_prefer_hanging<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.export_declaration_prefer_hanging(value);
-		Ok(slf)
-	}
-	fn extends_clause_prefer_hanging<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.extends_clause_prefer_hanging(value);
-		Ok(slf)
-	}
-	fn for_in_statement_prefer_hanging<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.for_in_statement_prefer_hanging(value);
-		Ok(slf)
-	}
-	fn for_of_statement_prefer_hanging<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.for_of_statement_prefer_hanging(value);
-		Ok(slf)
-	}
-	fn for_statement_prefer_hanging<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.for_statement_prefer_hanging(value);
-		Ok(slf)
-	}
-	fn if_statement_prefer_hanging<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.if_statement_prefer_hanging(value);
-		Ok(slf)
-	}
-	fn implements_clause_prefer_hanging<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.implements_clause_prefer_hanging(value);
-		Ok(slf)
-	}
-	fn import_declaration_prefer_hanging<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.import_declaration_prefer_hanging(value);
-		Ok(slf)
-	}
-	fn jsx_attributes_prefer_hanging<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.jsx_attributes_prefer_hanging(value);
-		Ok(slf)
-	}
-	fn object_expression_prefer_hanging<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.object_expression_prefer_hanging(value);
-		Ok(slf)
-	}
-	fn object_pattern_prefer_hanging<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.object_pattern_prefer_hanging(value);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn parameters_prefer_hanging<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.parameters_prefer_hanging(
-			PreferHanging::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-	fn sequence_expression_prefer_hanging<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.sequence_expression_prefer_hanging(value);
-		Ok(slf)
-	}
-	fn switch_statement_prefer_hanging<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.switch_statement_prefer_hanging(value);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn tuple_type_prefer_hanging<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.tuple_type_prefer_hanging(
-			PreferHanging::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-	fn type_literal_prefer_hanging<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.type_literal_prefer_hanging(value);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn type_parameters_prefer_hanging<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.type_parameters_prefer_hanging(
-			PreferHanging::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-	fn union_and_intersection_type_prefer_hanging<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.union_and_intersection_type_prefer_hanging(value);
-		Ok(slf)
-	}
-	fn variable_statement_prefer_hanging<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.variable_statement_prefer_hanging(value);
-		Ok(slf)
-	}
-	fn while_statement_prefer_hanging<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.while_statement_prefer_hanging(value);
-		Ok(slf)
-	}
-	fn export_declaration_force_single_line<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.export_declaration_force_single_line(value);
-		Ok(slf)
-	}
-	fn import_declaration_force_single_line<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.import_declaration_force_single_line(value);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn export_declaration_force_multi_line<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.export_declaration_force_multi_line(
-			ForceMultiLine::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn import_declaration_force_multi_line<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.import_declaration_force_multi_line(
-			ForceMultiLine::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn enum_declaration_member_spacing<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.enum_declaration_member_spacing(
-			MemberSpacing::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn if_statement_next_control_flow_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.if_statement_next_control_flow_position(
-			NextControlFlowPosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn try_statement_next_control_flow_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.try_statement_next_control_flow_position(
-			NextControlFlowPosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn do_while_statement_next_control_flow_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.do_while_statement_next_control_flow_position(
-			NextControlFlowPosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn binary_expression_operator_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.binary_expression_operator_position(
-			OperatorPosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn conditional_expression_operator_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.conditional_expression_operator_position(
-			OperatorPosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn conditional_type_operator_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.conditional_type_operator_position(
-			OperatorPosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn if_statement_single_body_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.if_statement_single_body_position(
-			SameOrNextLinePosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn for_statement_single_body_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.for_statement_single_body_position(
-			SameOrNextLinePosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn for_in_statement_single_body_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.for_in_statement_single_body_position(
-			SameOrNextLinePosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn for_of_statement_single_body_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.for_of_statement_single_body_position(
-			SameOrNextLinePosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn while_statement_single_body_position<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.while_statement_single_body_position(
-			SameOrNextLinePosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn arguments_trailing_commas<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.arguments_trailing_commas(
-			TrailingCommas::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn parameters_trailing_commas<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.parameters_trailing_commas(
-			TrailingCommas::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn array_expression_trailing_commas<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.array_expression_trailing_commas(
-			TrailingCommas::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn array_pattern_trailing_commas<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.array_pattern_trailing_commas(
-			TrailingCommas::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn enum_declaration_trailing_commas<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.enum_declaration_trailing_commas(
-			TrailingCommas::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn export_declaration_trailing_commas<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.export_declaration_trailing_commas(
-			TrailingCommas::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn import_declaration_trailing_commas<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.import_declaration_trailing_commas(
-			TrailingCommas::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn object_expression_trailing_commas<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.object_expression_trailing_commas(
-			TrailingCommas::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn object_pattern_trailing_commas<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.object_pattern_trailing_commas(
-			TrailingCommas::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn tuple_type_trailing_commas<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.tuple_type_trailing_commas(
-			TrailingCommas::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn type_literal_trailing_commas<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.type_literal_trailing_commas(
-			TrailingCommas::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	/// Only applies when using commas on type literals.
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn type_parameters_trailing_commas<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.type_parameters_trailing_commas(
-			TrailingCommas::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn if_statement_use_braces<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.if_statement_use_braces(
-			UseBraces::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn for_statement_use_braces<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.for_statement_use_braces(
-			UseBraces::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn for_in_statement_use_braces<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.for_in_statement_use_braces(
-			UseBraces::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn for_of_statement_use_braces<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.for_of_statement_use_braces(
-			UseBraces::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-
-	#[pyo3(signature = (value: "str") -> "ConfigurationBuilder")]
-	fn while_statement_use_braces<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: &str,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.while_statement_use_braces(
-			UseBraces::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
-		);
-		Ok(slf)
-	}
-	fn array_expression_prefer_single_line<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.array_expression_prefer_single_line(value);
-		Ok(slf)
-	}
-	fn array_pattern_prefer_single_line<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.array_pattern_prefer_single_line(value);
-		Ok(slf)
-	}
-	fn arguments_prefer_single_line<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.arguments_prefer_single_line(value);
-		Ok(slf)
-	}
-	fn binary_expression_prefer_single_line<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.binary_expression_prefer_single_line(value);
-		Ok(slf)
-	}
-	fn computed_prefer_single_line<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.computed_prefer_single_line(value);
-		Ok(slf)
-	}
-	fn conditional_expression_prefer_single_line<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.conditional_expression_prefer_single_line(value);
-		Ok(slf)
-	}
-	fn conditional_type_prefer_single_line<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.conditional_type_prefer_single_line(value);
-		Ok(slf)
-	}
-	fn decorators_prefer_single_line<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.decorators_prefer_single_line(value);
-		Ok(slf)
-	}
-	fn export_declaration_prefer_single_line<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.export_declaration_prefer_single_line(value);
-		Ok(slf)
-	}
-	fn for_statement_prefer_single_line<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.for_statement_prefer_single_line(value);
-		Ok(slf)
-	}
-	fn import_declaration_prefer_single_line<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.import_declaration_prefer_single_line(value);
-		Ok(slf)
-	}
-	fn jsx_attributes_prefer_single_line<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.jsx_attributes_prefer_single_line(value);
-		Ok(slf)
-	}
-	fn jsx_element_prefer_single_line<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.jsx_element_prefer_single_line(value);
-		Ok(slf)
-	}
-	fn mapped_type_prefer_single_line<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.mapped_type_prefer_single_line(value);
-		Ok(slf)
-	}
-	fn member_expression_prefer_single_line<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.member_expression_prefer_single_line(value);
-		Ok(slf)
-	}
-	fn object_expression_prefer_single_line<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.object_expression_prefer_single_line(value);
-		Ok(slf)
-	}
-	fn object_pattern_prefer_single_line<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.object_pattern_prefer_single_line(value);
-		Ok(slf)
-	}
-	fn parameters_prefer_single_line<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.parameters_prefer_single_line(value);
-		Ok(slf)
-	}
-	fn parentheses_prefer_single_line<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.parentheses_prefer_single_line(value);
-		Ok(slf)
-	}
-	fn tuple_type_prefer_single_line<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.tuple_type_prefer_single_line(value);
-		Ok(slf)
-	}
-	fn type_literal_prefer_single_line<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.type_literal_prefer_single_line(value);
-		Ok(slf)
-	}
-	fn type_parameters_prefer_single_line<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.type_parameters_prefer_single_line(value);
-		Ok(slf)
-	}
-	fn union_and_intersection_type_prefer_single_line<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.union_and_intersection_type_prefer_single_line(value);
-		Ok(slf)
-	}
-	fn variable_statement_prefer_single_line<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.variable_statement_prefer_single_line(value);
-		Ok(slf)
-	}
-	fn arguments_space_around<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.arguments_space_around(value);
-		Ok(slf)
-	}
-	fn array_expression_space_around<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.array_expression_space_around(value);
-		Ok(slf)
-	}
-	fn array_pattern_space_around<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.array_pattern_space_around(value);
-		Ok(slf)
-	}
-	fn catch_clause_space_around<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.catch_clause_space_around(value);
-		Ok(slf)
-	}
-	fn do_while_statement_space_around<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.do_while_statement_space_around(value);
-		Ok(slf)
-	}
-	fn for_in_statement_space_around<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.for_in_statement_space_around(value);
-		Ok(slf)
-	}
-	fn for_of_statement_space_around<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.for_of_statement_space_around(value);
-		Ok(slf)
-	}
-	fn for_statement_space_around<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.for_statement_space_around(value);
-		Ok(slf)
-	}
-	fn if_statement_space_around<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.if_statement_space_around(value);
-		Ok(slf)
-	}
-	fn parameters_space_around<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.parameters_space_around(value);
-		Ok(slf)
-	}
-	fn paren_expression_space_around<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.paren_expression_space_around(value);
-		Ok(slf)
-	}
-	fn switch_statement_space_around<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.switch_statement_space_around(value);
-		Ok(slf)
-	}
-	fn tuple_type_space_around<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.tuple_type_space_around(value);
-		Ok(slf)
-	}
-
-	fn while_statement_space_around<'a>(
-		mut slf: PyRefMut<'a, Self>,
-		value: bool,
-	) -> PyResult<PyRefMut<'a, Self>> {
-		slf.0.while_statement_space_around(value);
-		Ok(slf)
-	}
-
 	fn build<'a>(slf: PyRefMut<'a, Self>) -> PyResult<PyConfiguration> {
 		let configuration = slf.0.build();
 		Ok(PyConfiguration::from(configuration))
 	}
 }
+
+wrap_fn!(
+	line_width,
+	u32,
+	"int",
+	"The width of a line the printer will try to stay under. Note that the printer may exceed this width in certain cases.\n\nDefault ```120``"
+);
+
+wrap_fn!(
+	use_tabs,
+	bool,
+	"bool",
+	"Whether to use tabs (true) or spaces (false).\n\nDefault: :py:obj:`False`"
+);
+
+wrap_fn!(
+	indent_width,
+	u8,
+	"int",
+	"The number of columns for an indent.\n\nDefault: ```4``"
+);
+
+wrap_enum_fn!(
+	new_line_kind,
+	NewLineKind,
+	"The kind of newline to use.\n\nDefault: ```NewLineKind.LineFeed``"
+);
+
+wrap_enum_fn!(
+	quote_style,
+	QuoteStyle,
+	"The quote style to use.\n\nDefault: ```QuoteStyle.AlwaysDouble``"
+);
+
+wrap_enum_fn!(
+	jsx_quote_style,
+	JsxQuoteStyle,
+	"The JSX quote style to use for string literals in JSX attributes.\n\nDefault: ```JsxQuoteStyle.PreferDouble``"
+);
+
+wrap_enum_fn!(
+	jsx_multi_line_parens,
+	JsxMultiLineParens,
+	"Whether to surround a JSX element or fragment with parentheses when it's the top JSX node and it spans multiple lines.\n\nDefault: ```JsxMultiLineParens.Prefer``"
+);
+
+wrap_fn!(
+	jsx_force_new_lines_surrounding_content,
+	bool,
+	"bool",
+	"Forces newlines surrounding the content of JSX elements.\n\nDefault: :py:obj:`False`"
+);
+
+wrap_enum_fn!(
+	jsx_bracket_position,
+	SameOrNextLinePosition,
+	"If the end angle bracket of a jsx opening element or self closing element should be on the same or next line when the attributes span multiple lines.\n\nDefault: nextLine"
+);
+
+wrap_enum_fn!(
+	jsx_opening_element_bracket_position,
+	SameOrNextLinePosition,
+	"If the end angle bracket of a jsx opening element should be on the same or next line when the attributes span multiple lines.\n\nDefault: nextLine"
+);
+
+wrap_enum_fn!(
+	jsx_self_closing_element_bracket_position,
+	SameOrNextLinePosition,
+	"If the end angle bracket of a jsx self closing element should be on the same or next line when the attributes span multiple lines.\n\nDefault: nextLine"
+);
+
+wrap_enum_fn!(
+	semi_colons,
+	SemiColons,
+	"Whether statements should end in a semi-colon.\n\nDefault: ```SemiColons.Prefer``"
+);
+
+wrap_fn!(
+	prefer_hanging,
+	bool,
+	"bool",
+	"Set to prefer hanging indentation when exceeding the line width.\n\nDefault: :py:obj:`False`"
+);
+
+wrap_enum_fn!(
+	quote_props,
+	QuoteProps,
+	"Behaviour to use for quotes on property names.\n\nDefault: ```preserve``"
+);
+
+wrap_enum_fn!(
+	brace_position,
+	BracePosition,
+	"Where to place the opening brace.\n\nDefault: ```BracePosition.SameLineUnlessHanging``"
+);
+
+wrap_enum_fn!(
+	next_control_flow_position,
+	NextControlFlowPosition,
+	"Where to place the next control flow within a control flow statement.\n\nDefault: ```NextControlFlowPosition.NextLine``"
+);
+
+wrap_enum_fn!(
+	operator_position,
+	OperatorPosition,
+	"Where to place the operator for expressions that span multiple lines.\n\nDefault: ```OperatorPosition.NextLine``"
+);
+
+wrap_enum_fn!(
+	single_body_position,
+	SameOrNextLinePosition,
+	"Where to place the expression of a statement that could possibly be on one line (ex. ``if (true) console.log(5);`).\n\nDefault: ```SingleBodyPosition.Maintain``"
+);
+
+wrap_fn!(
+	file_indent_level,
+	u16,
+	"int",
+	"Amount of indents to use for the whole file.\n\nThis should only be set by tools that need to indent all the code in the file.\n\nDefault: ```0``"
+);
+
+wrap_enum_fn!(
+	trailing_commas,
+	TrailingCommas,
+	"If trailing commas should be used.\n\nDefault: ```TrailingCommas.OnlyMultiLine``"
+);
+
+wrap_enum_fn!(
+	use_braces,
+	UseBraces,
+	"If braces should be used or not.\n\nDefault: ```UseBraces.WhenNotSingleLine``"
+);
+
+wrap_fn!(
+	prefer_single_line,
+	bool,
+	"bool",
+	"If code should revert back from being on multiple lines to being on a single line when able.\n\nDefault: :py:obj:`False`"
+);
+
+wrap_fn!(
+	binary_expression_space_surrounding_bitwise_and_arithmetic_operator,
+	bool,
+	"bool",
+	"Whether to surround bitwise and arithmetic operators in a binary expression with spaces.\n\n* ``true`` (default) - Ex. ``1 + 2`\n* ``false`` - Ex. ``1+2`"
+);
+
+wrap_fn!(
+	comment_line_force_space_after_slashes,
+	bool,
+	"bool",
+	"Forces a space after the double slash in a comment line.\n\n* ``true`` (default) - Ex. ``//test`` -> ``// test`\n* ``false`` - Ex. ``//test`` -> ``//test`"
+);
+
+wrap_fn!(
+	construct_signature_space_after_new_keyword,
+	bool,
+	"bool",
+	"Whether to add a space after the ``new`` keyword in a construct signature.\n\n * ``true`` - Ex. ``new (): MyClass;`\n * ``false`` (default) - Ex. ``new(): MyClass;`"
+);
+
+wrap_fn!(
+	constructor_space_before_parentheses,
+	bool,
+	"bool",
+	"Whether to add a space before the parentheses of a constructor.\n\n * ``true`` - Ex. ``constructor ()`\n * ``false`` (false) - Ex. ``constructor()`"
+);
+
+wrap_fn!(
+	constructor_type_space_after_new_keyword,
+	bool,
+	"bool",
+	"Whether to add a space after the ``new`` keyword in a constructor type.\n\n * ``true`` - Ex. ``type MyClassCtor = new () => MyClass;`\n * ``false`` (default) - Ex. ``type MyClassCtor = new() => MyClass;`"
+);
+
+wrap_fn!(
+	do_while_statement_space_after_while_keyword,
+	bool,
+	"bool",
+	"Whether to add a space after the ``while`` keyword in a do while statement.\n\n * ``true`` (true) - Ex. ``do {\n} while (condition);`\n * ``false`` - Ex. ``do {\n} while(condition);`"
+);
+
+wrap_fn!(
+	export_declaration_space_surrounding_named_exports,
+	bool,
+	"bool",
+	"Whether to add spaces around named exports in an export declaration.\n\n * ``true`` (default) - Ex. ``export { SomeExport, OtherExport };`\n * ``false`` - Ex. ``export {SomeExport, OtherExport};`"
+);
+
+wrap_fn!(
+	for_statement_space_after_for_keyword,
+	bool,
+	"bool",
+	"Whether to add a space after the ``for`` keyword in a 'for' statement.\n\n * ``true`` (default) - Ex. ``for (let i = 0; i < 5; i++)`\n * ``false`` - Ex. ``for(let i = 0; i < 5; i++)`"
+);
+
+wrap_fn!(
+	for_statement_space_after_semi_colons,
+	bool,
+	"bool",
+	"Whether to add a space after the semi-colons in a 'for' statement.\n\n * ``true`` (default) - Ex. ``for (let i = 0; i < 5; i++)`\n * ``false`` - Ex. ``for (let i = 0;i < 5;i++)`"
+);
+
+wrap_fn!(
+	for_in_statement_space_after_for_keyword,
+	bool,
+	"bool",
+	"Whether to add a space after the ``for`` keyword in a 'for in' statement.\n\n * ``true`` (default) - Ex. ``for (const prop in obj)`\n * ``false`` - Ex. ``for(const prop in obj)`
+	"
+);
+
+wrap_fn!(
+	for_of_statement_space_after_for_keyword,
+	bool,
+	"bool",
+	"Whether to add a space after the ``for`` keyword in a 'for of' statement.\n\n * ``true`` (default) - Ex. ``for (const value of myArray)`\n * ``false`` - Ex. ``for(const value of myArray)`"
+);
+
+wrap_fn!(
+	function_declaration_space_before_parentheses,
+	bool,
+	"bool",
+	"Whether to add a space before the parentheses of a function declaration.\n\n * ``true`` - Ex. ``function myFunction ()`\n * ``false`` (default) - Ex. ``function myFunction()`"
+);
+
+wrap_fn!(
+	function_expression_space_before_parentheses,
+	bool,
+	"bool",
+	"Whether to add a space before the parentheses of a function expression.\n\n * ``true`` - Ex. ``function<T> ()`\n * ``false`` (default) - Ex. ``function<T> ()`"
+);
+
+wrap_fn!(
+	function_expression_space_after_function_keyword,
+	bool,
+	"bool",
+	"Whether to add a space after the function keyword of a function expression.\n\n * ``true`` - Ex. ``function <T>()`.\n * ``false`` (default) - Ex. ``function<T>()`"
+);
+
+wrap_fn!(
+	get_accessor_space_before_parentheses,
+	bool,
+	"bool",
+	"Whether to add a space before the parentheses of a get accessor.\n\n * ``true`` - Ex. ``get myProp ()`\n * ``false`` (false) - Ex. ``get myProp()`"
+);
+
+wrap_fn!(
+	if_statement_space_after_if_keyword,
+	bool,
+	"bool",
+	"Whether to add a space after the ``if`` keyword in an 'if' statement.\n\n * ``true`` (default) - Ex. ``if (true)`\n * ``false`` - Ex. ``if(true)`"
+);
+
+wrap_fn!(
+	import_declaration_space_surrounding_named_imports,
+	bool,
+	"bool",
+	"Whether to add spaces around named imports in an import declaration.\n\n * ``true`` (default) - Ex. ``import { SomeExport, OtherExport } from \"my-module\";`\n * ``false`` - Ex. ``import {SomeExport, OtherExport} from \"my-module\";`"
+);
+
+wrap_fn!(
+	jsx_expression_container_space_surrounding_expression,
+	bool,
+	"bool",
+	"Whether to add a space surrounding the expression of a JSX container.\n\n * ``true`` - Ex. ``{ myValue }`\n * ``false`` (default) - Ex. ``{myValue}`
+	"
+);
+
+wrap_fn!(
+	jsx_self_closing_element_space_before_slash,
+	bool,
+	"bool",
+	"Whether to add a space before the slash in a self closing tag for a JSX element.\n\n * ``true`` (default) - Ex. ``<Test />`\n * ``false`` - Ex. ``<Test/>`"
+);
+
+wrap_fn!(
+	object_expression_space_surrounding_properties,
+	bool,
+	"bool",
+	"Whether to add a space surrounding the properties of an object expression.\n\n * ``true`` (default) - Ex. ``{ key: value }`\n * ``false`` - Ex. ``{key: value}`"
+);
+
+wrap_fn!(
+	object_pattern_space_surrounding_properties,
+	bool,
+	"bool",
+	"Whether to add a space surrounding the properties of an object pattern.\n\n * ``true`` (default) - Ex. ``{ key: value } = obj`\n * ``false`` - Ex. ``{key: value} = obj`"
+);
+
+wrap_fn!(
+	method_space_before_parentheses,
+	bool,
+	"bool",
+	"Whether to add a space before the parentheses of a method.\n\n * ``true`` - Ex. ``myMethod ()`\n * ``false`` - Ex. ``myMethod()`"
+);
+
+wrap_fn!(
+	set_accessor_space_before_parentheses,
+	bool,
+	"bool",
+	"Whether to add a space before the parentheses of a set accessor.\n\n * ``true`` - Ex. ``set myProp (value: string)`\n * ``false`` (default) - Ex. ``set myProp(value: string)`"
+);
+
+wrap_fn!(
+	space_surrounding_properties,
+	bool,
+	"bool",
+	"Whether to add a space surrounding the properties of object-like nodes.\n\n * ``true`` (default) - Ex. ``{ key: value }`\n * ``false`` - Ex. ``{key: value}`"
+);
+
+wrap_fn!(
+	tagged_template_space_before_literal,
+	bool,
+	"bool",
+	"Whether to add a space before the literal in a tagged template.\n\n* ``true`` (default) - Ex. ``html \\`<element />\\``\n* ``false`` - Ex. ``html\\`<element />\\``"
+);
+
+wrap_fn!(
+	type_annotation_space_before_colon,
+	bool,
+	"bool",
+	"Whether to add a space before the colon of a type annotation.\n\n * ``true`` - Ex. ``function myFunction() : string`\n * ``false`` (default) - Ex. ``function myFunction(): string`"
+);
+
+wrap_fn!(
+	type_assertion_space_before_expression,
+	bool,
+	"bool",
+	"Whether to add a space before the expression in a type assertion.\n\n * ``true`` (default) - Ex. ``<string> myValue`\n * ``false`` - Ex. ``<string>myValue`"
+);
+
+wrap_fn!(
+	type_literal_space_surrounding_properties,
+	bool,
+	"bool",
+	"Whether to add a space surrounding the properties of a type literal.\n\n * ``true`` (default) - Ex. ``value: { key: Type }`\n * ``false`` - Ex. ``value: {key: Type}`"
+);
+
+wrap_fn!(
+	while_statement_space_after_while_keyword,
+	bool,
+	"bool",
+	"Whether to add a space after the ``while`` keyword in a while statement.\n\n * ``true`` (default) - Ex. ``while (true)`\n * ``false`` - Ex. ``while(true)`"
+);
+
+wrap_fn!(
+	space_around,
+	bool,
+	"bool",
+	"Whether to place spaces around enclosed expressions.\n\n* ``true`` - Ex. ``myFunction( true )`\n* ``false`` (default) - Ex. ``myFunction(true)`"
+);
+
+wrap_enum_fn!(
+	arrow_function_use_parentheses,
+	UseParentheses,
+	"Whether to use parentheses for arrow functions.\n\nDefault: ```UseParentheses.Maintain``"
+);
+wrap_fn!(
+	binary_expression_line_per_expression,
+	bool,
+	"bool",
+	"Whether to force a line per expression when spanning multiple lines.\n\n * ``true`` - Formats with each part on a new line.\n * ``false`` (default) - Maintains the line breaks as written by the programmer."
+);
+
+wrap_fn!(
+	conditional_expression_line_per_expression,
+	bool,
+	"bool",
+	"Whether to force a line per expression when spanning multiple lines.\n\n * ``true`` - Formats with each part on a new line.\n * ``false`` (default) - Maintains the line breaks as written by the programmer."
+);
+
+wrap_fn!(
+	member_expression_line_per_expression,
+	bool,
+	"bool",
+	"Whether to force a line per expression when spanning multiple lines.\n\n * ``true`` - Formats with each part on a new line.\n * ``false`` (default) - Maintains the line breaks as written by the programmer."
+);
+
+wrap_enum_fn!(
+	type_literal_separator_kind,
+	SemiColonOrComma,
+	"The kind of separator to use in type literals."
+);
+
+wrap_enum_fn!(
+	type_literal_separator_kind_single_line,
+	SemiColonOrComma,
+	"The kind of separator to use in type literals when single line."
+);
+
+wrap_enum_fn!(
+	type_literal_separator_kind_multi_line,
+	SemiColonOrComma,
+	"The kind of separator to use in type literals when multi-line."
+);
+
+wrap_enum_fn!(
+	module_sort_import_declarations,
+	SortOrder,
+	"Alphabetically sorts the import declarations based on their module specifiers.\n\nDefault: Case insensitive"
+);
+
+wrap_enum_fn!(
+	module_sort_export_declarations,
+	SortOrder,
+	"Alphabetically sorts the export declarations based on their module specifiers.\n\nDefault: Case insensitive"
+);
+
+wrap_enum_fn!(
+	import_declaration_sort_named_imports,
+	SortOrder,
+	"Alphabetically sorts the import declaration’s named imports.\n\nDefault: Case insensitive"
+);
+
+wrap_enum_fn!(
+	import_declaration_sort_type_only_imports,
+	NamedTypeImportsExportsOrder,
+	"Sorts type-only named imports first, last, or none (no sorting).\n\nDefault: Last"
+);
+
+wrap_enum_fn!(
+	export_declaration_sort_named_exports,
+	SortOrder,
+	"Alphabetically sorts the export declaration’s named exports.\n\nDefault: Case insensitive"
+);
+
+wrap_enum_fn!(
+	export_declaration_sort_type_only_exports,
+	NamedTypeImportsExportsOrder,
+	"Sorts type-only named exports first, last, or none (no sorting).\n\nDefault: Last"
+);
+
+wrap_fn!(
+	ignore_node_comment_text,
+	&str,
+	"str",
+	"The text to use for an ignore comment (ex. ``\"dprint-ignore\"``).\n\nDefault: \"dprint-ignore\""
+);
+
+wrap_fn!(
+	ignore_file_comment_text,
+	&str,
+	"str",
+	"The text to use for a file ignore comment (ex. ``\"dprint-ignore-file\"``).\n\nDefault: \"dprint-ignore-file\""
+);
+
+wrap_enum_fn!(arrow_function_brace_position, BracePosition, "");
+wrap_enum_fn!(class_declaration_brace_position, BracePosition, "");
+wrap_enum_fn!(class_expression_brace_position, BracePosition, "");
+wrap_enum_fn!(constructor_brace_position, BracePosition, "");
+wrap_enum_fn!(do_while_statement_brace_position, BracePosition, "");
+wrap_enum_fn!(enum_declaration_brace_position, BracePosition, "");
+wrap_enum_fn!(for_statement_brace_position, BracePosition, "");
+wrap_enum_fn!(for_in_statement_brace_position, BracePosition, "");
+wrap_enum_fn!(for_of_statement_brace_position, BracePosition, "");
+wrap_enum_fn!(get_accessor_brace_position, BracePosition, "");
+wrap_enum_fn!(if_statement_brace_position, BracePosition, "");
+wrap_enum_fn!(interface_declaration_brace_position, BracePosition, "");
+wrap_enum_fn!(function_declaration_brace_position, BracePosition, "");
+wrap_enum_fn!(function_expression_brace_position, BracePosition, "");
+wrap_enum_fn!(method_brace_position, BracePosition, "");
+wrap_enum_fn!(module_declaration_brace_position, BracePosition, "");
+wrap_enum_fn!(set_accessor_brace_position, BracePosition, "");
+wrap_enum_fn!(static_block_brace_position, BracePosition, "");
+wrap_enum_fn!(switch_case_brace_position, BracePosition, "");
+wrap_enum_fn!(switch_statement_brace_position, BracePosition, "");
+wrap_enum_fn!(try_statement_brace_position, BracePosition, "");
+wrap_enum_fn!(while_statement_brace_position, BracePosition, "");
+wrap_enum_fn!(arguments_prefer_hanging, PreferHanging, "");
+wrap_enum_fn!(array_expression_prefer_hanging, PreferHanging, "");
+wrap_fn!(array_pattern_prefer_hanging, bool, "bool", "");
+wrap_fn!(do_while_statement_prefer_hanging, bool, "bool", "");
+wrap_fn!(export_declaration_prefer_hanging, bool, "bool", "");
+wrap_fn!(extends_clause_prefer_hanging, bool, "bool", "");
+wrap_fn!(for_in_statement_prefer_hanging, bool, "bool", "");
+wrap_fn!(for_of_statement_prefer_hanging, bool, "bool", "");
+wrap_fn!(for_statement_prefer_hanging, bool, "bool", "");
+wrap_fn!(if_statement_prefer_hanging, bool, "bool", "");
+wrap_fn!(implements_clause_prefer_hanging, bool, "bool", "");
+wrap_fn!(import_declaration_prefer_hanging, bool, "bool", "");
+wrap_fn!(jsx_attributes_prefer_hanging, bool, "bool", "");
+wrap_fn!(object_expression_prefer_hanging, bool, "bool", "");
+wrap_fn!(object_pattern_prefer_hanging, bool, "bool", "");
+wrap_enum_fn!(parameters_prefer_hanging, PreferHanging, "");
+wrap_fn!(sequence_expression_prefer_hanging, bool, "bool", "");
+wrap_fn!(switch_statement_prefer_hanging, bool, "bool", "");
+wrap_enum_fn!(tuple_type_prefer_hanging, PreferHanging, "");
+wrap_fn!(type_literal_prefer_hanging, bool, "bool", "");
+wrap_enum_fn!(type_parameters_prefer_hanging, PreferHanging, "");
+wrap_fn!(union_and_intersection_type_prefer_hanging, bool, "bool", "");
+wrap_fn!(variable_statement_prefer_hanging, bool, "bool", "");
+wrap_fn!(while_statement_prefer_hanging, bool, "bool", "");
+wrap_fn!(export_declaration_force_single_line, bool, "bool", "");
+wrap_fn!(import_declaration_force_single_line, bool, "bool", "");
+wrap_enum_fn!(export_declaration_force_multi_line, ForceMultiLine, "");
+wrap_enum_fn!(import_declaration_force_multi_line, ForceMultiLine, "");
+wrap_enum_fn!(enum_declaration_member_spacing, MemberSpacing, "");
+
+wrap_enum_fn!(
+	if_statement_next_control_flow_position,
+	NextControlFlowPosition,
+	""
+);
+
+wrap_enum_fn!(
+	try_statement_next_control_flow_position,
+	NextControlFlowPosition,
+	""
+);
+
+wrap_enum_fn!(
+	do_while_statement_next_control_flow_position,
+	NextControlFlowPosition,
+	""
+);
+
+wrap_enum_fn!(binary_expression_operator_position, OperatorPosition, "");
+
+wrap_enum_fn!(
+	conditional_expression_operator_position,
+	OperatorPosition,
+	""
+);
+
+wrap_enum_fn!(conditional_type_operator_position, OperatorPosition, "");
+
+wrap_enum_fn!(
+	if_statement_single_body_position,
+	SameOrNextLinePosition,
+	""
+);
+
+wrap_enum_fn!(
+	for_statement_single_body_position,
+	SameOrNextLinePosition,
+	""
+);
+
+wrap_enum_fn!(
+	for_in_statement_single_body_position,
+	SameOrNextLinePosition,
+	""
+);
+
+wrap_enum_fn!(
+	for_of_statement_single_body_position,
+	SameOrNextLinePosition,
+	""
+);
+
+wrap_enum_fn!(
+	while_statement_single_body_position,
+	SameOrNextLinePosition,
+	""
+);
+
+wrap_enum_fn!(arguments_trailing_commas, TrailingCommas, "");
+wrap_enum_fn!(parameters_trailing_commas, TrailingCommas, "");
+wrap_enum_fn!(array_expression_trailing_commas, TrailingCommas, "");
+wrap_enum_fn!(array_pattern_trailing_commas, TrailingCommas, "");
+wrap_enum_fn!(enum_declaration_trailing_commas, TrailingCommas, "");
+wrap_enum_fn!(export_declaration_trailing_commas, TrailingCommas, "");
+wrap_enum_fn!(import_declaration_trailing_commas, TrailingCommas, "");
+wrap_enum_fn!(object_expression_trailing_commas, TrailingCommas, "");
+wrap_enum_fn!(object_pattern_trailing_commas, TrailingCommas, "");
+wrap_enum_fn!(tuple_type_trailing_commas, TrailingCommas, "");
+
+wrap_enum_fn!(
+	type_literal_trailing_commas,
+	TrailingCommas,
+	"Only applies when using commas on type literals."
+);
+
+wrap_enum_fn!(type_parameters_trailing_commas, TrailingCommas, "");
+wrap_enum_fn!(if_statement_use_braces, UseBraces, "");
+wrap_enum_fn!(for_statement_use_braces, UseBraces, "");
+wrap_enum_fn!(for_in_statement_use_braces, UseBraces, "");
+wrap_enum_fn!(for_of_statement_use_braces, UseBraces, "");
+wrap_enum_fn!(while_statement_use_braces, UseBraces, "");
+wrap_fn!(array_expression_prefer_single_line, bool, "bool", "");
+wrap_fn!(array_pattern_prefer_single_line, bool, "bool", "");
+wrap_fn!(arguments_prefer_single_line, bool, "bool", "");
+wrap_fn!(binary_expression_prefer_single_line, bool, "bool", "");
+wrap_fn!(computed_prefer_single_line, bool, "bool", "");
+wrap_fn!(conditional_expression_prefer_single_line, bool, "bool", "");
+wrap_fn!(conditional_type_prefer_single_line, bool, "bool", "");
+wrap_fn!(decorators_prefer_single_line, bool, "bool", "");
+wrap_fn!(export_declaration_prefer_single_line, bool, "bool", "");
+wrap_fn!(for_statement_prefer_single_line, bool, "bool", "");
+wrap_fn!(import_declaration_prefer_single_line, bool, "bool", "");
+wrap_fn!(jsx_attributes_prefer_single_line, bool, "bool", "");
+wrap_fn!(jsx_element_prefer_single_line, bool, "bool", "");
+wrap_fn!(mapped_type_prefer_single_line, bool, "bool", "");
+wrap_fn!(member_expression_prefer_single_line, bool, "bool", "");
+wrap_fn!(object_expression_prefer_single_line, bool, "bool", "");
+wrap_fn!(object_pattern_prefer_single_line, bool, "bool", "");
+wrap_fn!(parameters_prefer_single_line, bool, "bool", "");
+wrap_fn!(parentheses_prefer_single_line, bool, "bool", "");
+wrap_fn!(tuple_type_prefer_single_line, bool, "bool", "");
+wrap_fn!(type_literal_prefer_single_line, bool, "bool", "");
+wrap_fn!(type_parameters_prefer_single_line, bool, "bool", "");
+
+wrap_fn!(
+	union_and_intersection_type_prefer_single_line,
+	bool,
+	"bool",
+	""
+);
+
+wrap_fn!(variable_statement_prefer_single_line, bool, "bool", "");
+wrap_fn!(arguments_space_around, bool, "bool", "");
+wrap_fn!(array_expression_space_around, bool, "bool", "");
+wrap_fn!(array_pattern_space_around, bool, "bool", "");
+wrap_fn!(catch_clause_space_around, bool, "bool", "");
+wrap_fn!(do_while_statement_space_around, bool, "bool", "");
+wrap_fn!(for_in_statement_space_around, bool, "bool", "");
+wrap_fn!(for_of_statement_space_around, bool, "bool", "");
+wrap_fn!(for_statement_space_around, bool, "bool", "");
+wrap_fn!(if_statement_space_around, bool, "bool", "");
+wrap_fn!(parameters_space_around, bool, "bool", "");
+wrap_fn!(paren_expression_space_around, bool, "bool", "");
+wrap_fn!(switch_statement_space_around, bool, "bool", "");
+wrap_fn!(tuple_type_space_around, bool, "bool", "");
+wrap_fn!(while_statement_space_around, bool, "bool", "");
