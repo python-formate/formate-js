@@ -1,3 +1,4 @@
+use crate::configuration::PyConfiguration;
 use dprint_core::configuration::NewLineKind;
 use dprint_plugin_typescript::configuration::ConfigurationBuilder;
 use dprint_plugin_typescript::configuration::{
@@ -36,7 +37,7 @@ impl PyConfigurationBuilder {
 		Ok(PyConfigurationBuilder::new())
 	}
 
-	/// Set the global configuration.
+	// /// Set the global configuration.
 	// fn global_config<'a>(
 	// 	mut slf: PyRefMut<'a, Self>,
 	// 	global_config: GlobalConfiguration,
@@ -45,8 +46,8 @@ impl PyConfigurationBuilder {
 	// 	Ok(slf)
 	// }
 
-	#[pyo3(signature = () -> "ConfigurationBuilder")]
 	/// Helper method to set the configuration to what’s used for Deno.
+	#[pyo3(signature = () -> "ConfigurationBuilder")]
 	fn deno<'a>(mut slf: PyRefMut<'a, Self>) -> PyResult<PyRefMut<'a, Self>> {
 		slf.0.deno();
 		Ok(slf)
@@ -136,6 +137,7 @@ impl PyConfigurationBuilder {
 	/// Forces newlines surrounding the content of JSX elements.
 	///
 	/// Default: false
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn jsx_force_new_lines_surrounding_content<'a>(
 		mut slf: PyRefMut<'a, Self>,
 		value: bool,
@@ -204,6 +206,7 @@ impl PyConfigurationBuilder {
 	/// Set to prefer hanging indentation when exceeding the line width.
 	///
 	/// Default: false
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn prefer_hanging<'a>(
 		mut slf: PyRefMut<'a, Self>,
 		value: bool,
@@ -234,7 +237,7 @@ impl PyConfigurationBuilder {
 	) -> PyResult<PyRefMut<'a, Self>> {
 		slf.0.brace_position(
 			BracePosition::from_str(value)
-				.unwrap_or_else(|_| panic!("Invalid enum valuevalue '{}'", &value)),
+				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value)),
 		);
 		Ok(slf)
 	}
@@ -328,6 +331,7 @@ impl PyConfigurationBuilder {
 	/// If code should revert back from being on multiple lines to being on a single line when able.
 	///
 	/// Default: false
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn prefer_single_line<'a>(
 		mut slf: PyRefMut<'a, Self>,
 		value: bool,
@@ -340,6 +344,7 @@ impl PyConfigurationBuilder {
 	///
 	/// 	true (default) - Ex. 1 + 2
 	/// 	false - Ex. 1+2
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn binary_expression_space_surrounding_bitwise_and_arithmetic_operator<'a>(
 		mut slf: PyRefMut<'a, Self>,
 		value: bool,
@@ -352,6 +357,7 @@ impl PyConfigurationBuilder {
 	/// Forces a space after the double slash in a comment line.
 	///
 	/// true (default) - Ex. //test -> // test false - Ex. //test -> //test
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn comment_line_force_space_after_slashes<'a>(
 		mut slf: PyRefMut<'a, Self>,
 		value: bool,
@@ -363,6 +369,7 @@ impl PyConfigurationBuilder {
 	/// Whether to add a space after the new keyword in a construct signature.
 	///
 	/// true - Ex. new (): MyClass; false (default) - Ex. new(): MyClass;
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn construct_signature_space_after_new_keyword<'a>(
 		mut slf: PyRefMut<'a, Self>,
 		value: bool,
@@ -374,6 +381,7 @@ impl PyConfigurationBuilder {
 	/// Whether to add a space before the parentheses of a constructor.
 	///
 	/// true - Ex. constructor () false (false) - Ex. constructor()
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn constructor_space_before_parentheses<'a>(
 		mut slf: PyRefMut<'a, Self>,
 		value: bool,
@@ -385,6 +393,7 @@ impl PyConfigurationBuilder {
 	/// Whether to add a space after the new keyword in a constructor type.
 	///
 	/// true - Ex. type MyClassCtor = new () => MyClass; false (default) - Ex. type MyClassCtor = new() => MyClass;
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn constructor_type_space_after_new_keyword<'a>(
 		mut slf: PyRefMut<'a, Self>,
 		value: bool,
@@ -396,6 +405,7 @@ impl PyConfigurationBuilder {
 	/// Whether to add a space after the while keyword in a do while statement.
 	///
 	/// true (true) - Ex. do {\n} while (condition); false - Ex. do {\n} while(condition);
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn do_while_statement_space_after_while_keyword<'a>(
 		mut slf: PyRefMut<'a, Self>,
 		value: bool,
@@ -408,6 +418,7 @@ impl PyConfigurationBuilder {
 	///
 	/// 	true (default) - Ex. export { SomeExport, OtherExport };
 	/// 	false - Ex. export {SomeExport, OtherExport};
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn export_declaration_space_surrounding_named_exports<'a>(
 		mut slf: PyRefMut<'a, Self>,
 		value: bool,
@@ -421,6 +432,7 @@ impl PyConfigurationBuilder {
 	///
 	/// 	true (default) - Ex. for (let i = 0; i < 5; i++)
 	/// 	false - Ex. for(let i = 0; i < 5; i++)
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn for_statement_space_after_for_keyword<'a>(
 		mut slf: PyRefMut<'a, Self>,
 		value: bool,
@@ -433,6 +445,7 @@ impl PyConfigurationBuilder {
 	///
 	/// 	true (default) - Ex. for (let i = 0; i < 5; i++)
 	/// 	false - Ex. for (let i = 0;i < 5;i++)
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn for_statement_space_after_semi_colons<'a>(
 		mut slf: PyRefMut<'a, Self>,
 		value: bool,
@@ -445,6 +458,7 @@ impl PyConfigurationBuilder {
 	///
 	/// 	true (default) - Ex. for (const prop in obj)
 	/// 	false - Ex. for(const prop in obj)
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn for_in_statement_space_after_for_keyword<'a>(
 		mut slf: PyRefMut<'a, Self>,
 		value: bool,
@@ -457,6 +471,7 @@ impl PyConfigurationBuilder {
 	///
 	/// 	true (default) - Ex. for (const value of myArray)
 	/// 	false - Ex. for(const value of myArray)
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn for_of_statement_space_after_for_keyword<'a>(
 		mut slf: PyRefMut<'a, Self>,
 		value: bool,
@@ -469,6 +484,7 @@ impl PyConfigurationBuilder {
 	///
 	/// 	true - Ex. function myFunction ()
 	/// 	false (default) - Ex. function myFunction()
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn function_declaration_space_before_parentheses<'a>(
 		mut slf: PyRefMut<'a, Self>,
 		value: bool,
@@ -480,6 +496,7 @@ impl PyConfigurationBuilder {
 	/// Whether to add a space before the parentheses of a function expression.
 	///
 	/// true - Ex. function<T> () false (default) - Ex. function<T> ()
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn function_expression_space_before_parentheses<'a>(
 		mut slf: PyRefMut<'a, Self>,
 		value: bool,
@@ -491,6 +508,7 @@ impl PyConfigurationBuilder {
 	/// Whether to add a space after the function keyword of a function expression.
 	///
 	/// true - Ex. function <T>(). false (default) - Ex. function<T>()
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn function_expression_space_after_function_keyword<'a>(
 		mut slf: PyRefMut<'a, Self>,
 		value: bool,
@@ -503,6 +521,7 @@ impl PyConfigurationBuilder {
 	/// Whether to add a space before the parentheses of a get accessor.
 	///
 	/// true - Ex. get myProp () false (false) - Ex. get myProp()
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn get_accessor_space_before_parentheses<'a>(
 		mut slf: PyRefMut<'a, Self>,
 		value: bool,
@@ -514,6 +533,7 @@ impl PyConfigurationBuilder {
 	/// Whether to add a space after the if keyword in an “if” statement.
 	///
 	/// true (default) - Ex. if (true) false - Ex. if(true)
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn if_statement_space_after_if_keyword<'a>(
 		mut slf: PyRefMut<'a, Self>,
 		value: bool,
@@ -526,6 +546,7 @@ impl PyConfigurationBuilder {
 	///
 	/// 	true (default) - Ex. import { SomeExport, OtherExport } from "my-module";
 	/// 	false - Ex. import {SomeExport, OtherExport} from "my-module";
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn import_declaration_space_surrounding_named_imports<'a>(
 		mut slf: PyRefMut<'a, Self>,
 		value: bool,
@@ -539,6 +560,7 @@ impl PyConfigurationBuilder {
 	///
 	/// 	true - Ex. { myValue }
 	/// 	false (default) - Ex. {myValue}
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn jsx_expression_container_space_surrounding_expression<'a>(
 		mut slf: PyRefMut<'a, Self>,
 		value: bool,
@@ -552,6 +574,7 @@ impl PyConfigurationBuilder {
 	///
 	/// 	true (default) - Ex. <Test />
 	/// 	false - Ex. <Test/>
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn jsx_self_closing_element_space_before_slash<'a>(
 		mut slf: PyRefMut<'a, Self>,
 		value: bool,
@@ -564,6 +587,7 @@ impl PyConfigurationBuilder {
 	///
 	/// 	true (default) - Ex. { key: value }
 	/// 	false - Ex. {key: value}
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn object_expression_space_surrounding_properties<'a>(
 		mut slf: PyRefMut<'a, Self>,
 		value: bool,
@@ -576,6 +600,7 @@ impl PyConfigurationBuilder {
 	///
 	/// 	true (default) - Ex. { key: value } = obj
 	/// 	false - Ex. {key: value} = obj
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn object_pattern_space_surrounding_properties<'a>(
 		mut slf: PyRefMut<'a, Self>,
 		value: bool,
@@ -588,6 +613,7 @@ impl PyConfigurationBuilder {
 	///
 	/// true - Ex. myMethod () false - Ex. myMethod()
 	///
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn method_space_before_parentheses<'a>(
 		mut slf: PyRefMut<'a, Self>,
 		value: bool,
@@ -600,6 +626,7 @@ impl PyConfigurationBuilder {
 	///
 	/// true - Ex. set myProp (value: string) false (default) - Ex. set myProp(value: string)
 	///
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn set_accessor_space_before_parentheses<'a>(
 		mut slf: PyRefMut<'a, Self>,
 		value: bool,
@@ -612,6 +639,7 @@ impl PyConfigurationBuilder {
 	///
 	/// 	true (default) - Ex. { key: value }
 	/// 	false - Ex. {key: value}
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn space_surrounding_properties<'a>(
 		mut slf: PyRefMut<'a, Self>,
 		value: bool,
@@ -624,6 +652,7 @@ impl PyConfigurationBuilder {
 	///
 	/// 	true (default) - Ex. html \``
 	/// 	false - Ex. html\``
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn tagged_template_space_before_literal<'a>(
 		mut slf: PyRefMut<'a, Self>,
 		value: bool,
@@ -636,6 +665,7 @@ impl PyConfigurationBuilder {
 	///
 	/// 	true - Ex. function myFunction() : string
 	/// 	false (default) - Ex. function myFunction(): string
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn type_annotation_space_before_colon<'a>(
 		mut slf: PyRefMut<'a, Self>,
 		value: bool,
@@ -648,6 +678,7 @@ impl PyConfigurationBuilder {
 	///
 	/// 	true (default) - Ex. <string> myValue
 	/// 	false - Ex. <string>myValue
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn type_assertion_space_before_expression<'a>(
 		mut slf: PyRefMut<'a, Self>,
 		value: bool,
@@ -660,6 +691,7 @@ impl PyConfigurationBuilder {
 	///
 	/// 	true (default) - Ex. value: { key: Type }
 	/// 	false - Ex. value: {key: Type}
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn type_literal_space_surrounding_properties<'a>(
 		mut slf: PyRefMut<'a, Self>,
 		value: bool,
@@ -672,6 +704,7 @@ impl PyConfigurationBuilder {
 	///
 	/// 	true (default) - Ex. while (true)
 	/// 	false - Ex. while(true)
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn while_statement_space_after_while_keyword<'a>(
 		mut slf: PyRefMut<'a, Self>,
 		value: bool,
@@ -684,6 +717,7 @@ impl PyConfigurationBuilder {
 	///
 	/// 	true - Ex. myFunction( true )
 	/// 	false (default) - Ex. myFunction(true)
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn space_around<'a>(mut slf: PyRefMut<'a, Self>, value: bool) -> PyResult<PyRefMut<'a, Self>> {
 		slf.0.space_around(value);
 		Ok(slf)
@@ -708,6 +742,7 @@ impl PyConfigurationBuilder {
 	///
 	/// 	true - Formats with each part on a new line.
 	/// 	false (default) - Maintains the line breaks as written by the programmer.
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn binary_expression_line_per_expression<'a>(
 		mut slf: PyRefMut<'a, Self>,
 		value: bool,
@@ -720,6 +755,7 @@ impl PyConfigurationBuilder {
 	///
 	/// 	true - Formats with each part on a new line.
 	/// 	false (default) - Maintains the line breaks as written by the programmer.
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn conditional_expression_line_per_expression<'a>(
 		mut slf: PyRefMut<'a, Self>,
 		value: bool,
@@ -732,6 +768,7 @@ impl PyConfigurationBuilder {
 	///
 	/// 	true - Formats with each part on a new line.
 	/// 	false (default) - Maintains the line breaks as written by the programmer.
+	#[pyo3(signature = (value: "bool") -> "ConfigurationBuilder")]
 	fn member_expression_line_per_expression<'a>(
 		mut slf: PyRefMut<'a, Self>,
 		value: bool,
@@ -2002,5 +2039,10 @@ impl PyConfigurationBuilder {
 	) -> PyResult<PyRefMut<'a, Self>> {
 		slf.0.while_statement_space_around(value);
 		Ok(slf)
+	}
+
+	fn build<'a>(slf: PyRefMut<'a, Self>) -> PyResult<PyConfiguration> {
+		let configuration = slf.0.build();
+		Ok(PyConfiguration(configuration))
 	}
 }
