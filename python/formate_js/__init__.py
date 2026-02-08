@@ -1,6 +1,3 @@
-# stdlib
-from typing import TypedDict
-
 # this package
 from ._formate_js import *
 

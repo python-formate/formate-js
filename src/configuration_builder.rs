@@ -124,7 +124,7 @@ wrap_fn!(
 	line_width,
 	u32,
 	"int",
-	"The width of a line the printer will try to stay under. Note that the printer may exceed this width in certain cases.\n\nDefault ```120``"
+	"The width of a line the printer will try to stay under. Note that the printer may exceed this width in certain cases.\n\nDefault ``120``"
 );
 
 wrap_fn!(
@@ -138,31 +138,31 @@ wrap_fn!(
 	indent_width,
 	u8,
 	"int",
-	"The number of columns for an indent.\n\nDefault: ```4``"
+	"The number of columns for an indent.\n\nDefault: ``4``"
 );
 
 wrap_enum_fn!(
 	new_line_kind,
 	NewLineKind,
-	"The kind of newline to use.\n\nDefault: ```NewLineKind.LineFeed``"
+	"The kind of newline to use.\n\nDefault: ``NewLineKind.LineFeed``"
 );
 
 wrap_enum_fn!(
 	quote_style,
 	QuoteStyle,
-	"The quote style to use.\n\nDefault: ```QuoteStyle.AlwaysDouble``"
+	"The quote style to use.\n\nDefault: ``QuoteStyle.AlwaysDouble``"
 );
 
 wrap_enum_fn!(
 	jsx_quote_style,
 	JsxQuoteStyle,
-	"The JSX quote style to use for string literals in JSX attributes.\n\nDefault: ```JsxQuoteStyle.PreferDouble``"
+	"The JSX quote style to use for string literals in JSX attributes.\n\nDefault: ``JsxQuoteStyle.PreferDouble``"
 );
 
 wrap_enum_fn!(
 	jsx_multi_line_parens,
 	JsxMultiLineParens,
-	"Whether to surround a JSX element or fragment with parentheses when it's the top JSX node and it spans multiple lines.\n\nDefault: ```JsxMultiLineParens.Prefer``"
+	"Whether to surround a JSX element or fragment with parentheses when it's the top JSX node and it spans multiple lines.\n\nDefault: ``JsxMultiLineParens.Prefer``"
 );
 
 wrap_fn!(
@@ -193,7 +193,7 @@ wrap_enum_fn!(
 wrap_enum_fn!(
 	semi_colons,
 	SemiColons,
-	"Whether statements should end in a semi-colon.\n\nDefault: ```SemiColons.Prefer``"
+	"Whether statements should end in a semi-colon.\n\nDefault: ``SemiColons.Prefer``"
 );
 
 wrap_fn!(
@@ -206,50 +206,50 @@ wrap_fn!(
 wrap_enum_fn!(
 	quote_props,
 	QuoteProps,
-	"Behaviour to use for quotes on property names.\n\nDefault: ```preserve``"
+	"Behaviour to use for quotes on property names.\n\nDefault: ``preserve``"
 );
 
 wrap_enum_fn!(
 	brace_position,
 	BracePosition,
-	"Where to place the opening brace.\n\nDefault: ```BracePosition.SameLineUnlessHanging``"
+	"Where to place the opening brace.\n\nDefault: ``BracePosition.SameLineUnlessHanging``"
 );
 
 wrap_enum_fn!(
 	next_control_flow_position,
 	NextControlFlowPosition,
-	"Where to place the next control flow within a control flow statement.\n\nDefault: ```NextControlFlowPosition.NextLine``"
+	"Where to place the next control flow within a control flow statement.\n\nDefault: ``NextControlFlowPosition.NextLine``"
 );
 
 wrap_enum_fn!(
 	operator_position,
 	OperatorPosition,
-	"Where to place the operator for expressions that span multiple lines.\n\nDefault: ```OperatorPosition.NextLine``"
+	"Where to place the operator for expressions that span multiple lines.\n\nDefault: ``OperatorPosition.NextLine``"
 );
 
 wrap_enum_fn!(
 	single_body_position,
 	SameOrNextLinePosition,
-	"Where to place the expression of a statement that could possibly be on one line (ex. ``if (true) console.log(5);`).\n\nDefault: ```SingleBodyPosition.Maintain``"
+	"Where to place the expression of a statement that could possibly be on one line (ex. ``if (true) console.log(5);`).\n\nDefault: ``SingleBodyPosition.Maintain``"
 );
 
 wrap_fn!(
 	file_indent_level,
 	u16,
 	"int",
-	"Amount of indents to use for the whole file.\n\nThis should only be set by tools that need to indent all the code in the file.\n\nDefault: ```0``"
+	"Amount of indents to use for the whole file.\n\nThis should only be set by tools that need to indent all the code in the file.\n\nDefault: ``0``"
 );
 
 wrap_enum_fn!(
 	trailing_commas,
 	TrailingCommas,
-	"If trailing commas should be used.\n\nDefault: ```TrailingCommas.OnlyMultiLine``"
+	"If trailing commas should be used.\n\nDefault: ``TrailingCommas.OnlyMultiLine``"
 );
 
 wrap_enum_fn!(
 	use_braces,
 	UseBraces,
-	"If braces should be used or not.\n\nDefault: ```UseBraces.WhenNotSingleLine``"
+	"If braces should be used or not.\n\nDefault: ``UseBraces.WhenNotSingleLine``"
 );
 
 wrap_fn!(
@@ -474,7 +474,7 @@ wrap_fn!(
 wrap_enum_fn!(
 	arrow_function_use_parentheses,
 	UseParentheses,
-	"Whether to use parentheses for arrow functions.\n\nDefault: ```UseParentheses.Maintain``"
+	"Whether to use parentheses for arrow functions.\n\nDefault: ``UseParentheses.Maintain``"
 );
 wrap_fn!(
 	binary_expression_line_per_expression,
