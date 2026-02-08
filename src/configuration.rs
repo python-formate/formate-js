@@ -378,329 +378,131 @@ pub struct PyConfiguration {
 	pub while_statement_space_around: bool,
 }
 
+fn lookup_enum<T: FromStr>(value: &str) -> T {
+	T::from_str(value).unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value))
+}
+
 impl From<PyConfiguration> for Configuration {
 	fn from(value: PyConfiguration) -> Self {
 		Configuration {
 			indent_width: value.indent_width,
 			line_width: value.line_width,
 			use_tabs: value.use_tabs,
-			new_line_kind: NewLineKind::from_str(&value.new_line_kind)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value.new_line_kind)),
-			quote_style: QuoteStyle::from_str(&value.quote_style)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value.quote_style)),
-			quote_props: QuoteProps::from_str(&value.quote_props)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value.quote_props)),
-			semi_colons: SemiColons::from_str(&value.semi_colons)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value.semi_colons)),
+			new_line_kind: lookup_enum::<NewLineKind>(&value.new_line_kind),
+			quote_style: lookup_enum::<QuoteStyle>(&value.quote_style),
+			quote_props: lookup_enum::<QuoteProps>(&value.quote_props),
+			semi_colons: lookup_enum::<SemiColons>(&value.semi_colons),
 			file_indent_level: value.file_indent_level,
-			arrow_function_use_parentheses: UseParentheses::from_str(
+			arrow_function_use_parentheses: lookup_enum::<UseParentheses>(
 				&value.arrow_function_use_parentheses,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.arrow_function_use_parentheses
-				)
-			}),
+			),
 			binary_expression_line_per_expression: value.binary_expression_line_per_expression,
 			conditional_expression_line_per_expression: value
 				.conditional_expression_line_per_expression,
-			jsx_quote_style: JsxQuoteStyle::from_str(&value.jsx_quote_style)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value.jsx_quote_style)),
-			jsx_multi_line_parens: JsxMultiLineParens::from_str(&value.jsx_multi_line_parens)
-				.unwrap_or_else(|_| {
-					panic!("Invalid enum value '{}'", &value.jsx_multi_line_parens)
-				}),
+			jsx_quote_style: lookup_enum::<JsxQuoteStyle>(&value.jsx_quote_style),
+			jsx_multi_line_parens: lookup_enum::<JsxMultiLineParens>(&value.jsx_multi_line_parens),
 			jsx_force_new_lines_surrounding_content: value.jsx_force_new_lines_surrounding_content,
-			jsx_opening_element_bracket_position: SameOrNextLinePosition::from_str(
+			jsx_opening_element_bracket_position: lookup_enum::<SameOrNextLinePosition>(
 				&value.jsx_opening_element_bracket_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.jsx_opening_element_bracket_position
-				)
-			}),
-			jsx_self_closing_element_bracket_position: SameOrNextLinePosition::from_str(
+			),
+			jsx_self_closing_element_bracket_position: lookup_enum::<SameOrNextLinePosition>(
 				&value.jsx_self_closing_element_bracket_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.jsx_self_closing_element_bracket_position
-				)
-			}),
+			),
 			member_expression_line_per_expression: value.member_expression_line_per_expression,
-			type_literal_separator_kind_single_line: SemiColonOrComma::from_str(
+			type_literal_separator_kind_single_line: lookup_enum::<SemiColonOrComma>(
 				&value.type_literal_separator_kind_single_line,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.type_literal_separator_kind_single_line
-				)
-			}),
-			type_literal_separator_kind_multi_line: SemiColonOrComma::from_str(
+			),
+			type_literal_separator_kind_multi_line: lookup_enum::<SemiColonOrComma>(
 				&value.type_literal_separator_kind_multi_line,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.type_literal_separator_kind_multi_line
-				)
-			}),
-			module_sort_import_declarations: SortOrder::from_str(
+			),
+			module_sort_import_declarations: lookup_enum::<SortOrder>(
 				&value.module_sort_import_declarations,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.module_sort_import_declarations
-				)
-			}),
-			module_sort_export_declarations: SortOrder::from_str(
+			),
+			module_sort_export_declarations: lookup_enum::<SortOrder>(
 				&value.module_sort_export_declarations,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.module_sort_export_declarations
-				)
-			}),
-			import_declaration_sort_named_imports: SortOrder::from_str(
+			),
+			import_declaration_sort_named_imports: lookup_enum::<SortOrder>(
 				&value.import_declaration_sort_named_imports,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.import_declaration_sort_named_imports
-				)
-			}),
-			import_declaration_sort_type_only_imports: NamedTypeImportsExportsOrder::from_str(
+			),
+			import_declaration_sort_type_only_imports: lookup_enum::<NamedTypeImportsExportsOrder>(
 				&value.import_declaration_sort_type_only_imports,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.import_declaration_sort_type_only_imports
-				)
-			}),
-			export_declaration_sort_named_exports: SortOrder::from_str(
+			),
+			export_declaration_sort_named_exports: lookup_enum::<SortOrder>(
 				&value.export_declaration_sort_named_exports,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.export_declaration_sort_named_exports
-				)
-			}),
-			export_declaration_sort_type_only_exports: NamedTypeImportsExportsOrder::from_str(
+			),
+			export_declaration_sort_type_only_exports: lookup_enum::<NamedTypeImportsExportsOrder>(
 				&value.export_declaration_sort_type_only_exports,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.export_declaration_sort_type_only_exports
-				)
-			}),
+			),
 			ignore_node_comment_text: value.ignore_node_comment_text,
 			ignore_file_comment_text: value.ignore_file_comment_text,
-			arrow_function_brace_position: BracePosition::from_str(
+			arrow_function_brace_position: lookup_enum::<BracePosition>(
 				&value.arrow_function_brace_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.arrow_function_brace_position
-				)
-			}),
-			class_declaration_brace_position: BracePosition::from_str(
+			),
+			class_declaration_brace_position: lookup_enum::<BracePosition>(
 				&value.class_declaration_brace_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.class_declaration_brace_position
-				)
-			}),
-			class_expression_brace_position: BracePosition::from_str(
+			),
+			class_expression_brace_position: lookup_enum::<BracePosition>(
 				&value.class_expression_brace_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.class_expression_brace_position
-				)
-			}),
-			constructor_brace_position: BracePosition::from_str(&value.constructor_brace_position)
-				.unwrap_or_else(|_| {
-					panic!("Invalid enum value '{}'", &value.constructor_brace_position)
-				}),
-			do_while_statement_brace_position: BracePosition::from_str(
+			),
+			constructor_brace_position: lookup_enum::<BracePosition>(
+				&value.constructor_brace_position,
+			),
+			do_while_statement_brace_position: lookup_enum::<BracePosition>(
 				&value.do_while_statement_brace_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.do_while_statement_brace_position
-				)
-			}),
-			enum_declaration_brace_position: BracePosition::from_str(
+			),
+			enum_declaration_brace_position: lookup_enum::<BracePosition>(
 				&value.enum_declaration_brace_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.enum_declaration_brace_position
-				)
-			}),
-			get_accessor_brace_position: BracePosition::from_str(
+			),
+			get_accessor_brace_position: lookup_enum::<BracePosition>(
 				&value.get_accessor_brace_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.get_accessor_brace_position
-				)
-			}),
-			if_statement_brace_position: BracePosition::from_str(
+			),
+			if_statement_brace_position: lookup_enum::<BracePosition>(
 				&value.if_statement_brace_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.if_statement_brace_position
-				)
-			}),
-			interface_declaration_brace_position: BracePosition::from_str(
+			),
+			interface_declaration_brace_position: lookup_enum::<BracePosition>(
 				&value.interface_declaration_brace_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.interface_declaration_brace_position
-				)
-			}),
-			for_statement_brace_position: BracePosition::from_str(
+			),
+			for_statement_brace_position: lookup_enum::<BracePosition>(
 				&value.for_statement_brace_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.for_statement_brace_position
-				)
-			}),
-			for_in_statement_brace_position: BracePosition::from_str(
+			),
+			for_in_statement_brace_position: lookup_enum::<BracePosition>(
 				&value.for_in_statement_brace_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.for_in_statement_brace_position
-				)
-			}),
-			for_of_statement_brace_position: BracePosition::from_str(
+			),
+			for_of_statement_brace_position: lookup_enum::<BracePosition>(
 				&value.for_of_statement_brace_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.for_of_statement_brace_position
-				)
-			}),
-			function_declaration_brace_position: BracePosition::from_str(
+			),
+			function_declaration_brace_position: lookup_enum::<BracePosition>(
 				&value.function_declaration_brace_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.function_declaration_brace_position
-				)
-			}),
-			function_expression_brace_position: BracePosition::from_str(
+			),
+			function_expression_brace_position: lookup_enum::<BracePosition>(
 				&value.function_expression_brace_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.function_expression_brace_position
-				)
-			}),
-			method_brace_position: BracePosition::from_str(&value.method_brace_position)
-				.unwrap_or_else(|_| {
-					panic!("Invalid enum value '{}'", &value.method_brace_position)
-				}),
-			module_declaration_brace_position: BracePosition::from_str(
+			),
+			method_brace_position: lookup_enum::<BracePosition>(&value.method_brace_position),
+			module_declaration_brace_position: lookup_enum::<BracePosition>(
 				&value.module_declaration_brace_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.module_declaration_brace_position
-				)
-			}),
-			set_accessor_brace_position: BracePosition::from_str(
+			),
+			set_accessor_brace_position: lookup_enum::<BracePosition>(
 				&value.set_accessor_brace_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.set_accessor_brace_position
-				)
-			}),
-			static_block_brace_position: BracePosition::from_str(
+			),
+			static_block_brace_position: lookup_enum::<BracePosition>(
 				&value.static_block_brace_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.static_block_brace_position
-				)
-			}),
-			switch_case_brace_position: BracePosition::from_str(&value.switch_case_brace_position)
-				.unwrap_or_else(|_| {
-					panic!("Invalid enum value '{}'", &value.switch_case_brace_position)
-				}),
-			switch_statement_brace_position: BracePosition::from_str(
+			),
+			switch_case_brace_position: lookup_enum::<BracePosition>(
+				&value.switch_case_brace_position,
+			),
+			switch_statement_brace_position: lookup_enum::<BracePosition>(
 				&value.switch_statement_brace_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.switch_statement_brace_position
-				)
-			}),
-			try_statement_brace_position: BracePosition::from_str(
+			),
+			try_statement_brace_position: lookup_enum::<BracePosition>(
 				&value.try_statement_brace_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.try_statement_brace_position
-				)
-			}),
-			while_statement_brace_position: BracePosition::from_str(
+			),
+			while_statement_brace_position: lookup_enum::<BracePosition>(
 				&value.while_statement_brace_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.while_statement_brace_position
-				)
-			}),
-			arguments_prefer_hanging: PreferHanging::from_str(&value.arguments_prefer_hanging)
-				.unwrap_or_else(|_| {
-					panic!("Invalid enum value '{}'", &value.arguments_prefer_hanging)
-				}),
-			array_expression_prefer_hanging: PreferHanging::from_str(
+			),
+			arguments_prefer_hanging: lookup_enum::<PreferHanging>(&value.arguments_prefer_hanging),
+			array_expression_prefer_hanging: lookup_enum::<PreferHanging>(
 				&value.array_expression_prefer_hanging,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.array_expression_prefer_hanging
-				)
-			}),
+			),
 			array_pattern_prefer_hanging: value.array_pattern_prefer_hanging,
 			do_while_statement_prefer_hanging: value.do_while_statement_prefer_hanging,
 			export_declaration_prefer_hanging: value.export_declaration_prefer_hanging,
@@ -714,257 +516,103 @@ impl From<PyConfiguration> for Configuration {
 			jsx_attributes_prefer_hanging: value.jsx_attributes_prefer_hanging,
 			object_expression_prefer_hanging: value.object_expression_prefer_hanging,
 			object_pattern_prefer_hanging: value.object_pattern_prefer_hanging,
-			parameters_prefer_hanging: PreferHanging::from_str(&value.parameters_prefer_hanging)
-				.unwrap_or_else(|_| {
-					panic!("Invalid enum value '{}'", &value.parameters_prefer_hanging)
-				}),
+			parameters_prefer_hanging: lookup_enum::<PreferHanging>(
+				&value.parameters_prefer_hanging,
+			),
 			sequence_expression_prefer_hanging: value.sequence_expression_prefer_hanging,
 			switch_statement_prefer_hanging: value.switch_statement_prefer_hanging,
-			tuple_type_prefer_hanging: PreferHanging::from_str(&value.tuple_type_prefer_hanging)
-				.unwrap_or_else(|_| {
-					panic!("Invalid enum value '{}'", &value.tuple_type_prefer_hanging)
-				}),
+			tuple_type_prefer_hanging: lookup_enum::<PreferHanging>(
+				&value.tuple_type_prefer_hanging,
+			),
 			type_literal_prefer_hanging: value.type_literal_prefer_hanging,
-			type_parameters_prefer_hanging: PreferHanging::from_str(
+			type_parameters_prefer_hanging: lookup_enum::<PreferHanging>(
 				&value.type_parameters_prefer_hanging,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.type_parameters_prefer_hanging
-				)
-			}),
+			),
 			union_and_intersection_type_prefer_hanging: value
 				.union_and_intersection_type_prefer_hanging,
 			variable_statement_prefer_hanging: value.variable_statement_prefer_hanging,
 			while_statement_prefer_hanging: value.while_statement_prefer_hanging,
-			enum_declaration_member_spacing: MemberSpacing::from_str(
+			enum_declaration_member_spacing: lookup_enum::<MemberSpacing>(
 				&value.enum_declaration_member_spacing,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.enum_declaration_member_spacing
-				)
-			}),
-			if_statement_next_control_flow_position: NextControlFlowPosition::from_str(
+			),
+			if_statement_next_control_flow_position: lookup_enum::<NextControlFlowPosition>(
 				&value.if_statement_next_control_flow_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.if_statement_next_control_flow_position
-				)
-			}),
-			try_statement_next_control_flow_position: NextControlFlowPosition::from_str(
+			),
+			try_statement_next_control_flow_position: lookup_enum::<NextControlFlowPosition>(
 				&value.try_statement_next_control_flow_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.try_statement_next_control_flow_position
-				)
-			}),
-			do_while_statement_next_control_flow_position: NextControlFlowPosition::from_str(
+			),
+			do_while_statement_next_control_flow_position: lookup_enum::<NextControlFlowPosition>(
 				&value.do_while_statement_next_control_flow_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.do_while_statement_next_control_flow_position
-				)
-			}),
-			binary_expression_operator_position: OperatorPosition::from_str(
+			),
+			binary_expression_operator_position: lookup_enum::<OperatorPosition>(
 				&value.binary_expression_operator_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.binary_expression_operator_position
-				)
-			}),
-			conditional_expression_operator_position: OperatorPosition::from_str(
+			),
+			conditional_expression_operator_position: lookup_enum::<OperatorPosition>(
 				&value.conditional_expression_operator_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.conditional_expression_operator_position
-				)
-			}),
-			conditional_type_operator_position: OperatorPosition::from_str(
+			),
+			conditional_type_operator_position: lookup_enum::<OperatorPosition>(
 				&value.conditional_type_operator_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.conditional_type_operator_position
-				)
-			}),
-			if_statement_single_body_position: SameOrNextLinePosition::from_str(
+			),
+			if_statement_single_body_position: lookup_enum::<SameOrNextLinePosition>(
 				&value.if_statement_single_body_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.if_statement_single_body_position
-				)
-			}),
-			for_statement_single_body_position: SameOrNextLinePosition::from_str(
+			),
+			for_statement_single_body_position: lookup_enum::<SameOrNextLinePosition>(
 				&value.for_statement_single_body_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.for_statement_single_body_position
-				)
-			}),
-			for_in_statement_single_body_position: SameOrNextLinePosition::from_str(
+			),
+			for_in_statement_single_body_position: lookup_enum::<SameOrNextLinePosition>(
 				&value.for_in_statement_single_body_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.for_in_statement_single_body_position
-				)
-			}),
-			for_of_statement_single_body_position: SameOrNextLinePosition::from_str(
+			),
+			for_of_statement_single_body_position: lookup_enum::<SameOrNextLinePosition>(
 				&value.for_of_statement_single_body_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.for_of_statement_single_body_position
-				)
-			}),
-			while_statement_single_body_position: SameOrNextLinePosition::from_str(
+			),
+			while_statement_single_body_position: lookup_enum::<SameOrNextLinePosition>(
 				&value.while_statement_single_body_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.while_statement_single_body_position
-				)
-			}),
-			arguments_trailing_commas: TrailingCommas::from_str(&value.arguments_trailing_commas)
-				.unwrap_or_else(|_| {
-					panic!("Invalid enum value '{}'", &value.arguments_trailing_commas)
-				}),
-			parameters_trailing_commas: TrailingCommas::from_str(&value.parameters_trailing_commas)
-				.unwrap_or_else(|_| {
-					panic!("Invalid enum value '{}'", &value.parameters_trailing_commas)
-				}),
-			array_expression_trailing_commas: TrailingCommas::from_str(
+			),
+			arguments_trailing_commas: lookup_enum::<TrailingCommas>(
+				&value.arguments_trailing_commas,
+			),
+			parameters_trailing_commas: lookup_enum::<TrailingCommas>(
+				&value.parameters_trailing_commas,
+			),
+			array_expression_trailing_commas: lookup_enum::<TrailingCommas>(
 				&value.array_expression_trailing_commas,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.array_expression_trailing_commas
-				)
-			}),
-			array_pattern_trailing_commas: TrailingCommas::from_str(
+			),
+			array_pattern_trailing_commas: lookup_enum::<TrailingCommas>(
 				&value.array_pattern_trailing_commas,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.array_pattern_trailing_commas
-				)
-			}),
-			enum_declaration_trailing_commas: TrailingCommas::from_str(
+			),
+			enum_declaration_trailing_commas: lookup_enum::<TrailingCommas>(
 				&value.enum_declaration_trailing_commas,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.enum_declaration_trailing_commas
-				)
-			}),
-			export_declaration_trailing_commas: TrailingCommas::from_str(
+			),
+			export_declaration_trailing_commas: lookup_enum::<TrailingCommas>(
 				&value.export_declaration_trailing_commas,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.export_declaration_trailing_commas
-				)
-			}),
-			import_declaration_trailing_commas: TrailingCommas::from_str(
+			),
+			import_declaration_trailing_commas: lookup_enum::<TrailingCommas>(
 				&value.import_declaration_trailing_commas,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.import_declaration_trailing_commas
-				)
-			}),
-			object_pattern_trailing_commas: TrailingCommas::from_str(
+			),
+			object_pattern_trailing_commas: lookup_enum::<TrailingCommas>(
 				&value.object_pattern_trailing_commas,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.object_pattern_trailing_commas
-				)
-			}),
-			object_expression_trailing_commas: TrailingCommas::from_str(
+			),
+			object_expression_trailing_commas: lookup_enum::<TrailingCommas>(
 				&value.object_expression_trailing_commas,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.object_expression_trailing_commas
-				)
-			}),
-			tuple_type_trailing_commas: TrailingCommas::from_str(&value.tuple_type_trailing_commas)
-				.unwrap_or_else(|_| {
-					panic!("Invalid enum value '{}'", &value.tuple_type_trailing_commas)
-				}),
-			type_literal_trailing_commas: TrailingCommas::from_str(
+			),
+			tuple_type_trailing_commas: lookup_enum::<TrailingCommas>(
+				&value.tuple_type_trailing_commas,
+			),
+			type_literal_trailing_commas: lookup_enum::<TrailingCommas>(
 				&value.type_literal_trailing_commas,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.type_literal_trailing_commas
-				)
-			}),
-			type_parameters_trailing_commas: TrailingCommas::from_str(
+			),
+			type_parameters_trailing_commas: lookup_enum::<TrailingCommas>(
 				&value.type_parameters_trailing_commas,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.type_parameters_trailing_commas
-				)
-			}),
-			if_statement_use_braces: UseBraces::from_str(&value.if_statement_use_braces)
-				.unwrap_or_else(|_| {
-					panic!("Invalid enum value '{}'", &value.if_statement_use_braces)
-				}),
-			for_statement_use_braces: UseBraces::from_str(&value.for_statement_use_braces)
-				.unwrap_or_else(|_| {
-					panic!("Invalid enum value '{}'", &value.for_statement_use_braces)
-				}),
-			for_of_statement_use_braces: UseBraces::from_str(&value.for_of_statement_use_braces)
-				.unwrap_or_else(|_| {
-					panic!(
-						"Invalid enum value '{}'",
-						&value.for_of_statement_use_braces
-					)
-				}),
-			for_in_statement_use_braces: UseBraces::from_str(&value.for_in_statement_use_braces)
-				.unwrap_or_else(|_| {
-					panic!(
-						"Invalid enum value '{}'",
-						&value.for_in_statement_use_braces
-					)
-				}),
-			while_statement_use_braces: UseBraces::from_str(&value.while_statement_use_braces)
-				.unwrap_or_else(|_| {
-					panic!("Invalid enum value '{}'", &value.while_statement_use_braces)
-				}),
+			),
+			if_statement_use_braces: lookup_enum::<UseBraces>(&value.if_statement_use_braces),
+			for_statement_use_braces: lookup_enum::<UseBraces>(&value.for_statement_use_braces),
+			for_of_statement_use_braces: lookup_enum::<UseBraces>(
+				&value.for_of_statement_use_braces,
+			),
+			for_in_statement_use_braces: lookup_enum::<UseBraces>(
+				&value.for_in_statement_use_braces,
+			),
+			while_statement_use_braces: lookup_enum::<UseBraces>(&value.while_statement_use_braces),
 			array_expression_prefer_single_line: value.array_expression_prefer_single_line,
 			array_pattern_prefer_single_line: value.array_pattern_prefer_single_line,
 			arguments_prefer_single_line: value.arguments_prefer_single_line,
@@ -993,24 +641,12 @@ impl From<PyConfiguration> for Configuration {
 			variable_statement_prefer_single_line: value.variable_statement_prefer_single_line,
 			import_declaration_force_single_line: value.import_declaration_force_single_line,
 			export_declaration_force_single_line: value.export_declaration_force_single_line,
-			export_declaration_force_multi_line: ForceMultiLine::from_str(
+			export_declaration_force_multi_line: lookup_enum::<ForceMultiLine>(
 				&value.export_declaration_force_multi_line,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.export_declaration_force_multi_line
-				)
-			}),
-			import_declaration_force_multi_line: ForceMultiLine::from_str(
+			),
+			import_declaration_force_multi_line: lookup_enum::<ForceMultiLine>(
 				&value.import_declaration_force_multi_line,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&value.import_declaration_force_multi_line
-				)
-			}),
+			),
 			binary_expression_space_surrounding_bitwise_and_arithmetic_operator: value
 				.binary_expression_space_surrounding_bitwise_and_arithmetic_operator,
 			comment_line_force_space_after_slashes: value.comment_line_force_space_after_slashes,
