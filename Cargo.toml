@@ -13,6 +13,6 @@ name = "formate_js"
 crate-type = ["cdylib"]
 
 [dependencies]
-pyo3 = { version = "0.27.2", features = ["extension-module", "experimental-inspect", ] }
+pyo3 = { version = "0.27.2", features = ["extension-module", "experimental-inspect", "multiple-pymethods"] }
 dprint-plugin-typescript = "0.95.15"
 dprint-core = "0.67.4"
