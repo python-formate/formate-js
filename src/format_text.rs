@@ -56,10 +56,6 @@ impl PyFormatTextOptions {
 ///
 /// Returns the file text or an error when it failed to parse.
 pub fn format_text_py(options: PyFormatTextOptions) -> PyResult<Option<String>> {
-	println!(
-		"'ignore_node_comment_text' is {}",
-		options.config.0.ignore_node_comment_text
-	);
 	match format_text(FormatTextOptions {
 		path: &options.path,
 		extension: options.extension.as_deref(),
