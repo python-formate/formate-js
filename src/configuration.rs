@@ -10,726 +10,1318 @@ use pyo3::prelude::*;
 use std::str::FromStr;
 
 #[pyclass(name = "Configuration", module = "formate_js")]
-#[repr(transparent)]
+// #[repr(transparent)]
 #[derive(Clone)]
-// A wrapper around a [`Configuration`] that can be converted to and from python with `pyo3`.
 /// Formatting configuration knobs.
-pub struct PyConfiguration(pub Configuration);
+pub struct PyConfiguration {
+	#[pyo3(get, set)]
+	pub indent_width: u8,
+	#[pyo3(get, set)]
+	pub line_width: u32,
+	#[pyo3(get, set)]
+	pub use_tabs: bool,
+	#[pyo3(get, set)]
+	pub new_line_kind: String,
+	#[pyo3(get, set)]
+	pub quote_style: String,
+	#[pyo3(get, set)]
+	pub quote_props: String,
+	#[pyo3(get, set)]
+	pub semi_colons: String,
+	#[pyo3(get, set)]
+	pub file_indent_level: u32,
+	/* situational */
+	#[pyo3(get, set)]
+	pub arrow_function_use_parentheses: String,
+	#[pyo3(get, set)]
+	pub binary_expression_line_per_expression: bool,
+	#[pyo3(get, set)]
+	pub conditional_expression_line_per_expression: bool,
+	#[pyo3(get, set)]
+	pub jsx_quote_style: String,
+	#[pyo3(get, set)]
+	pub jsx_multi_line_parens: String,
+	#[pyo3(get, set)]
+	pub jsx_force_new_lines_surrounding_content: bool,
+	#[pyo3(get, set)]
+	pub jsx_opening_element_bracket_position: String,
+	#[pyo3(get, set)]
+	pub jsx_self_closing_element_bracket_position: String,
+	#[pyo3(get, set)]
+	pub member_expression_line_per_expression: bool,
+	#[pyo3(get, set)]
+	pub type_literal_separator_kind_single_line: String,
+	#[pyo3(get, set)]
+	pub type_literal_separator_kind_multi_line: String,
+	/* sorting */
+	#[pyo3(get, set)]
+	pub module_sort_import_declarations: String,
+	#[pyo3(get, set)]
+	pub module_sort_export_declarations: String,
+	#[pyo3(get, set)]
+	pub import_declaration_sort_named_imports: String,
+	#[pyo3(get, set)]
+	pub import_declaration_sort_type_only_imports: String,
+	#[pyo3(get, set)]
+	pub export_declaration_sort_named_exports: String,
+	#[pyo3(get, set)]
+	pub export_declaration_sort_type_only_exports: String,
+	/* ignore comments */
+	#[pyo3(get, set)]
+	pub ignore_node_comment_text: String,
+	#[pyo3(get, set)]
+	pub ignore_file_comment_text: String,
+	/* brace position */
+	#[pyo3(get, set)]
+	pub arrow_function_brace_position: String,
+	#[pyo3(get, set)]
+	pub class_declaration_brace_position: String,
+	#[pyo3(get, set)]
+	pub class_expression_brace_position: String,
+	#[pyo3(get, set)]
+	pub constructor_brace_position: String,
+	#[pyo3(get, set)]
+	pub do_while_statement_brace_position: String,
+	#[pyo3(get, set)]
+	pub enum_declaration_brace_position: String,
+	#[pyo3(get, set)]
+	pub get_accessor_brace_position: String,
+	#[pyo3(get, set)]
+	pub if_statement_brace_position: String,
+	#[pyo3(get, set)]
+	pub interface_declaration_brace_position: String,
+	#[pyo3(get, set)]
+	pub for_statement_brace_position: String,
+	#[pyo3(get, set)]
+	pub for_in_statement_brace_position: String,
+	#[pyo3(get, set)]
+	pub for_of_statement_brace_position: String,
+	#[pyo3(get, set)]
+	pub function_declaration_brace_position: String,
+	#[pyo3(get, set)]
+	pub function_expression_brace_position: String,
+	#[pyo3(get, set)]
+	pub method_brace_position: String,
+	#[pyo3(get, set)]
+	pub module_declaration_brace_position: String,
+	#[pyo3(get, set)]
+	pub set_accessor_brace_position: String,
+	#[pyo3(get, set)]
+	pub static_block_brace_position: String,
+	#[pyo3(get, set)]
+	pub switch_case_brace_position: String,
+	#[pyo3(get, set)]
+	pub switch_statement_brace_position: String,
+	#[pyo3(get, set)]
+	pub try_statement_brace_position: String,
+	#[pyo3(get, set)]
+	pub while_statement_brace_position: String,
+	/* prefer hanging */
+	#[pyo3(get, set)]
+	pub arguments_prefer_hanging: String,
+	#[pyo3(get, set)]
+	pub array_expression_prefer_hanging: String,
+	#[pyo3(get, set)]
+	pub array_pattern_prefer_hanging: bool,
+	#[pyo3(get, set)]
+	pub do_while_statement_prefer_hanging: bool,
+	#[pyo3(get, set)]
+	pub export_declaration_prefer_hanging: bool,
+	#[pyo3(get, set)]
+	pub extends_clause_prefer_hanging: bool,
+	#[pyo3(get, set)]
+	pub for_statement_prefer_hanging: bool,
+	#[pyo3(get, set)]
+	pub for_in_statement_prefer_hanging: bool,
+	#[pyo3(get, set)]
+	pub for_of_statement_prefer_hanging: bool,
+	#[pyo3(get, set)]
+	pub if_statement_prefer_hanging: bool,
+	#[pyo3(get, set)]
+	pub implements_clause_prefer_hanging: bool,
+	#[pyo3(get, set)]
+	pub import_declaration_prefer_hanging: bool,
+	#[pyo3(get, set)]
+	pub jsx_attributes_prefer_hanging: bool,
+	#[pyo3(get, set)]
+	pub object_expression_prefer_hanging: bool,
+	#[pyo3(get, set)]
+	pub object_pattern_prefer_hanging: bool,
+	#[pyo3(get, set)]
+	pub parameters_prefer_hanging: String,
+	#[pyo3(get, set)]
+	pub sequence_expression_prefer_hanging: bool,
+	#[pyo3(get, set)]
+	pub switch_statement_prefer_hanging: bool,
+	#[pyo3(get, set)]
+	pub tuple_type_prefer_hanging: String,
+	#[pyo3(get, set)]
+	pub type_literal_prefer_hanging: bool,
+	#[pyo3(get, set)]
+	pub type_parameters_prefer_hanging: String,
+	#[pyo3(get, set)]
+	pub union_and_intersection_type_prefer_hanging: bool,
+	#[pyo3(get, set)]
+	pub variable_statement_prefer_hanging: bool,
+	#[pyo3(get, set)]
+	pub while_statement_prefer_hanging: bool,
+	/* member spacing */
+	#[pyo3(get, set)]
+	pub enum_declaration_member_spacing: String,
+	/* next control flow position */
+	#[pyo3(get, set)]
+	pub if_statement_next_control_flow_position: String,
+	#[pyo3(get, set)]
+	pub try_statement_next_control_flow_position: String,
+	#[pyo3(get, set)]
+	pub do_while_statement_next_control_flow_position: String,
+	/* operator position */
+	#[pyo3(get, set)]
+	pub binary_expression_operator_position: String,
+	#[pyo3(get, set)]
+	pub conditional_expression_operator_position: String,
+	#[pyo3(get, set)]
+	pub conditional_type_operator_position: String,
+	/* single body position */
+	#[pyo3(get, set)]
+	pub if_statement_single_body_position: String,
+	#[pyo3(get, set)]
+	pub for_statement_single_body_position: String,
+	#[pyo3(get, set)]
+	pub for_in_statement_single_body_position: String,
+	#[pyo3(get, set)]
+	pub for_of_statement_single_body_position: String,
+	#[pyo3(get, set)]
+	pub while_statement_single_body_position: String,
+	/* trailing commas */
+	#[pyo3(get, set)]
+	pub arguments_trailing_commas: String,
+	#[pyo3(get, set)]
+	pub parameters_trailing_commas: String,
+	#[pyo3(get, set)]
+	pub array_expression_trailing_commas: String,
+	#[pyo3(get, set)]
+	pub array_pattern_trailing_commas: String,
+	#[pyo3(get, set)]
+	pub enum_declaration_trailing_commas: String,
+	#[pyo3(get, set)]
+	pub export_declaration_trailing_commas: String,
+	#[pyo3(get, set)]
+	pub import_declaration_trailing_commas: String,
+	#[pyo3(get, set)]
+	pub object_pattern_trailing_commas: String,
+	#[pyo3(get, set)]
+	pub object_expression_trailing_commas: String,
+	#[pyo3(get, set)]
+	pub tuple_type_trailing_commas: String,
+	#[pyo3(get, set)]
+	pub type_literal_trailing_commas: String,
+	#[pyo3(get, set)]
+	pub type_parameters_trailing_commas: String,
+	/* use braces */
+	#[pyo3(get, set)]
+	pub if_statement_use_braces: String,
+	#[pyo3(get, set)]
+	pub for_statement_use_braces: String,
+	#[pyo3(get, set)]
+	pub for_of_statement_use_braces: String,
+	#[pyo3(get, set)]
+	pub for_in_statement_use_braces: String,
+	#[pyo3(get, set)]
+	pub while_statement_use_braces: String,
+	/* prefer single line */
+	#[pyo3(get, set)]
+	pub array_expression_prefer_single_line: bool,
+	#[pyo3(get, set)]
+	pub array_pattern_prefer_single_line: bool,
+	#[pyo3(get, set)]
+	pub arguments_prefer_single_line: bool,
+	#[pyo3(get, set)]
+	pub binary_expression_prefer_single_line: bool,
+	#[pyo3(get, set)]
+	pub computed_prefer_single_line: bool,
+	#[pyo3(get, set)]
+	pub conditional_expression_prefer_single_line: bool,
+	#[pyo3(get, set)]
+	pub conditional_type_prefer_single_line: bool,
+	#[pyo3(get, set)]
+	pub decorators_prefer_single_line: bool,
+	#[pyo3(get, set)]
+	pub export_declaration_prefer_single_line: bool,
+	#[pyo3(get, set)]
+	pub for_statement_prefer_single_line: bool,
+	#[pyo3(get, set)]
+	pub import_declaration_prefer_single_line: bool,
+	#[pyo3(get, set)]
+	pub jsx_attributes_prefer_single_line: bool,
+	#[pyo3(get, set)]
+	pub jsx_element_prefer_single_line: bool,
+	#[pyo3(get, set)]
+	pub mapped_type_prefer_single_line: bool,
+	#[pyo3(get, set)]
+	pub member_expression_prefer_single_line: bool,
+	#[pyo3(get, set)]
+	pub object_expression_prefer_single_line: bool,
+	#[pyo3(get, set)]
+	pub object_pattern_prefer_single_line: bool,
+	#[pyo3(get, set)]
+	pub parameters_prefer_single_line: bool,
+	#[pyo3(get, set)]
+	pub parentheses_prefer_single_line: bool,
+	#[pyo3(get, set)]
+	pub tuple_type_prefer_single_line: bool,
+	#[pyo3(get, set)]
+	pub type_literal_prefer_single_line: bool,
+	#[pyo3(get, set)]
+	pub type_parameters_prefer_single_line: bool,
+	#[pyo3(get, set)]
+	pub union_and_intersection_type_prefer_single_line: bool,
+	#[pyo3(get, set)]
+	pub variable_statement_prefer_single_line: bool,
+	/* force single line */
+	#[pyo3(get, set)]
+	pub import_declaration_force_single_line: bool,
+	#[pyo3(get, set)]
+	pub export_declaration_force_single_line: bool,
+	/* force multi line specifiers */
+	#[pyo3(get, set)]
+	pub export_declaration_force_multi_line: String,
+	#[pyo3(get, set)]
+	pub import_declaration_force_multi_line: String,
 
-impl PyConfiguration {
-	#![allow(clippy::too_many_arguments)]
-	pub(crate) fn new(
-		indent_width: u8,
-		line_width: u32,
-		use_tabs: bool,
-		new_line_kind: &str,
-		quote_style: &str,
-		quote_props: &str,
-		semi_colons: &str,
-		file_indent_level: u32,
-		arrow_function_use_parentheses: &str,
-		binary_expression_line_per_expression: bool,
-		conditional_expression_line_per_expression: bool,
-		jsx_quote_style: &str,
-		jsx_multi_line_parens: &str,
-		jsx_force_new_lines_surrounding_content: bool,
-		jsx_opening_element_bracket_position: &str,
-		jsx_self_closing_element_bracket_position: &str,
-		member_expression_line_per_expression: bool,
-		type_literal_separator_kind_single_line: &str,
-		type_literal_separator_kind_multi_line: &str,
-		module_sort_import_declarations: &str,
-		module_sort_export_declarations: &str,
-		import_declaration_sort_named_imports: &str,
-		import_declaration_sort_type_only_imports: &str,
-		export_declaration_sort_named_exports: &str,
-		export_declaration_sort_type_only_exports: &str,
-		ignore_node_comment_text: String,
-		ignore_file_comment_text: String,
-		arrow_function_brace_position: &str,
-		class_declaration_brace_position: &str,
-		class_expression_brace_position: &str,
-		constructor_brace_position: &str,
-		do_while_statement_brace_position: &str,
-		enum_declaration_brace_position: &str,
-		get_accessor_brace_position: &str,
-		if_statement_brace_position: &str,
-		interface_declaration_brace_position: &str,
-		for_statement_brace_position: &str,
-		for_in_statement_brace_position: &str,
-		for_of_statement_brace_position: &str,
-		function_declaration_brace_position: &str,
-		function_expression_brace_position: &str,
-		method_brace_position: &str,
-		module_declaration_brace_position: &str,
-		set_accessor_brace_position: &str,
-		static_block_brace_position: &str,
-		switch_case_brace_position: &str,
-		switch_statement_brace_position: &str,
-		try_statement_brace_position: &str,
-		while_statement_brace_position: &str,
-		arguments_prefer_hanging: &str,
-		array_expression_prefer_hanging: &str,
-		array_pattern_prefer_hanging: bool,
-		do_while_statement_prefer_hanging: bool,
-		export_declaration_prefer_hanging: bool,
-		extends_clause_prefer_hanging: bool,
-		for_in_statement_prefer_hanging: bool,
-		for_of_statement_prefer_hanging: bool,
-		for_statement_prefer_hanging: bool,
-		if_statement_prefer_hanging: bool,
-		implements_clause_prefer_hanging: bool,
-		import_declaration_prefer_hanging: bool,
-		jsx_attributes_prefer_hanging: bool,
-		object_expression_prefer_hanging: bool,
-		object_pattern_prefer_hanging: bool,
-		parameters_prefer_hanging: &str,
-		sequence_expression_prefer_hanging: bool,
-		switch_statement_prefer_hanging: bool,
-		tuple_type_prefer_hanging: &str,
-		type_literal_prefer_hanging: bool,
-		type_parameters_prefer_hanging: &str,
-		union_and_intersection_type_prefer_hanging: bool,
-		variable_statement_prefer_hanging: bool,
-		while_statement_prefer_hanging: bool,
-		enum_declaration_member_spacing: &str,
-		if_statement_next_control_flow_position: &str,
-		try_statement_next_control_flow_position: &str,
-		do_while_statement_next_control_flow_position: &str,
-		binary_expression_operator_position: &str,
-		conditional_expression_operator_position: &str,
-		conditional_type_operator_position: &str,
-		if_statement_single_body_position: &str,
-		for_statement_single_body_position: &str,
-		for_in_statement_single_body_position: &str,
-		for_of_statement_single_body_position: &str,
-		while_statement_single_body_position: &str,
-		arguments_trailing_commas: &str,
-		parameters_trailing_commas: &str,
-		array_expression_trailing_commas: &str,
-		array_pattern_trailing_commas: &str,
-		enum_declaration_trailing_commas: &str,
-		export_declaration_trailing_commas: &str,
-		import_declaration_trailing_commas: &str,
-		object_expression_trailing_commas: &str,
-		object_pattern_trailing_commas: &str,
-		tuple_type_trailing_commas: &str,
-		type_literal_trailing_commas: &str,
-		type_parameters_trailing_commas: &str,
-		if_statement_use_braces: &str,
-		for_statement_use_braces: &str,
-		for_in_statement_use_braces: &str,
-		for_of_statement_use_braces: &str,
-		while_statement_use_braces: &str,
-		array_expression_prefer_single_line: bool,
-		array_pattern_prefer_single_line: bool,
-		arguments_prefer_single_line: bool,
-		binary_expression_prefer_single_line: bool,
-		computed_prefer_single_line: bool,
-		conditional_expression_prefer_single_line: bool,
-		conditional_type_prefer_single_line: bool,
-		decorators_prefer_single_line: bool,
-		export_declaration_prefer_single_line: bool,
-		for_statement_prefer_single_line: bool,
-		import_declaration_prefer_single_line: bool,
-		jsx_attributes_prefer_single_line: bool,
-		jsx_element_prefer_single_line: bool,
-		mapped_type_prefer_single_line: bool,
-		member_expression_prefer_single_line: bool,
-		object_expression_prefer_single_line: bool,
-		object_pattern_prefer_single_line: bool,
-		parameters_prefer_single_line: bool,
-		parentheses_prefer_single_line: bool,
-		tuple_type_prefer_single_line: bool,
-		type_literal_prefer_single_line: bool,
-		type_parameters_prefer_single_line: bool,
-		union_and_intersection_type_prefer_single_line: bool,
-		variable_statement_prefer_single_line: bool,
-		import_declaration_force_single_line: bool,
-		export_declaration_force_single_line: bool,
-		export_declaration_force_multi_line: &str,
-		import_declaration_force_multi_line: &str,
-		binary_expression_space_surrounding_bitwise_and_arithmetic_operator: bool,
-		comment_line_force_space_after_slashes: bool,
-		construct_signature_space_after_new_keyword: bool,
-		constructor_space_before_parentheses: bool,
-		constructor_type_space_after_new_keyword: bool,
-		do_while_statement_space_after_while_keyword: bool,
-		export_declaration_space_surrounding_named_exports: bool,
-		for_statement_space_after_for_keyword: bool,
-		for_statement_space_after_semi_colons: bool,
-		for_in_statement_space_after_for_keyword: bool,
-		for_of_statement_space_after_for_keyword: bool,
-		function_declaration_space_before_parentheses: bool,
-		function_expression_space_before_parentheses: bool,
-		function_expression_space_after_function_keyword: bool,
-		get_accessor_space_before_parentheses: bool,
-		if_statement_space_after_if_keyword: bool,
-		import_declaration_space_surrounding_named_imports: bool,
-		jsx_expression_container_space_surrounding_expression: bool,
-		jsx_self_closing_element_space_before_slash: bool,
-		method_space_before_parentheses: bool,
-		object_expression_space_surrounding_properties: bool,
-		object_pattern_space_surrounding_properties: bool,
-		set_accessor_space_before_parentheses: bool,
-		space_surrounding_properties: bool,
-		tagged_template_space_before_literal: bool,
-		type_annotation_space_before_colon: bool,
-		type_assertion_space_before_expression: bool,
-		type_literal_space_surrounding_properties: bool,
-		while_statement_space_after_while_keyword: bool,
-		arguments_space_around: bool,
-		array_expression_space_around: bool,
-		array_pattern_space_around: bool,
-		catch_clause_space_around: bool,
-		do_while_statement_space_around: bool,
-		for_in_statement_space_around: bool,
-		for_of_statement_space_around: bool,
-		for_statement_space_around: bool,
-		if_statement_space_around: bool,
-		parameters_space_around: bool,
-		paren_expression_space_around: bool,
-		switch_statement_space_around: bool,
-		tuple_type_space_around: bool,
-		while_statement_space_around: bool,
-	) -> Self {
-		PyConfiguration(Configuration {
-			indent_width,
-			line_width,
-			use_tabs,
-			new_line_kind: NewLineKind::from_str(new_line_kind)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &new_line_kind)),
-			quote_style: QuoteStyle::from_str(quote_style)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &quote_style)),
-			quote_props: QuoteProps::from_str(quote_props)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &quote_props)),
-			semi_colons: SemiColons::from_str(semi_colons)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &semi_colons)),
-			file_indent_level,
-			arrow_function_use_parentheses: UseParentheses::from_str(
-				arrow_function_use_parentheses,
-			)
-			.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &arrow_function_use_parentheses)),
-			binary_expression_line_per_expression,
-			conditional_expression_line_per_expression,
-			jsx_quote_style: JsxQuoteStyle::from_str(jsx_quote_style)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &jsx_quote_style)),
-			jsx_multi_line_parens: JsxMultiLineParens::from_str(jsx_multi_line_parens)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &jsx_multi_line_parens)),
-			jsx_force_new_lines_surrounding_content,
-			jsx_opening_element_bracket_position: SameOrNextLinePosition::from_str(
-				jsx_opening_element_bracket_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&jsx_opening_element_bracket_position
-				)
-			}),
-			jsx_self_closing_element_bracket_position: SameOrNextLinePosition::from_str(
-				jsx_self_closing_element_bracket_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&jsx_self_closing_element_bracket_position
-				)
-			}),
-			member_expression_line_per_expression,
-			type_literal_separator_kind_single_line: SemiColonOrComma::from_str(
-				type_literal_separator_kind_single_line,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&type_literal_separator_kind_single_line
-				)
-			}),
-			type_literal_separator_kind_multi_line: SemiColonOrComma::from_str(
-				type_literal_separator_kind_multi_line,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&type_literal_separator_kind_multi_line
-				)
-			}),
-			module_sort_import_declarations: SortOrder::from_str(module_sort_import_declarations)
-				.unwrap_or_else(|_| {
-					panic!("Invalid enum value '{}'", &module_sort_import_declarations)
-				}),
-			module_sort_export_declarations: SortOrder::from_str(module_sort_export_declarations)
-				.unwrap_or_else(|_| {
-					panic!("Invalid enum value '{}'", &module_sort_export_declarations)
-				}),
-			import_declaration_sort_named_imports: SortOrder::from_str(
-				import_declaration_sort_named_imports,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&import_declaration_sort_named_imports
-				)
-			}),
-			import_declaration_sort_type_only_imports: NamedTypeImportsExportsOrder::from_str(
-				import_declaration_sort_type_only_imports,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&import_declaration_sort_type_only_imports
-				)
-			}),
-			export_declaration_sort_named_exports: SortOrder::from_str(
-				export_declaration_sort_named_exports,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&export_declaration_sort_named_exports
-				)
-			}),
-			export_declaration_sort_type_only_exports: NamedTypeImportsExportsOrder::from_str(
-				export_declaration_sort_type_only_exports,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&export_declaration_sort_type_only_exports
-				)
-			}),
-			ignore_node_comment_text,
-			ignore_file_comment_text,
-			arrow_function_brace_position: BracePosition::from_str(arrow_function_brace_position)
-				.unwrap_or_else(|_| {
-					panic!("Invalid enum value '{}'", &arrow_function_brace_position)
-				}),
-			class_declaration_brace_position: BracePosition::from_str(
-				class_declaration_brace_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!("Invalid enum value '{}'", &class_declaration_brace_position)
-			}),
-			class_expression_brace_position: BracePosition::from_str(
-				class_expression_brace_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!("Invalid enum value '{}'", &class_expression_brace_position)
-			}),
-			constructor_brace_position: BracePosition::from_str(constructor_brace_position)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &constructor_brace_position)),
-			do_while_statement_brace_position: BracePosition::from_str(
-				do_while_statement_brace_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&do_while_statement_brace_position
-				)
-			}),
-			enum_declaration_brace_position: BracePosition::from_str(
-				enum_declaration_brace_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!("Invalid enum value '{}'", &enum_declaration_brace_position)
-			}),
-			get_accessor_brace_position: BracePosition::from_str(get_accessor_brace_position)
-				.unwrap_or_else(|_| {
-					panic!("Invalid enum value '{}'", &get_accessor_brace_position)
-				}),
-			if_statement_brace_position: BracePosition::from_str(if_statement_brace_position)
-				.unwrap_or_else(|_| {
-					panic!("Invalid enum value '{}'", &if_statement_brace_position)
-				}),
-			interface_declaration_brace_position: BracePosition::from_str(
-				interface_declaration_brace_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&interface_declaration_brace_position
-				)
-			}),
-			for_statement_brace_position: BracePosition::from_str(for_statement_brace_position)
-				.unwrap_or_else(|_| {
-					panic!("Invalid enum value '{}'", &for_statement_brace_position)
-				}),
-			for_in_statement_brace_position: BracePosition::from_str(
-				for_in_statement_brace_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!("Invalid enum value '{}'", &for_in_statement_brace_position)
-			}),
-			for_of_statement_brace_position: BracePosition::from_str(
-				for_of_statement_brace_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!("Invalid enum value '{}'", &for_of_statement_brace_position)
-			}),
-			function_declaration_brace_position: BracePosition::from_str(
-				function_declaration_brace_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&function_declaration_brace_position
-				)
-			}),
-			function_expression_brace_position: BracePosition::from_str(
-				function_expression_brace_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&function_expression_brace_position
-				)
-			}),
-			method_brace_position: BracePosition::from_str(method_brace_position)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &method_brace_position)),
-			module_declaration_brace_position: BracePosition::from_str(
-				module_declaration_brace_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&module_declaration_brace_position
-				)
-			}),
-			set_accessor_brace_position: BracePosition::from_str(set_accessor_brace_position)
-				.unwrap_or_else(|_| {
-					panic!("Invalid enum value '{}'", &set_accessor_brace_position)
-				}),
-			static_block_brace_position: BracePosition::from_str(static_block_brace_position)
-				.unwrap_or_else(|_| {
-					panic!("Invalid enum value '{}'", &static_block_brace_position)
-				}),
-			switch_case_brace_position: BracePosition::from_str(switch_case_brace_position)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &switch_case_brace_position)),
-			switch_statement_brace_position: BracePosition::from_str(
-				switch_statement_brace_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!("Invalid enum value '{}'", &switch_statement_brace_position)
-			}),
-			try_statement_brace_position: BracePosition::from_str(try_statement_brace_position)
-				.unwrap_or_else(|_| {
-					panic!("Invalid enum value '{}'", &try_statement_brace_position)
-				}),
-			while_statement_brace_position: BracePosition::from_str(while_statement_brace_position)
-				.unwrap_or_else(|_| {
-					panic!("Invalid enum value '{}'", &while_statement_brace_position)
-				}),
-			arguments_prefer_hanging: PreferHanging::from_str(arguments_prefer_hanging)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &arguments_prefer_hanging)),
-			array_expression_prefer_hanging: PreferHanging::from_str(
-				array_expression_prefer_hanging,
-			)
-			.unwrap_or_else(|_| {
-				panic!("Invalid enum value '{}'", &array_expression_prefer_hanging)
-			}),
-			array_pattern_prefer_hanging,
-			do_while_statement_prefer_hanging,
-			export_declaration_prefer_hanging,
-			extends_clause_prefer_hanging,
-			for_statement_prefer_hanging,
-			for_in_statement_prefer_hanging,
-			for_of_statement_prefer_hanging,
-			if_statement_prefer_hanging,
-			implements_clause_prefer_hanging,
-			import_declaration_prefer_hanging,
-			jsx_attributes_prefer_hanging,
-			object_expression_prefer_hanging,
-			object_pattern_prefer_hanging,
-			parameters_prefer_hanging: PreferHanging::from_str(parameters_prefer_hanging)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &parameters_prefer_hanging)),
-			sequence_expression_prefer_hanging,
-			switch_statement_prefer_hanging,
-			tuple_type_prefer_hanging: PreferHanging::from_str(tuple_type_prefer_hanging)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &tuple_type_prefer_hanging)),
-			type_literal_prefer_hanging,
-			type_parameters_prefer_hanging: PreferHanging::from_str(type_parameters_prefer_hanging)
-				.unwrap_or_else(|_| {
-					panic!("Invalid enum value '{}'", &type_parameters_prefer_hanging)
-				}),
-			union_and_intersection_type_prefer_hanging,
-			variable_statement_prefer_hanging,
-			while_statement_prefer_hanging,
-			enum_declaration_member_spacing: MemberSpacing::from_str(
-				enum_declaration_member_spacing,
-			)
-			.unwrap_or_else(|_| {
-				panic!("Invalid enum value '{}'", &enum_declaration_member_spacing)
-			}),
-			if_statement_next_control_flow_position: NextControlFlowPosition::from_str(
-				if_statement_next_control_flow_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&if_statement_next_control_flow_position
-				)
-			}),
-			try_statement_next_control_flow_position: NextControlFlowPosition::from_str(
-				try_statement_next_control_flow_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&try_statement_next_control_flow_position
-				)
-			}),
-			do_while_statement_next_control_flow_position: NextControlFlowPosition::from_str(
-				do_while_statement_next_control_flow_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&do_while_statement_next_control_flow_position
-				)
-			}),
-			binary_expression_operator_position: OperatorPosition::from_str(
-				binary_expression_operator_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&binary_expression_operator_position
-				)
-			}),
-			conditional_expression_operator_position: OperatorPosition::from_str(
-				conditional_expression_operator_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&conditional_expression_operator_position
-				)
-			}),
-			conditional_type_operator_position: OperatorPosition::from_str(
-				conditional_type_operator_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&conditional_type_operator_position
-				)
-			}),
-			if_statement_single_body_position: SameOrNextLinePosition::from_str(
-				if_statement_single_body_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&if_statement_single_body_position
-				)
-			}),
-			for_statement_single_body_position: SameOrNextLinePosition::from_str(
-				for_statement_single_body_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&for_statement_single_body_position
-				)
-			}),
-			for_in_statement_single_body_position: SameOrNextLinePosition::from_str(
-				for_in_statement_single_body_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&for_in_statement_single_body_position
-				)
-			}),
-			for_of_statement_single_body_position: SameOrNextLinePosition::from_str(
-				for_of_statement_single_body_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&for_of_statement_single_body_position
-				)
-			}),
-			while_statement_single_body_position: SameOrNextLinePosition::from_str(
-				while_statement_single_body_position,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&while_statement_single_body_position
-				)
-			}),
-			arguments_trailing_commas: TrailingCommas::from_str(arguments_trailing_commas)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &arguments_trailing_commas)),
-			parameters_trailing_commas: TrailingCommas::from_str(parameters_trailing_commas)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &parameters_trailing_commas)),
-			array_expression_trailing_commas: TrailingCommas::from_str(
-				array_expression_trailing_commas,
-			)
-			.unwrap_or_else(|_| {
-				panic!("Invalid enum value '{}'", &array_expression_trailing_commas)
-			}),
-			array_pattern_trailing_commas: TrailingCommas::from_str(array_pattern_trailing_commas)
-				.unwrap_or_else(|_| {
-					panic!("Invalid enum value '{}'", &array_pattern_trailing_commas)
-				}),
-			enum_declaration_trailing_commas: TrailingCommas::from_str(
-				enum_declaration_trailing_commas,
-			)
-			.unwrap_or_else(|_| {
-				panic!("Invalid enum value '{}'", &enum_declaration_trailing_commas)
-			}),
-			export_declaration_trailing_commas: TrailingCommas::from_str(
-				export_declaration_trailing_commas,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&export_declaration_trailing_commas
-				)
-			}),
-			import_declaration_trailing_commas: TrailingCommas::from_str(
-				import_declaration_trailing_commas,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&import_declaration_trailing_commas
-				)
-			}),
-			object_pattern_trailing_commas: TrailingCommas::from_str(
-				object_pattern_trailing_commas,
-			)
-			.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &object_pattern_trailing_commas)),
-			object_expression_trailing_commas: TrailingCommas::from_str(
-				object_expression_trailing_commas,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&object_expression_trailing_commas
-				)
-			}),
-			tuple_type_trailing_commas: TrailingCommas::from_str(tuple_type_trailing_commas)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &tuple_type_trailing_commas)),
-			type_literal_trailing_commas: TrailingCommas::from_str(type_literal_trailing_commas)
-				.unwrap_or_else(|_| {
-					panic!("Invalid enum value '{}'", &type_literal_trailing_commas)
-				}),
-			type_parameters_trailing_commas: TrailingCommas::from_str(
-				type_parameters_trailing_commas,
-			)
-			.unwrap_or_else(|_| {
-				panic!("Invalid enum value '{}'", &type_parameters_trailing_commas)
-			}),
-			if_statement_use_braces: UseBraces::from_str(if_statement_use_braces)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &if_statement_use_braces)),
-			for_statement_use_braces: UseBraces::from_str(for_statement_use_braces)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &for_statement_use_braces)),
-			for_of_statement_use_braces: UseBraces::from_str(for_of_statement_use_braces)
-				.unwrap_or_else(|_| {
-					panic!("Invalid enum value '{}'", &for_of_statement_use_braces)
-				}),
-			for_in_statement_use_braces: UseBraces::from_str(for_in_statement_use_braces)
-				.unwrap_or_else(|_| {
-					panic!("Invalid enum value '{}'", &for_in_statement_use_braces)
-				}),
-			while_statement_use_braces: UseBraces::from_str(while_statement_use_braces)
-				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &while_statement_use_braces)),
-			array_expression_prefer_single_line,
-			array_pattern_prefer_single_line,
-			arguments_prefer_single_line,
-			binary_expression_prefer_single_line,
-			computed_prefer_single_line,
-			conditional_expression_prefer_single_line,
-			conditional_type_prefer_single_line,
-			decorators_prefer_single_line,
-			export_declaration_prefer_single_line,
-			for_statement_prefer_single_line,
-			import_declaration_prefer_single_line,
-			jsx_attributes_prefer_single_line,
-			jsx_element_prefer_single_line,
-			mapped_type_prefer_single_line,
-			member_expression_prefer_single_line,
-			object_expression_prefer_single_line,
-			object_pattern_prefer_single_line,
-			parameters_prefer_single_line,
-			parentheses_prefer_single_line,
-			tuple_type_prefer_single_line,
-			type_literal_prefer_single_line,
-			type_parameters_prefer_single_line,
-			union_and_intersection_type_prefer_single_line,
-			variable_statement_prefer_single_line,
-			import_declaration_force_single_line,
-			export_declaration_force_single_line,
-			export_declaration_force_multi_line: ForceMultiLine::from_str(
-				export_declaration_force_multi_line,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&export_declaration_force_multi_line
-				)
-			}),
-			import_declaration_force_multi_line: ForceMultiLine::from_str(
-				import_declaration_force_multi_line,
-			)
-			.unwrap_or_else(|_| {
-				panic!(
-					"Invalid enum value '{}'",
-					&import_declaration_force_multi_line
-				)
-			}),
-			binary_expression_space_surrounding_bitwise_and_arithmetic_operator,
-			comment_line_force_space_after_slashes,
-			construct_signature_space_after_new_keyword,
-			constructor_space_before_parentheses,
-			constructor_type_space_after_new_keyword,
-			do_while_statement_space_after_while_keyword,
-			export_declaration_space_surrounding_named_exports,
-			for_statement_space_after_for_keyword,
-			for_statement_space_after_semi_colons,
-			for_in_statement_space_after_for_keyword,
-			for_of_statement_space_after_for_keyword,
-			function_declaration_space_before_parentheses,
-			function_expression_space_before_parentheses,
-			function_expression_space_after_function_keyword,
-			get_accessor_space_before_parentheses,
-			if_statement_space_after_if_keyword,
-			import_declaration_space_surrounding_named_imports,
-			jsx_expression_container_space_surrounding_expression,
-			jsx_self_closing_element_space_before_slash,
-			method_space_before_parentheses,
-			object_expression_space_surrounding_properties,
-			object_pattern_space_surrounding_properties,
-			set_accessor_space_before_parentheses,
-			space_surrounding_properties,
-			tagged_template_space_before_literal,
-			type_annotation_space_before_colon,
-			type_assertion_space_before_expression,
-			type_literal_space_surrounding_properties,
-			while_statement_space_after_while_keyword,
-			arguments_space_around,
-			array_expression_space_around,
-			array_pattern_space_around,
-			catch_clause_space_around,
-			do_while_statement_space_around,
-			for_in_statement_space_around,
-			for_of_statement_space_around,
-			for_statement_space_around,
-			if_statement_space_around,
-			parameters_space_around,
-			paren_expression_space_around,
-			switch_statement_space_around,
-			tuple_type_space_around,
-			while_statement_space_around,
-		})
-	}
+	/* use space separator */
+	#[pyo3(get, set)]
+	pub binary_expression_space_surrounding_bitwise_and_arithmetic_operator: bool,
+	#[pyo3(get, set)]
+	pub comment_line_force_space_after_slashes: bool,
+	#[pyo3(get, set)]
+	pub construct_signature_space_after_new_keyword: bool,
+	#[pyo3(get, set)]
+	pub constructor_space_before_parentheses: bool,
+	#[pyo3(get, set)]
+	pub constructor_type_space_after_new_keyword: bool,
+	#[pyo3(get, set)]
+	pub do_while_statement_space_after_while_keyword: bool,
+	#[pyo3(get, set)]
+	pub export_declaration_space_surrounding_named_exports: bool,
+	#[pyo3(get, set)]
+	pub for_statement_space_after_for_keyword: bool,
+	#[pyo3(get, set)]
+	pub for_statement_space_after_semi_colons: bool,
+	#[pyo3(get, set)]
+	pub for_in_statement_space_after_for_keyword: bool,
+	#[pyo3(get, set)]
+	pub for_of_statement_space_after_for_keyword: bool,
+	#[pyo3(get, set)]
+	pub function_declaration_space_before_parentheses: bool,
+	#[pyo3(get, set)]
+	pub function_expression_space_before_parentheses: bool,
+	#[pyo3(get, set)]
+	pub function_expression_space_after_function_keyword: bool,
+	#[pyo3(get, set)]
+	pub get_accessor_space_before_parentheses: bool,
+	#[pyo3(get, set)]
+	pub if_statement_space_after_if_keyword: bool,
+	#[pyo3(get, set)]
+	pub import_declaration_space_surrounding_named_imports: bool,
+	#[pyo3(get, set)]
+	pub jsx_expression_container_space_surrounding_expression: bool,
+	#[pyo3(get, set)]
+	pub jsx_self_closing_element_space_before_slash: bool,
+	#[pyo3(get, set)]
+	pub method_space_before_parentheses: bool,
+	#[pyo3(get, set)]
+	pub object_expression_space_surrounding_properties: bool,
+	#[pyo3(get, set)]
+	pub object_pattern_space_surrounding_properties: bool,
+	#[pyo3(get, set)]
+	pub set_accessor_space_before_parentheses: bool,
+	#[pyo3(get, set)]
+	pub space_surrounding_properties: bool,
+	#[pyo3(get, set)]
+	pub tagged_template_space_before_literal: bool,
+	#[pyo3(get, set)]
+	pub type_annotation_space_before_colon: bool,
+	#[pyo3(get, set)]
+	pub type_assertion_space_before_expression: bool,
+	#[pyo3(get, set)]
+	pub type_literal_space_surrounding_properties: bool,
+	#[pyo3(get, set)]
+	pub while_statement_space_after_while_keyword: bool,
+	#[pyo3(get, set)]
+	pub arguments_space_around: bool,
+	#[pyo3(get, set)]
+	pub array_expression_space_around: bool,
+	#[pyo3(get, set)]
+	pub array_pattern_space_around: bool,
+	#[pyo3(get, set)]
+	pub catch_clause_space_around: bool,
+	#[pyo3(get, set)]
+	pub do_while_statement_space_around: bool,
+	#[pyo3(get, set)]
+	pub for_in_statement_space_around: bool,
+	#[pyo3(get, set)]
+	pub for_of_statement_space_around: bool,
+	#[pyo3(get, set)]
+	pub for_statement_space_around: bool,
+	#[pyo3(get, set)]
+	pub if_statement_space_around: bool,
+	#[pyo3(get, set)]
+	pub parameters_space_around: bool,
+	#[pyo3(get, set)]
+	pub paren_expression_space_around: bool,
+	#[pyo3(get, set)]
+	pub switch_statement_space_around: bool,
+	#[pyo3(get, set)]
+	pub tuple_type_space_around: bool,
+	#[pyo3(get, set)]
+	pub while_statement_space_around: bool,
 }
 
 impl From<PyConfiguration> for Configuration {
 	fn from(value: PyConfiguration) -> Self {
-		value.0
+		Configuration {
+			indent_width: value.indent_width,
+			line_width: value.line_width,
+			use_tabs: value.use_tabs,
+			new_line_kind: NewLineKind::from_str(&value.new_line_kind)
+				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value.new_line_kind)),
+			quote_style: QuoteStyle::from_str(&value.quote_style)
+				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value.quote_style)),
+			quote_props: QuoteProps::from_str(&value.quote_props)
+				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value.quote_props)),
+			semi_colons: SemiColons::from_str(&value.semi_colons)
+				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value.semi_colons)),
+			file_indent_level: value.file_indent_level,
+			arrow_function_use_parentheses: UseParentheses::from_str(
+				&value.arrow_function_use_parentheses,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.arrow_function_use_parentheses
+				)
+			}),
+			binary_expression_line_per_expression: value.binary_expression_line_per_expression,
+			conditional_expression_line_per_expression: value
+				.conditional_expression_line_per_expression,
+			jsx_quote_style: JsxQuoteStyle::from_str(&value.jsx_quote_style)
+				.unwrap_or_else(|_| panic!("Invalid enum value '{}'", &value.jsx_quote_style)),
+			jsx_multi_line_parens: JsxMultiLineParens::from_str(&value.jsx_multi_line_parens)
+				.unwrap_or_else(|_| {
+					panic!("Invalid enum value '{}'", &value.jsx_multi_line_parens)
+				}),
+			jsx_force_new_lines_surrounding_content: value.jsx_force_new_lines_surrounding_content,
+			jsx_opening_element_bracket_position: SameOrNextLinePosition::from_str(
+				&value.jsx_opening_element_bracket_position,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.jsx_opening_element_bracket_position
+				)
+			}),
+			jsx_self_closing_element_bracket_position: SameOrNextLinePosition::from_str(
+				&value.jsx_self_closing_element_bracket_position,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.jsx_self_closing_element_bracket_position
+				)
+			}),
+			member_expression_line_per_expression: value.member_expression_line_per_expression,
+			type_literal_separator_kind_single_line: SemiColonOrComma::from_str(
+				&value.type_literal_separator_kind_single_line,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.type_literal_separator_kind_single_line
+				)
+			}),
+			type_literal_separator_kind_multi_line: SemiColonOrComma::from_str(
+				&value.type_literal_separator_kind_multi_line,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.type_literal_separator_kind_multi_line
+				)
+			}),
+			module_sort_import_declarations: SortOrder::from_str(
+				&value.module_sort_import_declarations,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.module_sort_import_declarations
+				)
+			}),
+			module_sort_export_declarations: SortOrder::from_str(
+				&value.module_sort_export_declarations,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.module_sort_export_declarations
+				)
+			}),
+			import_declaration_sort_named_imports: SortOrder::from_str(
+				&value.import_declaration_sort_named_imports,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.import_declaration_sort_named_imports
+				)
+			}),
+			import_declaration_sort_type_only_imports: NamedTypeImportsExportsOrder::from_str(
+				&value.import_declaration_sort_type_only_imports,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.import_declaration_sort_type_only_imports
+				)
+			}),
+			export_declaration_sort_named_exports: SortOrder::from_str(
+				&value.export_declaration_sort_named_exports,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.export_declaration_sort_named_exports
+				)
+			}),
+			export_declaration_sort_type_only_exports: NamedTypeImportsExportsOrder::from_str(
+				&value.export_declaration_sort_type_only_exports,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.export_declaration_sort_type_only_exports
+				)
+			}),
+			ignore_node_comment_text: value.ignore_node_comment_text,
+			ignore_file_comment_text: value.ignore_file_comment_text,
+			arrow_function_brace_position: BracePosition::from_str(
+				&value.arrow_function_brace_position,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.arrow_function_brace_position
+				)
+			}),
+			class_declaration_brace_position: BracePosition::from_str(
+				&value.class_declaration_brace_position,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.class_declaration_brace_position
+				)
+			}),
+			class_expression_brace_position: BracePosition::from_str(
+				&value.class_expression_brace_position,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.class_expression_brace_position
+				)
+			}),
+			constructor_brace_position: BracePosition::from_str(&value.constructor_brace_position)
+				.unwrap_or_else(|_| {
+					panic!("Invalid enum value '{}'", &value.constructor_brace_position)
+				}),
+			do_while_statement_brace_position: BracePosition::from_str(
+				&value.do_while_statement_brace_position,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.do_while_statement_brace_position
+				)
+			}),
+			enum_declaration_brace_position: BracePosition::from_str(
+				&value.enum_declaration_brace_position,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.enum_declaration_brace_position
+				)
+			}),
+			get_accessor_brace_position: BracePosition::from_str(
+				&value.get_accessor_brace_position,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.get_accessor_brace_position
+				)
+			}),
+			if_statement_brace_position: BracePosition::from_str(
+				&value.if_statement_brace_position,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.if_statement_brace_position
+				)
+			}),
+			interface_declaration_brace_position: BracePosition::from_str(
+				&value.interface_declaration_brace_position,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.interface_declaration_brace_position
+				)
+			}),
+			for_statement_brace_position: BracePosition::from_str(
+				&value.for_statement_brace_position,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.for_statement_brace_position
+				)
+			}),
+			for_in_statement_brace_position: BracePosition::from_str(
+				&value.for_in_statement_brace_position,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.for_in_statement_brace_position
+				)
+			}),
+			for_of_statement_brace_position: BracePosition::from_str(
+				&value.for_of_statement_brace_position,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.for_of_statement_brace_position
+				)
+			}),
+			function_declaration_brace_position: BracePosition::from_str(
+				&value.function_declaration_brace_position,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.function_declaration_brace_position
+				)
+			}),
+			function_expression_brace_position: BracePosition::from_str(
+				&value.function_expression_brace_position,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.function_expression_brace_position
+				)
+			}),
+			method_brace_position: BracePosition::from_str(&value.method_brace_position)
+				.unwrap_or_else(|_| {
+					panic!("Invalid enum value '{}'", &value.method_brace_position)
+				}),
+			module_declaration_brace_position: BracePosition::from_str(
+				&value.module_declaration_brace_position,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.module_declaration_brace_position
+				)
+			}),
+			set_accessor_brace_position: BracePosition::from_str(
+				&value.set_accessor_brace_position,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.set_accessor_brace_position
+				)
+			}),
+			static_block_brace_position: BracePosition::from_str(
+				&value.static_block_brace_position,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.static_block_brace_position
+				)
+			}),
+			switch_case_brace_position: BracePosition::from_str(&value.switch_case_brace_position)
+				.unwrap_or_else(|_| {
+					panic!("Invalid enum value '{}'", &value.switch_case_brace_position)
+				}),
+			switch_statement_brace_position: BracePosition::from_str(
+				&value.switch_statement_brace_position,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.switch_statement_brace_position
+				)
+			}),
+			try_statement_brace_position: BracePosition::from_str(
+				&value.try_statement_brace_position,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.try_statement_brace_position
+				)
+			}),
+			while_statement_brace_position: BracePosition::from_str(
+				&value.while_statement_brace_position,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.while_statement_brace_position
+				)
+			}),
+			arguments_prefer_hanging: PreferHanging::from_str(&value.arguments_prefer_hanging)
+				.unwrap_or_else(|_| {
+					panic!("Invalid enum value '{}'", &value.arguments_prefer_hanging)
+				}),
+			array_expression_prefer_hanging: PreferHanging::from_str(
+				&value.array_expression_prefer_hanging,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.array_expression_prefer_hanging
+				)
+			}),
+			array_pattern_prefer_hanging: value.array_pattern_prefer_hanging,
+			do_while_statement_prefer_hanging: value.do_while_statement_prefer_hanging,
+			export_declaration_prefer_hanging: value.export_declaration_prefer_hanging,
+			extends_clause_prefer_hanging: value.extends_clause_prefer_hanging,
+			for_statement_prefer_hanging: value.for_statement_prefer_hanging,
+			for_in_statement_prefer_hanging: value.for_in_statement_prefer_hanging,
+			for_of_statement_prefer_hanging: value.for_of_statement_prefer_hanging,
+			if_statement_prefer_hanging: value.if_statement_prefer_hanging,
+			implements_clause_prefer_hanging: value.implements_clause_prefer_hanging,
+			import_declaration_prefer_hanging: value.import_declaration_prefer_hanging,
+			jsx_attributes_prefer_hanging: value.jsx_attributes_prefer_hanging,
+			object_expression_prefer_hanging: value.object_expression_prefer_hanging,
+			object_pattern_prefer_hanging: value.object_pattern_prefer_hanging,
+			parameters_prefer_hanging: PreferHanging::from_str(&value.parameters_prefer_hanging)
+				.unwrap_or_else(|_| {
+					panic!("Invalid enum value '{}'", &value.parameters_prefer_hanging)
+				}),
+			sequence_expression_prefer_hanging: value.sequence_expression_prefer_hanging,
+			switch_statement_prefer_hanging: value.switch_statement_prefer_hanging,
+			tuple_type_prefer_hanging: PreferHanging::from_str(&value.tuple_type_prefer_hanging)
+				.unwrap_or_else(|_| {
+					panic!("Invalid enum value '{}'", &value.tuple_type_prefer_hanging)
+				}),
+			type_literal_prefer_hanging: value.type_literal_prefer_hanging,
+			type_parameters_prefer_hanging: PreferHanging::from_str(
+				&value.type_parameters_prefer_hanging,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.type_parameters_prefer_hanging
+				)
+			}),
+			union_and_intersection_type_prefer_hanging: value
+				.union_and_intersection_type_prefer_hanging,
+			variable_statement_prefer_hanging: value.variable_statement_prefer_hanging,
+			while_statement_prefer_hanging: value.while_statement_prefer_hanging,
+			enum_declaration_member_spacing: MemberSpacing::from_str(
+				&value.enum_declaration_member_spacing,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.enum_declaration_member_spacing
+				)
+			}),
+			if_statement_next_control_flow_position: NextControlFlowPosition::from_str(
+				&value.if_statement_next_control_flow_position,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.if_statement_next_control_flow_position
+				)
+			}),
+			try_statement_next_control_flow_position: NextControlFlowPosition::from_str(
+				&value.try_statement_next_control_flow_position,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.try_statement_next_control_flow_position
+				)
+			}),
+			do_while_statement_next_control_flow_position: NextControlFlowPosition::from_str(
+				&value.do_while_statement_next_control_flow_position,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.do_while_statement_next_control_flow_position
+				)
+			}),
+			binary_expression_operator_position: OperatorPosition::from_str(
+				&value.binary_expression_operator_position,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.binary_expression_operator_position
+				)
+			}),
+			conditional_expression_operator_position: OperatorPosition::from_str(
+				&value.conditional_expression_operator_position,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.conditional_expression_operator_position
+				)
+			}),
+			conditional_type_operator_position: OperatorPosition::from_str(
+				&value.conditional_type_operator_position,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.conditional_type_operator_position
+				)
+			}),
+			if_statement_single_body_position: SameOrNextLinePosition::from_str(
+				&value.if_statement_single_body_position,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.if_statement_single_body_position
+				)
+			}),
+			for_statement_single_body_position: SameOrNextLinePosition::from_str(
+				&value.for_statement_single_body_position,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.for_statement_single_body_position
+				)
+			}),
+			for_in_statement_single_body_position: SameOrNextLinePosition::from_str(
+				&value.for_in_statement_single_body_position,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.for_in_statement_single_body_position
+				)
+			}),
+			for_of_statement_single_body_position: SameOrNextLinePosition::from_str(
+				&value.for_of_statement_single_body_position,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.for_of_statement_single_body_position
+				)
+			}),
+			while_statement_single_body_position: SameOrNextLinePosition::from_str(
+				&value.while_statement_single_body_position,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.while_statement_single_body_position
+				)
+			}),
+			arguments_trailing_commas: TrailingCommas::from_str(&value.arguments_trailing_commas)
+				.unwrap_or_else(|_| {
+					panic!("Invalid enum value '{}'", &value.arguments_trailing_commas)
+				}),
+			parameters_trailing_commas: TrailingCommas::from_str(&value.parameters_trailing_commas)
+				.unwrap_or_else(|_| {
+					panic!("Invalid enum value '{}'", &value.parameters_trailing_commas)
+				}),
+			array_expression_trailing_commas: TrailingCommas::from_str(
+				&value.array_expression_trailing_commas,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.array_expression_trailing_commas
+				)
+			}),
+			array_pattern_trailing_commas: TrailingCommas::from_str(
+				&value.array_pattern_trailing_commas,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.array_pattern_trailing_commas
+				)
+			}),
+			enum_declaration_trailing_commas: TrailingCommas::from_str(
+				&value.enum_declaration_trailing_commas,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.enum_declaration_trailing_commas
+				)
+			}),
+			export_declaration_trailing_commas: TrailingCommas::from_str(
+				&value.export_declaration_trailing_commas,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.export_declaration_trailing_commas
+				)
+			}),
+			import_declaration_trailing_commas: TrailingCommas::from_str(
+				&value.import_declaration_trailing_commas,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.import_declaration_trailing_commas
+				)
+			}),
+			object_pattern_trailing_commas: TrailingCommas::from_str(
+				&value.object_pattern_trailing_commas,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.object_pattern_trailing_commas
+				)
+			}),
+			object_expression_trailing_commas: TrailingCommas::from_str(
+				&value.object_expression_trailing_commas,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.object_expression_trailing_commas
+				)
+			}),
+			tuple_type_trailing_commas: TrailingCommas::from_str(&value.tuple_type_trailing_commas)
+				.unwrap_or_else(|_| {
+					panic!("Invalid enum value '{}'", &value.tuple_type_trailing_commas)
+				}),
+			type_literal_trailing_commas: TrailingCommas::from_str(
+				&value.type_literal_trailing_commas,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.type_literal_trailing_commas
+				)
+			}),
+			type_parameters_trailing_commas: TrailingCommas::from_str(
+				&value.type_parameters_trailing_commas,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.type_parameters_trailing_commas
+				)
+			}),
+			if_statement_use_braces: UseBraces::from_str(&value.if_statement_use_braces)
+				.unwrap_or_else(|_| {
+					panic!("Invalid enum value '{}'", &value.if_statement_use_braces)
+				}),
+			for_statement_use_braces: UseBraces::from_str(&value.for_statement_use_braces)
+				.unwrap_or_else(|_| {
+					panic!("Invalid enum value '{}'", &value.for_statement_use_braces)
+				}),
+			for_of_statement_use_braces: UseBraces::from_str(&value.for_of_statement_use_braces)
+				.unwrap_or_else(|_| {
+					panic!(
+						"Invalid enum value '{}'",
+						&value.for_of_statement_use_braces
+					)
+				}),
+			for_in_statement_use_braces: UseBraces::from_str(&value.for_in_statement_use_braces)
+				.unwrap_or_else(|_| {
+					panic!(
+						"Invalid enum value '{}'",
+						&value.for_in_statement_use_braces
+					)
+				}),
+			while_statement_use_braces: UseBraces::from_str(&value.while_statement_use_braces)
+				.unwrap_or_else(|_| {
+					panic!("Invalid enum value '{}'", &value.while_statement_use_braces)
+				}),
+			array_expression_prefer_single_line: value.array_expression_prefer_single_line,
+			array_pattern_prefer_single_line: value.array_pattern_prefer_single_line,
+			arguments_prefer_single_line: value.arguments_prefer_single_line,
+			binary_expression_prefer_single_line: value.binary_expression_prefer_single_line,
+			computed_prefer_single_line: value.computed_prefer_single_line,
+			conditional_expression_prefer_single_line: value
+				.conditional_expression_prefer_single_line,
+			conditional_type_prefer_single_line: value.conditional_type_prefer_single_line,
+			decorators_prefer_single_line: value.decorators_prefer_single_line,
+			export_declaration_prefer_single_line: value.export_declaration_prefer_single_line,
+			for_statement_prefer_single_line: value.for_statement_prefer_single_line,
+			import_declaration_prefer_single_line: value.import_declaration_prefer_single_line,
+			jsx_attributes_prefer_single_line: value.jsx_attributes_prefer_single_line,
+			jsx_element_prefer_single_line: value.jsx_element_prefer_single_line,
+			mapped_type_prefer_single_line: value.mapped_type_prefer_single_line,
+			member_expression_prefer_single_line: value.member_expression_prefer_single_line,
+			object_expression_prefer_single_line: value.object_expression_prefer_single_line,
+			object_pattern_prefer_single_line: value.object_pattern_prefer_single_line,
+			parameters_prefer_single_line: value.parameters_prefer_single_line,
+			parentheses_prefer_single_line: value.parentheses_prefer_single_line,
+			tuple_type_prefer_single_line: value.tuple_type_prefer_single_line,
+			type_literal_prefer_single_line: value.type_literal_prefer_single_line,
+			type_parameters_prefer_single_line: value.type_parameters_prefer_single_line,
+			union_and_intersection_type_prefer_single_line: value
+				.union_and_intersection_type_prefer_single_line,
+			variable_statement_prefer_single_line: value.variable_statement_prefer_single_line,
+			import_declaration_force_single_line: value.import_declaration_force_single_line,
+			export_declaration_force_single_line: value.export_declaration_force_single_line,
+			export_declaration_force_multi_line: ForceMultiLine::from_str(
+				&value.export_declaration_force_multi_line,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.export_declaration_force_multi_line
+				)
+			}),
+			import_declaration_force_multi_line: ForceMultiLine::from_str(
+				&value.import_declaration_force_multi_line,
+			)
+			.unwrap_or_else(|_| {
+				panic!(
+					"Invalid enum value '{}'",
+					&value.import_declaration_force_multi_line
+				)
+			}),
+			binary_expression_space_surrounding_bitwise_and_arithmetic_operator: value
+				.binary_expression_space_surrounding_bitwise_and_arithmetic_operator,
+			comment_line_force_space_after_slashes: value.comment_line_force_space_after_slashes,
+			construct_signature_space_after_new_keyword: value
+				.construct_signature_space_after_new_keyword,
+			constructor_space_before_parentheses: value.constructor_space_before_parentheses,
+			constructor_type_space_after_new_keyword: value
+				.constructor_type_space_after_new_keyword,
+			do_while_statement_space_after_while_keyword: value
+				.do_while_statement_space_after_while_keyword,
+			export_declaration_space_surrounding_named_exports: value
+				.export_declaration_space_surrounding_named_exports,
+			for_statement_space_after_for_keyword: value.for_statement_space_after_for_keyword,
+			for_statement_space_after_semi_colons: value.for_statement_space_after_semi_colons,
+			for_in_statement_space_after_for_keyword: value
+				.for_in_statement_space_after_for_keyword,
+			for_of_statement_space_after_for_keyword: value
+				.for_of_statement_space_after_for_keyword,
+			function_declaration_space_before_parentheses: value
+				.function_declaration_space_before_parentheses,
+			function_expression_space_before_parentheses: value
+				.function_expression_space_before_parentheses,
+			function_expression_space_after_function_keyword: value
+				.function_expression_space_after_function_keyword,
+			get_accessor_space_before_parentheses: value.get_accessor_space_before_parentheses,
+			if_statement_space_after_if_keyword: value.if_statement_space_after_if_keyword,
+			import_declaration_space_surrounding_named_imports: value
+				.import_declaration_space_surrounding_named_imports,
+			jsx_expression_container_space_surrounding_expression: value
+				.jsx_expression_container_space_surrounding_expression,
+			jsx_self_closing_element_space_before_slash: value
+				.jsx_self_closing_element_space_before_slash,
+			method_space_before_parentheses: value.method_space_before_parentheses,
+			object_expression_space_surrounding_properties: value
+				.object_expression_space_surrounding_properties,
+			object_pattern_space_surrounding_properties: value
+				.object_pattern_space_surrounding_properties,
+			set_accessor_space_before_parentheses: value.set_accessor_space_before_parentheses,
+			space_surrounding_properties: value.space_surrounding_properties,
+			tagged_template_space_before_literal: value.tagged_template_space_before_literal,
+			type_annotation_space_before_colon: value.type_annotation_space_before_colon,
+			type_assertion_space_before_expression: value.type_assertion_space_before_expression,
+			type_literal_space_surrounding_properties: value
+				.type_literal_space_surrounding_properties,
+			while_statement_space_after_while_keyword: value
+				.while_statement_space_after_while_keyword,
+			arguments_space_around: value.arguments_space_around,
+			array_expression_space_around: value.array_expression_space_around,
+			array_pattern_space_around: value.array_pattern_space_around,
+			catch_clause_space_around: value.catch_clause_space_around,
+			do_while_statement_space_around: value.do_while_statement_space_around,
+			for_in_statement_space_around: value.for_in_statement_space_around,
+			for_of_statement_space_around: value.for_of_statement_space_around,
+			for_statement_space_around: value.for_statement_space_around,
+			if_statement_space_around: value.if_statement_space_around,
+			parameters_space_around: value.parameters_space_around,
+			paren_expression_space_around: value.paren_expression_space_around,
+			switch_statement_space_around: value.switch_statement_space_around,
+			tuple_type_space_around: value.tuple_type_space_around,
+			while_statement_space_around: value.while_statement_space_around,
+		}
+	}
+}
+impl From<Configuration> for PyConfiguration {
+	fn from(value: Configuration) -> Self {
+		PyConfiguration {
+			indent_width: value.indent_width,
+			line_width: value.line_width,
+			use_tabs: value.use_tabs,
+			new_line_kind: value.new_line_kind.to_string(),
+			quote_style: value.quote_style.to_string(),
+			quote_props: value.quote_props.to_string(),
+			semi_colons: value.semi_colons.to_string(),
+			file_indent_level: value.file_indent_level,
+			arrow_function_use_parentheses: value.arrow_function_use_parentheses.to_string(),
+			binary_expression_line_per_expression: value.binary_expression_line_per_expression,
+			conditional_expression_line_per_expression: value
+				.conditional_expression_line_per_expression,
+			jsx_quote_style: value.jsx_quote_style.to_string(),
+			jsx_multi_line_parens: value.jsx_multi_line_parens.to_string(),
+			jsx_force_new_lines_surrounding_content: value.jsx_force_new_lines_surrounding_content,
+			jsx_opening_element_bracket_position: value
+				.jsx_opening_element_bracket_position
+				.to_string(),
+			jsx_self_closing_element_bracket_position: value
+				.jsx_self_closing_element_bracket_position
+				.to_string(),
+			member_expression_line_per_expression: value.member_expression_line_per_expression,
+			type_literal_separator_kind_single_line: value
+				.type_literal_separator_kind_single_line
+				.to_string(),
+			type_literal_separator_kind_multi_line: value
+				.type_literal_separator_kind_multi_line
+				.to_string(),
+			module_sort_import_declarations: value.module_sort_import_declarations.to_string(),
+			module_sort_export_declarations: value.module_sort_export_declarations.to_string(),
+			import_declaration_sort_named_imports: value
+				.import_declaration_sort_named_imports
+				.to_string(),
+			import_declaration_sort_type_only_imports: value
+				.import_declaration_sort_type_only_imports
+				.to_string(),
+			export_declaration_sort_named_exports: value
+				.export_declaration_sort_named_exports
+				.to_string(),
+			export_declaration_sort_type_only_exports: value
+				.export_declaration_sort_type_only_exports
+				.to_string(),
+			ignore_node_comment_text: value.ignore_node_comment_text,
+			ignore_file_comment_text: value.ignore_file_comment_text,
+			arrow_function_brace_position: value.arrow_function_brace_position.to_string(),
+			class_declaration_brace_position: value.class_declaration_brace_position.to_string(),
+			class_expression_brace_position: value.class_expression_brace_position.to_string(),
+			constructor_brace_position: value.constructor_brace_position.to_string(),
+			do_while_statement_brace_position: value.do_while_statement_brace_position.to_string(),
+			enum_declaration_brace_position: value.enum_declaration_brace_position.to_string(),
+			get_accessor_brace_position: value.get_accessor_brace_position.to_string(),
+			if_statement_brace_position: value.if_statement_brace_position.to_string(),
+			interface_declaration_brace_position: value
+				.interface_declaration_brace_position
+				.to_string(),
+			for_statement_brace_position: value.for_statement_brace_position.to_string(),
+			for_in_statement_brace_position: value.for_in_statement_brace_position.to_string(),
+			for_of_statement_brace_position: value.for_of_statement_brace_position.to_string(),
+			function_declaration_brace_position: value
+				.function_declaration_brace_position
+				.to_string(),
+			function_expression_brace_position: value
+				.function_expression_brace_position
+				.to_string(),
+			method_brace_position: value.method_brace_position.to_string(),
+			module_declaration_brace_position: value.module_declaration_brace_position.to_string(),
+			set_accessor_brace_position: value.set_accessor_brace_position.to_string(),
+			static_block_brace_position: value.static_block_brace_position.to_string(),
+			switch_case_brace_position: value.switch_case_brace_position.to_string(),
+			switch_statement_brace_position: value.switch_statement_brace_position.to_string(),
+			try_statement_brace_position: value.try_statement_brace_position.to_string(),
+			while_statement_brace_position: value.while_statement_brace_position.to_string(),
+			arguments_prefer_hanging: value.arguments_prefer_hanging.to_string(),
+			array_expression_prefer_hanging: value.array_expression_prefer_hanging.to_string(),
+			array_pattern_prefer_hanging: value.array_pattern_prefer_hanging,
+			do_while_statement_prefer_hanging: value.do_while_statement_prefer_hanging,
+			export_declaration_prefer_hanging: value.export_declaration_prefer_hanging,
+			extends_clause_prefer_hanging: value.extends_clause_prefer_hanging,
+			for_statement_prefer_hanging: value.for_statement_prefer_hanging,
+			for_in_statement_prefer_hanging: value.for_in_statement_prefer_hanging,
+			for_of_statement_prefer_hanging: value.for_of_statement_prefer_hanging,
+			if_statement_prefer_hanging: value.if_statement_prefer_hanging,
+			implements_clause_prefer_hanging: value.implements_clause_prefer_hanging,
+			import_declaration_prefer_hanging: value.import_declaration_prefer_hanging,
+			jsx_attributes_prefer_hanging: value.jsx_attributes_prefer_hanging,
+			object_expression_prefer_hanging: value.object_expression_prefer_hanging,
+			object_pattern_prefer_hanging: value.object_pattern_prefer_hanging,
+			parameters_prefer_hanging: value.parameters_prefer_hanging.to_string(),
+			sequence_expression_prefer_hanging: value.sequence_expression_prefer_hanging,
+			switch_statement_prefer_hanging: value.switch_statement_prefer_hanging,
+			tuple_type_prefer_hanging: value.tuple_type_prefer_hanging.to_string(),
+			type_literal_prefer_hanging: value.type_literal_prefer_hanging,
+			type_parameters_prefer_hanging: value.type_parameters_prefer_hanging.to_string(),
+			union_and_intersection_type_prefer_hanging: value
+				.union_and_intersection_type_prefer_hanging,
+			variable_statement_prefer_hanging: value.variable_statement_prefer_hanging,
+			while_statement_prefer_hanging: value.while_statement_prefer_hanging,
+			enum_declaration_member_spacing: value.enum_declaration_member_spacing.to_string(),
+			if_statement_next_control_flow_position: value
+				.if_statement_next_control_flow_position
+				.to_string(),
+			try_statement_next_control_flow_position: value
+				.try_statement_next_control_flow_position
+				.to_string(),
+			do_while_statement_next_control_flow_position: value
+				.do_while_statement_next_control_flow_position
+				.to_string(),
+			binary_expression_operator_position: value
+				.binary_expression_operator_position
+				.to_string(),
+			conditional_expression_operator_position: value
+				.conditional_expression_operator_position
+				.to_string(),
+			conditional_type_operator_position: value
+				.conditional_type_operator_position
+				.to_string(),
+			if_statement_single_body_position: value.if_statement_single_body_position.to_string(),
+			for_statement_single_body_position: value
+				.for_statement_single_body_position
+				.to_string(),
+			for_in_statement_single_body_position: value
+				.for_in_statement_single_body_position
+				.to_string(),
+			for_of_statement_single_body_position: value
+				.for_of_statement_single_body_position
+				.to_string(),
+			while_statement_single_body_position: value
+				.while_statement_single_body_position
+				.to_string(),
+			arguments_trailing_commas: value.arguments_trailing_commas.to_string(),
+			parameters_trailing_commas: value.parameters_trailing_commas.to_string(),
+			array_expression_trailing_commas: value.array_expression_trailing_commas.to_string(),
+			array_pattern_trailing_commas: value.array_pattern_trailing_commas.to_string(),
+			enum_declaration_trailing_commas: value.enum_declaration_trailing_commas.to_string(),
+			export_declaration_trailing_commas: value
+				.export_declaration_trailing_commas
+				.to_string(),
+			import_declaration_trailing_commas: value
+				.import_declaration_trailing_commas
+				.to_string(),
+			object_pattern_trailing_commas: value.object_pattern_trailing_commas.to_string(),
+			object_expression_trailing_commas: value.object_expression_trailing_commas.to_string(),
+			tuple_type_trailing_commas: value.tuple_type_trailing_commas.to_string(),
+			type_literal_trailing_commas: value.type_literal_trailing_commas.to_string(),
+			type_parameters_trailing_commas: value.type_parameters_trailing_commas.to_string(),
+			if_statement_use_braces: value.if_statement_use_braces.to_string(),
+			for_statement_use_braces: value.for_statement_use_braces.to_string(),
+			for_of_statement_use_braces: value.for_of_statement_use_braces.to_string(),
+			for_in_statement_use_braces: value.for_in_statement_use_braces.to_string(),
+			while_statement_use_braces: value.while_statement_use_braces.to_string(),
+			array_expression_prefer_single_line: value.array_expression_prefer_single_line,
+			array_pattern_prefer_single_line: value.array_pattern_prefer_single_line,
+			arguments_prefer_single_line: value.arguments_prefer_single_line,
+			binary_expression_prefer_single_line: value.binary_expression_prefer_single_line,
+			computed_prefer_single_line: value.computed_prefer_single_line,
+			conditional_expression_prefer_single_line: value
+				.conditional_expression_prefer_single_line,
+			conditional_type_prefer_single_line: value.conditional_type_prefer_single_line,
+			decorators_prefer_single_line: value.decorators_prefer_single_line,
+			export_declaration_prefer_single_line: value.export_declaration_prefer_single_line,
+			for_statement_prefer_single_line: value.for_statement_prefer_single_line,
+			import_declaration_prefer_single_line: value.import_declaration_prefer_single_line,
+			jsx_attributes_prefer_single_line: value.jsx_attributes_prefer_single_line,
+			jsx_element_prefer_single_line: value.jsx_element_prefer_single_line,
+			mapped_type_prefer_single_line: value.mapped_type_prefer_single_line,
+			member_expression_prefer_single_line: value.member_expression_prefer_single_line,
+			object_expression_prefer_single_line: value.object_expression_prefer_single_line,
+			object_pattern_prefer_single_line: value.object_pattern_prefer_single_line,
+			parameters_prefer_single_line: value.parameters_prefer_single_line,
+			parentheses_prefer_single_line: value.parentheses_prefer_single_line,
+			tuple_type_prefer_single_line: value.tuple_type_prefer_single_line,
+			type_literal_prefer_single_line: value.type_literal_prefer_single_line,
+			type_parameters_prefer_single_line: value.type_parameters_prefer_single_line,
+			union_and_intersection_type_prefer_single_line: value
+				.union_and_intersection_type_prefer_single_line,
+			variable_statement_prefer_single_line: value.variable_statement_prefer_single_line,
+			import_declaration_force_single_line: value.import_declaration_force_single_line,
+			export_declaration_force_single_line: value.export_declaration_force_single_line,
+			export_declaration_force_multi_line: value
+				.export_declaration_force_multi_line
+				.to_string(),
+			import_declaration_force_multi_line: value
+				.import_declaration_force_multi_line
+				.to_string(),
+			binary_expression_space_surrounding_bitwise_and_arithmetic_operator: value
+				.binary_expression_space_surrounding_bitwise_and_arithmetic_operator,
+			comment_line_force_space_after_slashes: value.comment_line_force_space_after_slashes,
+			construct_signature_space_after_new_keyword: value
+				.construct_signature_space_after_new_keyword,
+			constructor_space_before_parentheses: value.constructor_space_before_parentheses,
+			constructor_type_space_after_new_keyword: value
+				.constructor_type_space_after_new_keyword,
+			do_while_statement_space_after_while_keyword: value
+				.do_while_statement_space_after_while_keyword,
+			export_declaration_space_surrounding_named_exports: value
+				.export_declaration_space_surrounding_named_exports,
+			for_statement_space_after_for_keyword: value.for_statement_space_after_for_keyword,
+			for_statement_space_after_semi_colons: value.for_statement_space_after_semi_colons,
+			for_in_statement_space_after_for_keyword: value
+				.for_in_statement_space_after_for_keyword,
+			for_of_statement_space_after_for_keyword: value
+				.for_of_statement_space_after_for_keyword,
+			function_declaration_space_before_parentheses: value
+				.function_declaration_space_before_parentheses,
+			function_expression_space_before_parentheses: value
+				.function_expression_space_before_parentheses,
+			function_expression_space_after_function_keyword: value
+				.function_expression_space_after_function_keyword,
+			get_accessor_space_before_parentheses: value.get_accessor_space_before_parentheses,
+			if_statement_space_after_if_keyword: value.if_statement_space_after_if_keyword,
+			import_declaration_space_surrounding_named_imports: value
+				.import_declaration_space_surrounding_named_imports,
+			jsx_expression_container_space_surrounding_expression: value
+				.jsx_expression_container_space_surrounding_expression,
+			jsx_self_closing_element_space_before_slash: value
+				.jsx_self_closing_element_space_before_slash,
+			method_space_before_parentheses: value.method_space_before_parentheses,
+			object_expression_space_surrounding_properties: value
+				.object_expression_space_surrounding_properties,
+			object_pattern_space_surrounding_properties: value
+				.object_pattern_space_surrounding_properties,
+			set_accessor_space_before_parentheses: value.set_accessor_space_before_parentheses,
+			space_surrounding_properties: value.space_surrounding_properties,
+			tagged_template_space_before_literal: value.tagged_template_space_before_literal,
+			type_annotation_space_before_colon: value.type_annotation_space_before_colon,
+			type_assertion_space_before_expression: value.type_assertion_space_before_expression,
+			type_literal_space_surrounding_properties: value
+				.type_literal_space_surrounding_properties,
+			while_statement_space_after_while_keyword: value
+				.while_statement_space_after_while_keyword,
+			arguments_space_around: value.arguments_space_around,
+			array_expression_space_around: value.array_expression_space_around,
+			array_pattern_space_around: value.array_pattern_space_around,
+			catch_clause_space_around: value.catch_clause_space_around,
+			do_while_statement_space_around: value.do_while_statement_space_around,
+			for_in_statement_space_around: value.for_in_statement_space_around,
+			for_of_statement_space_around: value.for_of_statement_space_around,
+			for_statement_space_around: value.for_statement_space_around,
+			if_statement_space_around: value.if_statement_space_around,
+			parameters_space_around: value.parameters_space_around,
+			paren_expression_space_around: value.paren_expression_space_around,
+			switch_statement_space_around: value.switch_statement_space_around,
+			tuple_type_space_around: value.tuple_type_space_around,
+			while_statement_space_around: value.while_statement_space_around,
+		}
 	}
 }
 // TODO: expose all the fields as properties?
@@ -1089,58 +1681,65 @@ impl PyConfiguration {
 		tuple_type_space_around: bool,
 		while_statement_space_around: bool,
 	) -> PyResult<Self> {
-		Ok(PyConfiguration::new(
+		Ok(PyConfiguration {
 			indent_width,
 			line_width,
 			use_tabs,
-			new_line_kind,
-			quote_style,
-			quote_props,
-			semi_colons,
+			new_line_kind: new_line_kind.to_string(),
+			quote_style: quote_style.to_string(),
+			quote_props: quote_props.to_string(),
+			semi_colons: semi_colons.to_string(),
 			file_indent_level,
-			arrow_function_use_parentheses,
+			arrow_function_use_parentheses: arrow_function_use_parentheses.to_string(),
 			binary_expression_line_per_expression,
 			conditional_expression_line_per_expression,
-			jsx_quote_style,
-			jsx_multi_line_parens,
+			jsx_quote_style: jsx_quote_style.to_string(),
+			jsx_multi_line_parens: jsx_multi_line_parens.to_string(),
 			jsx_force_new_lines_surrounding_content,
-			jsx_opening_element_bracket_position,
-			jsx_self_closing_element_bracket_position,
+			jsx_opening_element_bracket_position: jsx_opening_element_bracket_position.to_string(),
+			jsx_self_closing_element_bracket_position: jsx_self_closing_element_bracket_position
+				.to_string(),
 			member_expression_line_per_expression,
-			type_literal_separator_kind_single_line,
-			type_literal_separator_kind_multi_line,
-			module_sort_import_declarations,
-			module_sort_export_declarations,
-			import_declaration_sort_named_imports,
-			import_declaration_sort_type_only_imports,
-			export_declaration_sort_named_exports,
-			export_declaration_sort_type_only_exports,
-			ignore_node_comment_text.to_string(),
-			ignore_file_comment_text.to_string(),
-			arrow_function_brace_position,
-			class_declaration_brace_position,
-			class_expression_brace_position,
-			constructor_brace_position,
-			do_while_statement_brace_position,
-			enum_declaration_brace_position,
-			get_accessor_brace_position,
-			if_statement_brace_position,
-			interface_declaration_brace_position,
-			for_statement_brace_position,
-			for_in_statement_brace_position,
-			for_of_statement_brace_position,
-			function_declaration_brace_position,
-			function_expression_brace_position,
-			method_brace_position,
-			module_declaration_brace_position,
-			set_accessor_brace_position,
-			static_block_brace_position,
-			switch_case_brace_position,
-			switch_statement_brace_position,
-			try_statement_brace_position,
-			while_statement_brace_position,
-			arguments_prefer_hanging,
-			array_expression_prefer_hanging,
+			type_literal_separator_kind_single_line: type_literal_separator_kind_single_line
+				.to_string(),
+			type_literal_separator_kind_multi_line: type_literal_separator_kind_multi_line
+				.to_string(),
+			module_sort_import_declarations: module_sort_import_declarations.to_string(),
+			module_sort_export_declarations: module_sort_export_declarations.to_string(),
+			import_declaration_sort_named_imports: import_declaration_sort_named_imports
+				.to_string(),
+			import_declaration_sort_type_only_imports: import_declaration_sort_type_only_imports
+				.to_string(),
+			export_declaration_sort_named_exports: export_declaration_sort_named_exports
+				.to_string(),
+			export_declaration_sort_type_only_exports: export_declaration_sort_type_only_exports
+				.to_string(),
+			ignore_node_comment_text: ignore_node_comment_text.to_string(),
+			ignore_file_comment_text: ignore_file_comment_text.to_string(),
+			arrow_function_brace_position: arrow_function_brace_position.to_string(),
+			class_declaration_brace_position: class_declaration_brace_position.to_string(),
+			class_expression_brace_position: class_expression_brace_position.to_string(),
+			constructor_brace_position: constructor_brace_position.to_string(),
+			do_while_statement_brace_position: do_while_statement_brace_position.to_string(),
+			enum_declaration_brace_position: enum_declaration_brace_position.to_string(),
+			get_accessor_brace_position: get_accessor_brace_position.to_string(),
+			if_statement_brace_position: if_statement_brace_position.to_string(),
+			interface_declaration_brace_position: interface_declaration_brace_position.to_string(),
+			for_statement_brace_position: for_statement_brace_position.to_string(),
+			for_in_statement_brace_position: for_in_statement_brace_position.to_string(),
+			for_of_statement_brace_position: for_of_statement_brace_position.to_string(),
+			function_declaration_brace_position: function_declaration_brace_position.to_string(),
+			function_expression_brace_position: function_expression_brace_position.to_string(),
+			method_brace_position: method_brace_position.to_string(),
+			module_declaration_brace_position: module_declaration_brace_position.to_string(),
+			set_accessor_brace_position: set_accessor_brace_position.to_string(),
+			static_block_brace_position: static_block_brace_position.to_string(),
+			switch_case_brace_position: switch_case_brace_position.to_string(),
+			switch_statement_brace_position: switch_statement_brace_position.to_string(),
+			try_statement_brace_position: try_statement_brace_position.to_string(),
+			while_statement_brace_position: while_statement_brace_position.to_string(),
+			arguments_prefer_hanging: arguments_prefer_hanging.to_string(),
+			array_expression_prefer_hanging: array_expression_prefer_hanging.to_string(),
 			array_pattern_prefer_hanging,
 			do_while_statement_prefer_hanging,
 			export_declaration_prefer_hanging,
@@ -1154,44 +1753,50 @@ impl PyConfiguration {
 			jsx_attributes_prefer_hanging,
 			object_expression_prefer_hanging,
 			object_pattern_prefer_hanging,
-			parameters_prefer_hanging,
+			parameters_prefer_hanging: parameters_prefer_hanging.to_string(),
 			sequence_expression_prefer_hanging,
 			switch_statement_prefer_hanging,
-			tuple_type_prefer_hanging,
+			tuple_type_prefer_hanging: tuple_type_prefer_hanging.to_string(),
 			type_literal_prefer_hanging,
-			type_parameters_prefer_hanging,
+			type_parameters_prefer_hanging: type_parameters_prefer_hanging.to_string(),
 			union_and_intersection_type_prefer_hanging,
 			variable_statement_prefer_hanging,
 			while_statement_prefer_hanging,
-			enum_declaration_member_spacing,
-			if_statement_next_control_flow_position,
-			try_statement_next_control_flow_position,
-			do_while_statement_next_control_flow_position,
-			binary_expression_operator_position,
-			conditional_expression_operator_position,
-			conditional_type_operator_position,
-			if_statement_single_body_position,
-			for_statement_single_body_position,
-			for_in_statement_single_body_position,
-			for_of_statement_single_body_position,
-			while_statement_single_body_position,
-			arguments_trailing_commas,
-			parameters_trailing_commas,
-			array_expression_trailing_commas,
-			array_pattern_trailing_commas,
-			enum_declaration_trailing_commas,
-			export_declaration_trailing_commas,
-			import_declaration_trailing_commas,
-			object_pattern_trailing_commas,
-			object_expression_trailing_commas,
-			tuple_type_trailing_commas,
-			type_literal_trailing_commas,
-			type_parameters_trailing_commas,
-			if_statement_use_braces,
-			for_statement_use_braces,
-			for_of_statement_use_braces,
-			for_in_statement_use_braces,
-			while_statement_use_braces,
+			enum_declaration_member_spacing: enum_declaration_member_spacing.to_string(),
+			if_statement_next_control_flow_position: if_statement_next_control_flow_position
+				.to_string(),
+			try_statement_next_control_flow_position: try_statement_next_control_flow_position
+				.to_string(),
+			do_while_statement_next_control_flow_position:
+				do_while_statement_next_control_flow_position.to_string(),
+			binary_expression_operator_position: binary_expression_operator_position.to_string(),
+			conditional_expression_operator_position: conditional_expression_operator_position
+				.to_string(),
+			conditional_type_operator_position: conditional_type_operator_position.to_string(),
+			if_statement_single_body_position: if_statement_single_body_position.to_string(),
+			for_statement_single_body_position: for_statement_single_body_position.to_string(),
+			for_in_statement_single_body_position: for_in_statement_single_body_position
+				.to_string(),
+			for_of_statement_single_body_position: for_of_statement_single_body_position
+				.to_string(),
+			while_statement_single_body_position: while_statement_single_body_position.to_string(),
+			arguments_trailing_commas: arguments_trailing_commas.to_string(),
+			parameters_trailing_commas: parameters_trailing_commas.to_string(),
+			array_expression_trailing_commas: array_expression_trailing_commas.to_string(),
+			array_pattern_trailing_commas: array_pattern_trailing_commas.to_string(),
+			enum_declaration_trailing_commas: enum_declaration_trailing_commas.to_string(),
+			export_declaration_trailing_commas: export_declaration_trailing_commas.to_string(),
+			import_declaration_trailing_commas: import_declaration_trailing_commas.to_string(),
+			object_pattern_trailing_commas: object_pattern_trailing_commas.to_string(),
+			object_expression_trailing_commas: object_expression_trailing_commas.to_string(),
+			tuple_type_trailing_commas: tuple_type_trailing_commas.to_string(),
+			type_literal_trailing_commas: type_literal_trailing_commas.to_string(),
+			type_parameters_trailing_commas: type_parameters_trailing_commas.to_string(),
+			if_statement_use_braces: if_statement_use_braces.to_string(),
+			for_statement_use_braces: for_statement_use_braces.to_string(),
+			for_of_statement_use_braces: for_of_statement_use_braces.to_string(),
+			for_in_statement_use_braces: for_in_statement_use_braces.to_string(),
+			while_statement_use_braces: while_statement_use_braces.to_string(),
 			array_expression_prefer_single_line,
 			array_pattern_prefer_single_line,
 			arguments_prefer_single_line,
@@ -1218,8 +1823,8 @@ impl PyConfiguration {
 			variable_statement_prefer_single_line,
 			import_declaration_force_single_line,
 			export_declaration_force_single_line,
-			export_declaration_force_multi_line,
-			import_declaration_force_multi_line,
+			export_declaration_force_multi_line: export_declaration_force_multi_line.to_string(),
+			import_declaration_force_multi_line: import_declaration_force_multi_line.to_string(),
 			binary_expression_space_surrounding_bitwise_and_arithmetic_operator,
 			comment_line_force_space_after_slashes,
 			construct_signature_space_after_new_keyword,
@@ -1263,6 +1868,6 @@ impl PyConfiguration {
 			switch_statement_space_around,
 			tuple_type_space_around,
 			while_statement_space_around,
-		))
+		})
 	}
 }

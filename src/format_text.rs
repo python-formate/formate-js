@@ -64,7 +64,7 @@ pub fn format_text_py(options: PyFormatTextOptions) -> PyResult<Option<String>> 
 		path: &options.path,
 		extension: options.extension.as_deref(),
 		text: options.text,
-		config: &options.config.0,
+		config: &options.config.into(),
 		external_formatter: None,
 		// TODO: external_formatter: options.external_formatter,
 	}) {

@@ -2043,6 +2043,6 @@ impl PyConfigurationBuilder {
 
 	fn build<'a>(slf: PyRefMut<'a, Self>) -> PyResult<PyConfiguration> {
 		let configuration = slf.0.build();
-		Ok(PyConfiguration(configuration))
+		Ok(PyConfiguration::from(configuration))
 	}
 }
