@@ -1,4 +1,5 @@
 use dprint_core::configuration::NewLineKind;
+use dprint_core::configuration::RECOMMENDED_GLOBAL_CONFIGURATION;
 use dprint_plugin_typescript::configuration::Configuration;
 use dprint_plugin_typescript::configuration::{
 	BracePosition, ForceMultiLine, JsxMultiLineParens, JsxQuoteStyle, MemberSpacing,
@@ -961,185 +962,248 @@ impl From<Configuration> for PyConfiguration {
 		}
 	}
 }
-// TODO: expose all the fields as properties?
+
+const SEMI_COLONS_DEFAULT: &str = "prefer";
+const BRACE_POSITION_DEFAULT: &str = "sameLineUnlessHanging";
+const NEXT_CONTROL_FLOW_POSITION_DEFAULT: &str = "sameLine";
+const OPERATOR_POSITION_DEFAULT: &str = "nextLine";
+const SINGLE_BODY_POSITION_DEFAULT: &str = "maintain";
+const TRAILING_COMMAS_DEFAULT: &str = "onlyMultiLine";
+const USE_BRACES_DEFAULT: &str = "whenNotSingleLine";
+const PREFER_HANGING_DEFAULT: bool = false;
+const PREFER_HANGING_GRANULAR_DEFAULT: &str = "never";
+const PREFER_SINGLE_LINE_DEFAULT: bool = false;
+const SPACE_SURROUNDING_PROPERTIES_DEFAULT: bool = true;
+const TYPE_LITERAL_SEPARATOR_KIND_DEFAULT: &str = "semiColon";
+const QUOTE_STYLE_DEFAULT: &str = "alwaysDouble";
+const QUOTE_PROPS_DEFAULT: &str = "preserve";
+const SPACE_AROUND_DEFAULT: bool = false;
+const JSX_BRACKET_POSITION_DEFAULT: &str = "nextLine";
+
+const NEW_LINE_KIND_DEFAULT: &str = "lf";
+const FILE_INDENT_LEVEL_DEFAULT: u32 = 0;
+const ARROW_FUNCTION_USE_PARENTHESES_DEFAULT: &str = "maintain";
+const BINARY_EXPRESSION_LINE_PER_EXPRESSION_DEFAULT: bool = false;
+const CONDITIONAL_EXPRESSION_LINE_PER_EXPRESSION_DEFAULT: bool = true;
+const JSX_QUOTE_STYLE_DEFAULT: &str = "preferDouble";
+const JSX_MULTI_LINE_PARENS_DEFAULT: &str = "prefer";
+const JSX_FORCE_NEW_LINES_SURROUNDING_CONTENT_DEFAULT: bool = false;
+const MEMBER_EXPRESSION_LINE_PER_EXPRESSION_DEFAULT: bool = false;
+const MODULE_SORT_IMPORT_DECLARATIONS_DEFAULT: &str = "caseInsensitive";
+const MODULE_SORT_EXPORT_DECLARATIONS_DEFAULT: &str = "caseInsensitive";
+const IMPORT_DECLARATION_SORT_NAMED_IMPORTS_DEFAULT: &str = "caseInsensitive";
+const IMPORT_DECLARATION_SORT_TYPE_ONLY_IMPORTS_DEFAULT: &str = "none";
+const EXPORT_DECLARATION_SORT_NAMED_EXPORTS_DEFAULT: &str = "caseInsensitive";
+const EXPORT_DECLARATION_SORT_TYPE_ONLY_EXPORTS_DEFAULT: &str = "none";
+const IGNORE_NODE_COMMENT_TEXT_DEFAULT: &str = "dprint-ignore";
+const IGNORE_FILE_COMMENT_TEXT_DEFAULT: &str = "dprint-ignore-file";
+const ENUM_DECLARATION_MEMBER_SPACING_DEFAULT: &str = "maintain";
+const IMPORT_DECLARATION_FORCE_SINGLE_LINE_DEFAULT: bool = false;
+const EXPORT_DECLARATION_FORCE_SINGLE_LINE_DEFAULT: bool = false;
+const EXPORT_DECLARATION_FORCE_MULTI_LINE_DEFAULT: &str = "never";
+const IMPORT_DECLARATION_FORCE_MULTI_LINE_DEFAULT: &str = "never";
+const BINARY_EXPRESSION_SPACE_SURROUNDING_BITWISE_AND_ARITHMETIC_OPERATOR_DEFAULT: bool = true;
+const COMMENT_LINE_FORCE_SPACE_AFTER_SLASHES_DEFAULT: bool = true;
+const CONSTRUCT_SIGNATURE_SPACE_AFTER_NEW_KEYWORD_DEFAULT: bool = false;
+const CONSTRUCTOR_SPACE_BEFORE_PARENTHESES_DEFAULT: bool = false;
+const CONSTRUCTOR_TYPE_SPACE_AFTER_NEW_KEYWORD_DEFAULT: bool = false;
+const DO_WHILE_STATEMENT_SPACE_AFTER_WHILE_KEYWORD_DEFAULT: bool = true;
+const EXPORT_DECLARATION_SPACE_SURROUNDING_NAMED_EXPORTS_DEFAULT: bool = true;
+const FOR_STATEMENT_SPACE_AFTER_FOR_KEYWORD_DEFAULT: bool = true;
+const FOR_STATEMENT_SPACE_AFTER_SEMI_COLONS_DEFAULT: bool = true;
+const FOR_IN_STATEMENT_SPACE_AFTER_FOR_KEYWORD_DEFAULT: bool = true;
+const FOR_OF_STATEMENT_SPACE_AFTER_FOR_KEYWORD_DEFAULT: bool = true;
+const FUNCTION_DECLARATION_SPACE_BEFORE_PARENTHESES_DEFAULT: bool = false;
+const FUNCTION_EXPRESSION_SPACE_BEFORE_PARENTHESES_DEFAULT: bool = false;
+const FUNCTION_EXPRESSION_SPACE_AFTER_FUNCTION_KEYWORD_DEFAULT: bool = false;
+const GET_ACCESSOR_SPACE_BEFORE_PARENTHESES_DEFAULT: bool = false;
+const IF_STATEMENT_SPACE_AFTER_IF_KEYWORD_DEFAULT: bool = true;
+const IMPORT_DECLARATION_SPACE_SURROUNDING_NAMED_IMPORTS_DEFAULT: bool = true;
+const JSX_EXPRESSION_CONTAINER_SPACE_SURROUNDING_EXPRESSION_DEFAULT: bool = false;
+const JSX_SELF_CLOSING_ELEMENT_SPACE_BEFORE_SLASH_DEFAULT: bool = true;
+const SET_ACCESSOR_SPACE_BEFORE_PARENTHESES_DEFAULT: bool = false;
+const TAGGED_TEMPLATE_SPACE_BEFORE_LITERAL_DEFAULT: bool = false;
+const TYPE_ANNOTATION_SPACE_BEFORE_COLON_DEFAULT: bool = false;
+const TYPE_ASSERTION_SPACE_BEFORE_EXPRESSION_DEFAULT: bool = true;
+const WHILE_STATEMENT_SPACE_AFTER_WHILE_KEYWORD_DEFAULT: bool = true;
 
 #[pymethods]
 impl PyConfiguration {
 	#![allow(clippy::too_many_arguments)]
 	#[pyo3(signature = (
-		indent_width: "int" = 2,
-		line_width: "int" = 120,
-		use_tabs: "bool" = false,
-		new_line_kind: "str" = "lf",
-		quote_style: "str" = "alwaysDouble",
-		quote_props: "str" = "preserve",
-		semi_colons: "str" = "prefer",
-		file_indent_level: "int" = 0,
-		arrow_function_use_parentheses: "str" = "maintain",
-		binary_expression_line_per_expression: "bool" = false,
-		conditional_expression_line_per_expression: "bool" = true,
-		jsx_quote_style: "str" = "preferDouble",
-		jsx_multi_line_parens: "str" = "prefer",
-		jsx_force_new_lines_surrounding_content: "bool" = false,
-		jsx_opening_element_bracket_position: "str" = "nextLine",
-		jsx_self_closing_element_bracket_position: "str" = "nextLine",
-		member_expression_line_per_expression: "bool" = false,
-		type_literal_separator_kind_single_line: "str" = "semiColon",
-		type_literal_separator_kind_multi_line: "str" = "semiColon",
-		module_sort_import_declarations: "str" = "caseInsensitive",
-		module_sort_export_declarations: "str" = "caseInsensitive",
-		import_declaration_sort_named_imports: "str" = "caseInsensitive",
-		import_declaration_sort_type_only_imports: "str" = "none",
-		export_declaration_sort_named_exports: "str" = "caseInsensitive",
-		export_declaration_sort_type_only_exports: "str" = "none",
-		ignore_node_comment_text: "str" = "dprint-ignore",
-		ignore_file_comment_text: "str" = "dprint-ignore-file",
-		arrow_function_brace_position: "str" = "sameLineUnlessHanging",
-		class_declaration_brace_position: "str" = "sameLineUnlessHanging",
-		class_expression_brace_position: "str" = "sameLineUnlessHanging",
-		constructor_brace_position: "str" = "sameLineUnlessHanging",
-		do_while_statement_brace_position: "str" = "sameLineUnlessHanging",
-		enum_declaration_brace_position: "str" = "sameLineUnlessHanging",
-		get_accessor_brace_position: "str" = "sameLineUnlessHanging",
-		if_statement_brace_position: "str" = "sameLineUnlessHanging",
-		interface_declaration_brace_position: "str" = "sameLineUnlessHanging",
-		for_statement_brace_position: "str" = "sameLineUnlessHanging",
-		for_in_statement_brace_position: "str" = "sameLineUnlessHanging",
-		for_of_statement_brace_position: "str" = "sameLineUnlessHanging",
-		function_declaration_brace_position: "str" = "sameLineUnlessHanging",
-		function_expression_brace_position: "str" = "sameLineUnlessHanging",
-		method_brace_position: "str" = "sameLineUnlessHanging",
-		module_declaration_brace_position: "str" = "sameLineUnlessHanging",
-		set_accessor_brace_position: "str" = "sameLineUnlessHanging",
-		static_block_brace_position: "str" = "sameLineUnlessHanging",
-		switch_case_brace_position: "str" = "sameLineUnlessHanging",
-		switch_statement_brace_position: "str" = "sameLineUnlessHanging",
-		try_statement_brace_position: "str" = "sameLineUnlessHanging",
-		while_statement_brace_position: "str" = "sameLineUnlessHanging",
-		arguments_prefer_hanging: "str" = "never",
-		array_expression_prefer_hanging: "str" = "never",
-		array_pattern_prefer_hanging: "bool" = false,
-		do_while_statement_prefer_hanging: "bool" = false,
-		export_declaration_prefer_hanging: "bool" = false,
-		extends_clause_prefer_hanging: "bool" = false,
-		for_statement_prefer_hanging: "bool" = false,
-		for_in_statement_prefer_hanging: "bool" = false,
-		for_of_statement_prefer_hanging: "bool" = false,
-		if_statement_prefer_hanging: "bool" = false,
-		implements_clause_prefer_hanging: "bool" = false,
-		import_declaration_prefer_hanging: "bool" = false,
-		jsx_attributes_prefer_hanging: "bool" = false,
-		object_expression_prefer_hanging: "bool" = false,
-		object_pattern_prefer_hanging: "bool" = false,
-		parameters_prefer_hanging: "str" = "never",
-		sequence_expression_prefer_hanging: "bool" = false,
-		switch_statement_prefer_hanging: "bool" = false,
-		tuple_type_prefer_hanging: "str" = "never",
-		type_literal_prefer_hanging: "bool" = false,
-		type_parameters_prefer_hanging: "str" = "never",
-		union_and_intersection_type_prefer_hanging: "bool" = false,
-		variable_statement_prefer_hanging: "bool" = false,
-		while_statement_prefer_hanging: "bool" = false,
-		enum_declaration_member_spacing: "str" = "maintain",
-		if_statement_next_control_flow_position: "str" = "sameLine",
-		try_statement_next_control_flow_position: "str" = "sameLine",
-		do_while_statement_next_control_flow_position: "str" = "sameLine",
-		binary_expression_operator_position: "str" = "nextLine",
-		conditional_expression_operator_position: "str" = "nextLine",
-		conditional_type_operator_position: "str" = "nextLine",
-		if_statement_single_body_position: "str" = "maintain",
-		for_statement_single_body_position: "str" = "maintain",
-		for_in_statement_single_body_position: "str" = "maintain",
-		for_of_statement_single_body_position: "str" = "maintain",
-		while_statement_single_body_position: "str" = "maintain",
-		arguments_trailing_commas: "str" = "onlyMultiLine",
-		parameters_trailing_commas: "str" = "onlyMultiLine",
-		array_expression_trailing_commas: "str" = "onlyMultiLine",
-		array_pattern_trailing_commas: "str" = "onlyMultiLine",
-		enum_declaration_trailing_commas: "str" = "onlyMultiLine",
-		export_declaration_trailing_commas: "str" = "onlyMultiLine",
-		import_declaration_trailing_commas: "str" = "onlyMultiLine",
-		object_pattern_trailing_commas: "str" = "onlyMultiLine",
-		object_expression_trailing_commas: "str" = "onlyMultiLine",
-		tuple_type_trailing_commas: "str" = "onlyMultiLine",
-		type_literal_trailing_commas: "str" = "onlyMultiLine",
-		type_parameters_trailing_commas: "str" = "onlyMultiLine",
-		if_statement_use_braces: "str" = "whenNotSingleLine",
-		for_statement_use_braces: "str" = "whenNotSingleLine",
-		for_of_statement_use_braces: "str" = "whenNotSingleLine",
-		for_in_statement_use_braces: "str" = "whenNotSingleLine",
-		while_statement_use_braces: "str" = "whenNotSingleLine",
-		array_expression_prefer_single_line: "bool" = false,
-		array_pattern_prefer_single_line: "bool" = false,
-		arguments_prefer_single_line: "bool" = false,
-		binary_expression_prefer_single_line: "bool" = false,
-		computed_prefer_single_line: "bool" = false,
-		conditional_expression_prefer_single_line: "bool" = false,
-		conditional_type_prefer_single_line: "bool" = false,
-		decorators_prefer_single_line: "bool" = false,
-		export_declaration_prefer_single_line: "bool" = true,
-		for_statement_prefer_single_line: "bool" = false,
-		import_declaration_prefer_single_line: "bool" = true,
-		jsx_attributes_prefer_single_line: "bool" = false,
-		jsx_element_prefer_single_line: "bool" = false,
-		mapped_type_prefer_single_line: "bool" = false,
-		member_expression_prefer_single_line: "bool" = false,
-		object_expression_prefer_single_line: "bool" = false,
-		object_pattern_prefer_single_line: "bool" = false,
-		parameters_prefer_single_line: "bool" = false,
-		parentheses_prefer_single_line: "bool" = false,
-		tuple_type_prefer_single_line: "bool" = false,
-		type_literal_prefer_single_line: "bool" = false,
-		type_parameters_prefer_single_line: "bool" = false,
-		union_and_intersection_type_prefer_single_line: "bool" = false,
-		variable_statement_prefer_single_line: "bool" = false,
-		import_declaration_force_single_line: "bool" = false,
-		export_declaration_force_single_line: "bool" = false,
-		export_declaration_force_multi_line: "str" = "never",
-		import_declaration_force_multi_line: "str" = "never",
-		binary_expression_space_surrounding_bitwise_and_arithmetic_operator: "bool" = true,
-		comment_line_force_space_after_slashes: "bool" = true,
-		construct_signature_space_after_new_keyword: "bool" = false,
-		constructor_space_before_parentheses: "bool" = false,
-		constructor_type_space_after_new_keyword: "bool" = false,
-		do_while_statement_space_after_while_keyword: "bool" = true,
-		export_declaration_space_surrounding_named_exports: "bool" = true,
-		for_statement_space_after_for_keyword: "bool" = true,
-		for_statement_space_after_semi_colons: "bool" = true,
-		for_in_statement_space_after_for_keyword: "bool" = true,
-		for_of_statement_space_after_for_keyword: "bool" = true,
-		function_declaration_space_before_parentheses: "bool" = false,
-		function_expression_space_before_parentheses: "bool" = false,
-		function_expression_space_after_function_keyword: "bool" = false,
-		get_accessor_space_before_parentheses: "bool" = false,
-		if_statement_space_after_if_keyword: "bool" = true,
-		import_declaration_space_surrounding_named_imports: "bool" = true,
-		jsx_expression_container_space_surrounding_expression: "bool" = false,
-		jsx_self_closing_element_space_before_slash: "bool" = true,
-		method_space_before_parentheses: "bool" = false,
-		object_expression_space_surrounding_properties: "bool" = true,
-		object_pattern_space_surrounding_properties: "bool" = true,
-		set_accessor_space_before_parentheses: "bool" = false,
-		space_surrounding_properties: "bool" = true,
-		tagged_template_space_before_literal: "bool" = false,
-		type_annotation_space_before_colon: "bool" = false,
-		type_assertion_space_before_expression: "bool" = true,
-		type_literal_space_surrounding_properties: "bool" = true,
-		while_statement_space_after_while_keyword: "bool" = true,
-		arguments_space_around: "bool" = false,
-		array_expression_space_around: "bool" = false,
-		array_pattern_space_around: "bool" = false,
-		catch_clause_space_around: "bool" = false,
-		do_while_statement_space_around: "bool" = false,
-		for_in_statement_space_around: "bool" = false,
-		for_of_statement_space_around: "bool" = false,
-		for_statement_space_around: "bool" = false,
-		if_statement_space_around: "bool" = false,
-		parameters_space_around: "bool" = false,
-		paren_expression_space_around: "bool" = false,
-		switch_statement_space_around: "bool" = false,
-		tuple_type_space_around: "bool" = false,
-		while_statement_space_around: "bool" = false,
+		indent_width: "int" = RECOMMENDED_GLOBAL_CONFIGURATION.indent_width,
+		line_width: "int" = RECOMMENDED_GLOBAL_CONFIGURATION.line_width,
+		use_tabs: "bool" = RECOMMENDED_GLOBAL_CONFIGURATION.use_tabs,
+		new_line_kind: "str" = NEW_LINE_KIND_DEFAULT,
+		quote_style: "str" = QUOTE_STYLE_DEFAULT,
+		quote_props: "str" = QUOTE_PROPS_DEFAULT,
+		semi_colons: "str" = SEMI_COLONS_DEFAULT,
+		file_indent_level: "int" = FILE_INDENT_LEVEL_DEFAULT,
+		arrow_function_use_parentheses: "str" = ARROW_FUNCTION_USE_PARENTHESES_DEFAULT,
+		binary_expression_line_per_expression: "bool" = BINARY_EXPRESSION_LINE_PER_EXPRESSION_DEFAULT,
+		conditional_expression_line_per_expression: "bool" = CONDITIONAL_EXPRESSION_LINE_PER_EXPRESSION_DEFAULT,
+		jsx_quote_style: "str" = JSX_QUOTE_STYLE_DEFAULT,
+		jsx_multi_line_parens: "str" = JSX_MULTI_LINE_PARENS_DEFAULT,
+		jsx_force_new_lines_surrounding_content: "bool" = JSX_FORCE_NEW_LINES_SURROUNDING_CONTENT_DEFAULT,
+		jsx_opening_element_bracket_position: "str" = JSX_BRACKET_POSITION_DEFAULT,
+		jsx_self_closing_element_bracket_position: "str" = JSX_BRACKET_POSITION_DEFAULT,
+		member_expression_line_per_expression: "bool" = MEMBER_EXPRESSION_LINE_PER_EXPRESSION_DEFAULT,
+		type_literal_separator_kind_single_line: "str" = TYPE_LITERAL_SEPARATOR_KIND_DEFAULT,
+		type_literal_separator_kind_multi_line: "str" = TYPE_LITERAL_SEPARATOR_KIND_DEFAULT,
+		module_sort_import_declarations: "str" = MODULE_SORT_IMPORT_DECLARATIONS_DEFAULT,
+		module_sort_export_declarations: "str" = MODULE_SORT_EXPORT_DECLARATIONS_DEFAULT,
+		import_declaration_sort_named_imports: "str" = IMPORT_DECLARATION_SORT_NAMED_IMPORTS_DEFAULT,
+		import_declaration_sort_type_only_imports: "str" = IMPORT_DECLARATION_SORT_TYPE_ONLY_IMPORTS_DEFAULT,
+		export_declaration_sort_named_exports: "str" = EXPORT_DECLARATION_SORT_NAMED_EXPORTS_DEFAULT,
+		export_declaration_sort_type_only_exports: "str" = EXPORT_DECLARATION_SORT_TYPE_ONLY_EXPORTS_DEFAULT,
+		ignore_node_comment_text: "str" = IGNORE_NODE_COMMENT_TEXT_DEFAULT,
+		ignore_file_comment_text: "str" = IGNORE_FILE_COMMENT_TEXT_DEFAULT,
+		arrow_function_brace_position: "str" = BRACE_POSITION_DEFAULT,
+		class_declaration_brace_position: "str" = BRACE_POSITION_DEFAULT,
+		class_expression_brace_position: "str" = BRACE_POSITION_DEFAULT,
+		constructor_brace_position: "str" = BRACE_POSITION_DEFAULT,
+		do_while_statement_brace_position: "str" = BRACE_POSITION_DEFAULT,
+		enum_declaration_brace_position: "str" = BRACE_POSITION_DEFAULT,
+		get_accessor_brace_position: "str" = BRACE_POSITION_DEFAULT,
+		if_statement_brace_position: "str" = BRACE_POSITION_DEFAULT,
+		interface_declaration_brace_position: "str" = BRACE_POSITION_DEFAULT,
+		for_statement_brace_position: "str" = BRACE_POSITION_DEFAULT,
+		for_in_statement_brace_position: "str" = BRACE_POSITION_DEFAULT,
+		for_of_statement_brace_position: "str" = BRACE_POSITION_DEFAULT,
+		function_declaration_brace_position: "str" = BRACE_POSITION_DEFAULT,
+		function_expression_brace_position: "str" = BRACE_POSITION_DEFAULT,
+		method_brace_position: "str" = BRACE_POSITION_DEFAULT,
+		module_declaration_brace_position: "str" = BRACE_POSITION_DEFAULT,
+		set_accessor_brace_position: "str" = BRACE_POSITION_DEFAULT,
+		static_block_brace_position: "str" = BRACE_POSITION_DEFAULT,
+		switch_case_brace_position: "str" = BRACE_POSITION_DEFAULT,
+		switch_statement_brace_position: "str" = BRACE_POSITION_DEFAULT,
+		try_statement_brace_position: "str" = BRACE_POSITION_DEFAULT,
+		while_statement_brace_position: "str" = BRACE_POSITION_DEFAULT,
+		arguments_prefer_hanging: "str" = PREFER_HANGING_GRANULAR_DEFAULT,
+		array_expression_prefer_hanging: "str" = PREFER_HANGING_GRANULAR_DEFAULT,
+		array_pattern_prefer_hanging: "bool" = PREFER_HANGING_DEFAULT,
+		do_while_statement_prefer_hanging: "bool" = PREFER_HANGING_DEFAULT,
+		export_declaration_prefer_hanging: "bool" = PREFER_HANGING_DEFAULT,
+		extends_clause_prefer_hanging: "bool" = PREFER_HANGING_DEFAULT,
+		for_statement_prefer_hanging: "bool" = PREFER_HANGING_DEFAULT,
+		for_in_statement_prefer_hanging: "bool" = PREFER_HANGING_DEFAULT,
+		for_of_statement_prefer_hanging: "bool" = PREFER_HANGING_DEFAULT,
+		if_statement_prefer_hanging: "bool" = PREFER_HANGING_DEFAULT,
+		implements_clause_prefer_hanging: "bool" = PREFER_HANGING_DEFAULT,
+		import_declaration_prefer_hanging: "bool" = PREFER_HANGING_DEFAULT,
+		jsx_attributes_prefer_hanging: "bool" = PREFER_HANGING_DEFAULT,
+		object_expression_prefer_hanging: "bool" = PREFER_HANGING_DEFAULT,
+		object_pattern_prefer_hanging: "bool" = PREFER_HANGING_DEFAULT,
+		parameters_prefer_hanging: "str" = PREFER_HANGING_GRANULAR_DEFAULT,
+		sequence_expression_prefer_hanging: "bool" = PREFER_HANGING_DEFAULT,
+		switch_statement_prefer_hanging: "bool" = PREFER_HANGING_DEFAULT,
+		tuple_type_prefer_hanging: "str" = PREFER_HANGING_GRANULAR_DEFAULT,
+		type_literal_prefer_hanging: "bool" = PREFER_HANGING_DEFAULT,
+		type_parameters_prefer_hanging: "str" = PREFER_HANGING_GRANULAR_DEFAULT,
+		union_and_intersection_type_prefer_hanging: "bool" = PREFER_HANGING_DEFAULT,
+		variable_statement_prefer_hanging: "bool" = PREFER_HANGING_DEFAULT,
+		while_statement_prefer_hanging: "bool" = PREFER_HANGING_DEFAULT,
+		enum_declaration_member_spacing: "str" = ENUM_DECLARATION_MEMBER_SPACING_DEFAULT,
+		if_statement_next_control_flow_position: "str" = NEXT_CONTROL_FLOW_POSITION_DEFAULT,
+		try_statement_next_control_flow_position: "str" = NEXT_CONTROL_FLOW_POSITION_DEFAULT,
+		do_while_statement_next_control_flow_position: "str" = NEXT_CONTROL_FLOW_POSITION_DEFAULT,
+		binary_expression_operator_position: "str" = OPERATOR_POSITION_DEFAULT,
+		conditional_expression_operator_position: "str" = OPERATOR_POSITION_DEFAULT,
+		conditional_type_operator_position: "str" = OPERATOR_POSITION_DEFAULT,
+		if_statement_single_body_position: "str" = SINGLE_BODY_POSITION_DEFAULT,
+		for_statement_single_body_position: "str" = SINGLE_BODY_POSITION_DEFAULT,
+		for_in_statement_single_body_position: "str" = SINGLE_BODY_POSITION_DEFAULT,
+		for_of_statement_single_body_position: "str" = SINGLE_BODY_POSITION_DEFAULT,
+		while_statement_single_body_position: "str" = SINGLE_BODY_POSITION_DEFAULT,
+		arguments_trailing_commas: "str" = TRAILING_COMMAS_DEFAULT,
+		parameters_trailing_commas: "str" = TRAILING_COMMAS_DEFAULT,
+		array_expression_trailing_commas: "str" = TRAILING_COMMAS_DEFAULT,
+		array_pattern_trailing_commas: "str" = TRAILING_COMMAS_DEFAULT,
+		enum_declaration_trailing_commas: "str" = TRAILING_COMMAS_DEFAULT,
+		export_declaration_trailing_commas: "str" = TRAILING_COMMAS_DEFAULT,
+		import_declaration_trailing_commas: "str" = TRAILING_COMMAS_DEFAULT,
+		object_pattern_trailing_commas: "str" = TRAILING_COMMAS_DEFAULT,
+		object_expression_trailing_commas: "str" = TRAILING_COMMAS_DEFAULT,
+		tuple_type_trailing_commas: "str" = TRAILING_COMMAS_DEFAULT,
+		type_literal_trailing_commas: "str" = TRAILING_COMMAS_DEFAULT,
+		type_parameters_trailing_commas: "str" = TRAILING_COMMAS_DEFAULT,
+		if_statement_use_braces: "str" = USE_BRACES_DEFAULT,
+		for_statement_use_braces: "str" = USE_BRACES_DEFAULT,
+		for_of_statement_use_braces: "str" = USE_BRACES_DEFAULT,
+		for_in_statement_use_braces: "str" = USE_BRACES_DEFAULT,
+		while_statement_use_braces: "str" = USE_BRACES_DEFAULT,
+		array_expression_prefer_single_line: "bool" = PREFER_SINGLE_LINE_DEFAULT,
+		array_pattern_prefer_single_line: "bool" = PREFER_SINGLE_LINE_DEFAULT,
+		arguments_prefer_single_line: "bool" = PREFER_SINGLE_LINE_DEFAULT,
+		binary_expression_prefer_single_line: "bool" = PREFER_SINGLE_LINE_DEFAULT,
+		computed_prefer_single_line: "bool" = PREFER_SINGLE_LINE_DEFAULT,
+		conditional_expression_prefer_single_line: "bool" = PREFER_SINGLE_LINE_DEFAULT,
+		conditional_type_prefer_single_line: "bool" = PREFER_SINGLE_LINE_DEFAULT,
+		decorators_prefer_single_line: "bool" = PREFER_SINGLE_LINE_DEFAULT,
+		export_declaration_prefer_single_line: "bool" = PREFER_SINGLE_LINE_DEFAULT,
+		for_statement_prefer_single_line: "bool" = PREFER_SINGLE_LINE_DEFAULT,
+		import_declaration_prefer_single_line: "bool" = PREFER_SINGLE_LINE_DEFAULT,
+		jsx_attributes_prefer_single_line: "bool" = PREFER_SINGLE_LINE_DEFAULT,
+		jsx_element_prefer_single_line: "bool" = PREFER_SINGLE_LINE_DEFAULT,
+		mapped_type_prefer_single_line: "bool" = PREFER_SINGLE_LINE_DEFAULT,
+		member_expression_prefer_single_line: "bool" = PREFER_SINGLE_LINE_DEFAULT,
+		object_expression_prefer_single_line: "bool" = PREFER_SINGLE_LINE_DEFAULT,
+		object_pattern_prefer_single_line: "bool" = PREFER_SINGLE_LINE_DEFAULT,
+		parameters_prefer_single_line: "bool" = PREFER_SINGLE_LINE_DEFAULT,
+		parentheses_prefer_single_line: "bool" = PREFER_SINGLE_LINE_DEFAULT,
+		tuple_type_prefer_single_line: "bool" = PREFER_SINGLE_LINE_DEFAULT,
+		type_literal_prefer_single_line: "bool" = PREFER_SINGLE_LINE_DEFAULT,
+		type_parameters_prefer_single_line: "bool" = PREFER_SINGLE_LINE_DEFAULT,
+		union_and_intersection_type_prefer_single_line: "bool" = PREFER_SINGLE_LINE_DEFAULT,
+		variable_statement_prefer_single_line: "bool" = PREFER_SINGLE_LINE_DEFAULT,
+		import_declaration_force_single_line: "bool" = IMPORT_DECLARATION_FORCE_SINGLE_LINE_DEFAULT,
+		export_declaration_force_single_line: "bool" = EXPORT_DECLARATION_FORCE_SINGLE_LINE_DEFAULT,
+		export_declaration_force_multi_line: "str" = EXPORT_DECLARATION_FORCE_MULTI_LINE_DEFAULT,
+		import_declaration_force_multi_line: "str" = IMPORT_DECLARATION_FORCE_MULTI_LINE_DEFAULT,
+		binary_expression_space_surrounding_bitwise_and_arithmetic_operator: "bool" = BINARY_EXPRESSION_SPACE_SURROUNDING_BITWISE_AND_ARITHMETIC_OPERATOR_DEFAULT,
+		comment_line_force_space_after_slashes: "bool" = COMMENT_LINE_FORCE_SPACE_AFTER_SLASHES_DEFAULT,
+		construct_signature_space_after_new_keyword: "bool" = CONSTRUCT_SIGNATURE_SPACE_AFTER_NEW_KEYWORD_DEFAULT,
+		constructor_space_before_parentheses: "bool" = CONSTRUCTOR_SPACE_BEFORE_PARENTHESES_DEFAULT,
+		constructor_type_space_after_new_keyword: "bool" = CONSTRUCTOR_TYPE_SPACE_AFTER_NEW_KEYWORD_DEFAULT,
+		do_while_statement_space_after_while_keyword: "bool" = DO_WHILE_STATEMENT_SPACE_AFTER_WHILE_KEYWORD_DEFAULT,
+		export_declaration_space_surrounding_named_exports: "bool" = EXPORT_DECLARATION_SPACE_SURROUNDING_NAMED_EXPORTS_DEFAULT,
+		for_statement_space_after_for_keyword: "bool" = FOR_STATEMENT_SPACE_AFTER_FOR_KEYWORD_DEFAULT,
+		for_statement_space_after_semi_colons: "bool" = FOR_STATEMENT_SPACE_AFTER_SEMI_COLONS_DEFAULT,
+		for_in_statement_space_after_for_keyword: "bool" = FOR_IN_STATEMENT_SPACE_AFTER_FOR_KEYWORD_DEFAULT,
+		for_of_statement_space_after_for_keyword: "bool" = FOR_OF_STATEMENT_SPACE_AFTER_FOR_KEYWORD_DEFAULT,
+		function_declaration_space_before_parentheses: "bool" = FUNCTION_DECLARATION_SPACE_BEFORE_PARENTHESES_DEFAULT,
+		function_expression_space_before_parentheses: "bool" = FUNCTION_EXPRESSION_SPACE_BEFORE_PARENTHESES_DEFAULT,
+		function_expression_space_after_function_keyword: "bool" = FUNCTION_EXPRESSION_SPACE_AFTER_FUNCTION_KEYWORD_DEFAULT,
+		get_accessor_space_before_parentheses: "bool" = GET_ACCESSOR_SPACE_BEFORE_PARENTHESES_DEFAULT,
+		if_statement_space_after_if_keyword: "bool" = IF_STATEMENT_SPACE_AFTER_IF_KEYWORD_DEFAULT,
+		import_declaration_space_surrounding_named_imports: "bool" = IMPORT_DECLARATION_SPACE_SURROUNDING_NAMED_IMPORTS_DEFAULT,
+		jsx_expression_container_space_surrounding_expression: "bool" = JSX_EXPRESSION_CONTAINER_SPACE_SURROUNDING_EXPRESSION_DEFAULT,
+		jsx_self_closing_element_space_before_slash: "bool" = JSX_SELF_CLOSING_ELEMENT_SPACE_BEFORE_SLASH_DEFAULT,
+		method_space_before_parentheses: "bool" = SPACE_SURROUNDING_PROPERTIES_DEFAULT,
+		object_expression_space_surrounding_properties: "bool" = SPACE_SURROUNDING_PROPERTIES_DEFAULT,
+		object_pattern_space_surrounding_properties: "bool" = SPACE_SURROUNDING_PROPERTIES_DEFAULT,
+		set_accessor_space_before_parentheses: "bool" = SET_ACCESSOR_SPACE_BEFORE_PARENTHESES_DEFAULT,
+		space_surrounding_properties: "bool" = SPACE_SURROUNDING_PROPERTIES_DEFAULT,
+		tagged_template_space_before_literal: "bool" = TAGGED_TEMPLATE_SPACE_BEFORE_LITERAL_DEFAULT,
+		type_annotation_space_before_colon: "bool" = TYPE_ANNOTATION_SPACE_BEFORE_COLON_DEFAULT,
+		type_assertion_space_before_expression: "bool" = TYPE_ASSERTION_SPACE_BEFORE_EXPRESSION_DEFAULT,
+		type_literal_space_surrounding_properties: "bool" = SPACE_SURROUNDING_PROPERTIES_DEFAULT,
+		while_statement_space_after_while_keyword: "bool" = WHILE_STATEMENT_SPACE_AFTER_WHILE_KEYWORD_DEFAULT,
+		arguments_space_around: "bool" = SPACE_AROUND_DEFAULT,
+		array_expression_space_around: "bool" = SPACE_AROUND_DEFAULT,
+		array_pattern_space_around: "bool" = SPACE_AROUND_DEFAULT,
+		catch_clause_space_around: "bool" = SPACE_AROUND_DEFAULT,
+		do_while_statement_space_around: "bool" = SPACE_AROUND_DEFAULT,
+		for_in_statement_space_around: "bool" = SPACE_AROUND_DEFAULT,
+		for_of_statement_space_around: "bool" = SPACE_AROUND_DEFAULT,
+		for_statement_space_around: "bool" = SPACE_AROUND_DEFAULT,
+		if_statement_space_around: "bool" = SPACE_AROUND_DEFAULT,
+		parameters_space_around: "bool" = SPACE_AROUND_DEFAULT,
+		paren_expression_space_around: "bool" = SPACE_AROUND_DEFAULT,
+		switch_statement_space_around: "bool" = SPACE_AROUND_DEFAULT,
+		tuple_type_space_around: "bool" = SPACE_AROUND_DEFAULT,
+		while_statement_space_around: "bool" = SPACE_AROUND_DEFAULT,
 	))
 	]
 	#[new]
@@ -1508,642 +1572,877 @@ impl PyConfiguration {
 		})
 	}
 
-	fn to_dict<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyDict>> {
-		self.clone().into_py_dict(py)
+	/// Returns a dictionary representation of the configuration.
+	///
+	/// :param changed: If :py:obj:`True` only values changed from their defaults are included.
+	#[pyo3(signature = (changed: "bool" = true) -> "Dict[str, Any")]
+	fn to_dict<'py>(&self, py: Python<'py>, changed: bool) -> PyResult<Bound<'py, PyDict>> {
+		let as_dict = PyDict::new(py);
+		macro_rules! dict_set_item {
+			($key:literal, $value:expr, $default:expr) => {
+				if (!changed || $value != $default) {
+					as_dict
+						.set_item($key, $value)
+						.expect("Error setting dict item.");
+				}
+			};
+		}
+
+		dict_set_item!(
+			"indent_width",
+			self.indent_width,
+			RECOMMENDED_GLOBAL_CONFIGURATION.indent_width
+		);
+		dict_set_item!(
+			"line_width",
+			self.line_width,
+			RECOMMENDED_GLOBAL_CONFIGURATION.line_width
+		);
+		dict_set_item!(
+			"use_tabs",
+			self.use_tabs,
+			RECOMMENDED_GLOBAL_CONFIGURATION.use_tabs
+		);
+		dict_set_item!("new_line_kind", &self.new_line_kind, &NEW_LINE_KIND_DEFAULT);
+		dict_set_item!("quote_style", &self.quote_style, &QUOTE_STYLE_DEFAULT);
+		dict_set_item!("quote_props", &self.quote_props, &QUOTE_PROPS_DEFAULT);
+		dict_set_item!("semi_colons", &self.semi_colons, &SEMI_COLONS_DEFAULT);
+		dict_set_item!(
+			"file_indent_level",
+			self.file_indent_level,
+			FILE_INDENT_LEVEL_DEFAULT
+		);
+		dict_set_item!(
+			"arrow_function_use_parentheses",
+			&self.arrow_function_use_parentheses,
+			&ARROW_FUNCTION_USE_PARENTHESES_DEFAULT
+		);
+		dict_set_item!(
+			"binary_expression_line_per_expression",
+			self.binary_expression_line_per_expression,
+			BINARY_EXPRESSION_LINE_PER_EXPRESSION_DEFAULT
+		);
+		dict_set_item!(
+			"conditional_expression_line_per_expression",
+			self.conditional_expression_line_per_expression,
+			CONDITIONAL_EXPRESSION_LINE_PER_EXPRESSION_DEFAULT
+		);
+		dict_set_item!(
+			"jsx_quote_style",
+			&self.jsx_quote_style,
+			&JSX_QUOTE_STYLE_DEFAULT
+		);
+		dict_set_item!(
+			"jsx_multi_line_parens",
+			&self.jsx_multi_line_parens,
+			&JSX_MULTI_LINE_PARENS_DEFAULT
+		);
+		dict_set_item!(
+			"jsx_force_new_lines_surrounding_content",
+			self.jsx_force_new_lines_surrounding_content,
+			JSX_FORCE_NEW_LINES_SURROUNDING_CONTENT_DEFAULT
+		);
+		dict_set_item!(
+			"jsx_opening_element_bracket_position",
+			&self.jsx_opening_element_bracket_position,
+			&JSX_BRACKET_POSITION_DEFAULT
+		);
+		dict_set_item!(
+			"jsx_self_closing_element_bracket_position",
+			&self.jsx_self_closing_element_bracket_position,
+			&JSX_BRACKET_POSITION_DEFAULT
+		);
+		dict_set_item!(
+			"member_expression_line_per_expression",
+			self.member_expression_line_per_expression,
+			MEMBER_EXPRESSION_LINE_PER_EXPRESSION_DEFAULT
+		);
+		dict_set_item!(
+			"type_literal_separator_kind_single_line",
+			&self.type_literal_separator_kind_single_line,
+			&TYPE_LITERAL_SEPARATOR_KIND_DEFAULT
+		);
+		dict_set_item!(
+			"type_literal_separator_kind_multi_line",
+			&self.type_literal_separator_kind_multi_line,
+			&TYPE_LITERAL_SEPARATOR_KIND_DEFAULT
+		);
+		dict_set_item!(
+			"module_sort_import_declarations",
+			&self.module_sort_import_declarations,
+			&MODULE_SORT_IMPORT_DECLARATIONS_DEFAULT
+		);
+		dict_set_item!(
+			"module_sort_export_declarations",
+			&self.module_sort_export_declarations,
+			&MODULE_SORT_EXPORT_DECLARATIONS_DEFAULT
+		);
+		dict_set_item!(
+			"import_declaration_sort_named_imports",
+			&self.import_declaration_sort_named_imports,
+			&IMPORT_DECLARATION_SORT_NAMED_IMPORTS_DEFAULT
+		);
+		dict_set_item!(
+			"import_declaration_sort_type_only_imports",
+			&self.import_declaration_sort_type_only_imports,
+			&IMPORT_DECLARATION_SORT_TYPE_ONLY_IMPORTS_DEFAULT
+		);
+		dict_set_item!(
+			"export_declaration_sort_named_exports",
+			&self.export_declaration_sort_named_exports,
+			&EXPORT_DECLARATION_SORT_NAMED_EXPORTS_DEFAULT
+		);
+		dict_set_item!(
+			"export_declaration_sort_type_only_exports",
+			&self.export_declaration_sort_type_only_exports,
+			&EXPORT_DECLARATION_SORT_TYPE_ONLY_EXPORTS_DEFAULT
+		);
+		dict_set_item!(
+			"ignore_node_comment_text",
+			&self.ignore_node_comment_text,
+			&IGNORE_NODE_COMMENT_TEXT_DEFAULT
+		);
+		dict_set_item!(
+			"ignore_file_comment_text",
+			&self.ignore_file_comment_text,
+			&IGNORE_FILE_COMMENT_TEXT_DEFAULT
+		);
+		dict_set_item!(
+			"arrow_function_brace_position",
+			&self.arrow_function_brace_position,
+			&BRACE_POSITION_DEFAULT
+		);
+		dict_set_item!(
+			"class_declaration_brace_position",
+			&self.class_declaration_brace_position,
+			&BRACE_POSITION_DEFAULT
+		);
+		dict_set_item!(
+			"class_expression_brace_position",
+			&self.class_expression_brace_position,
+			&BRACE_POSITION_DEFAULT
+		);
+		dict_set_item!(
+			"constructor_brace_position",
+			&self.constructor_brace_position,
+			&BRACE_POSITION_DEFAULT
+		);
+		dict_set_item!(
+			"do_while_statement_brace_position",
+			&self.do_while_statement_brace_position,
+			&BRACE_POSITION_DEFAULT
+		);
+		dict_set_item!(
+			"enum_declaration_brace_position",
+			&self.enum_declaration_brace_position,
+			&BRACE_POSITION_DEFAULT
+		);
+		dict_set_item!(
+			"get_accessor_brace_position",
+			&self.get_accessor_brace_position,
+			&BRACE_POSITION_DEFAULT
+		);
+		dict_set_item!(
+			"if_statement_brace_position",
+			&self.if_statement_brace_position,
+			&BRACE_POSITION_DEFAULT
+		);
+		dict_set_item!(
+			"interface_declaration_brace_position",
+			&self.interface_declaration_brace_position,
+			&BRACE_POSITION_DEFAULT
+		);
+		dict_set_item!(
+			"for_statement_brace_position",
+			&self.for_statement_brace_position,
+			&BRACE_POSITION_DEFAULT
+		);
+		dict_set_item!(
+			"for_in_statement_brace_position",
+			&self.for_in_statement_brace_position,
+			&BRACE_POSITION_DEFAULT
+		);
+		dict_set_item!(
+			"for_of_statement_brace_position",
+			&self.for_of_statement_brace_position,
+			&BRACE_POSITION_DEFAULT
+		);
+		dict_set_item!(
+			"function_declaration_brace_position",
+			&self.function_declaration_brace_position,
+			&BRACE_POSITION_DEFAULT
+		);
+		dict_set_item!(
+			"function_expression_brace_position",
+			&self.function_expression_brace_position,
+			&BRACE_POSITION_DEFAULT
+		);
+		dict_set_item!(
+			"method_brace_position",
+			&self.method_brace_position,
+			&BRACE_POSITION_DEFAULT
+		);
+		dict_set_item!(
+			"module_declaration_brace_position",
+			&self.module_declaration_brace_position,
+			&BRACE_POSITION_DEFAULT
+		);
+		dict_set_item!(
+			"set_accessor_brace_position",
+			&self.set_accessor_brace_position,
+			&BRACE_POSITION_DEFAULT
+		);
+		dict_set_item!(
+			"static_block_brace_position",
+			&self.static_block_brace_position,
+			&BRACE_POSITION_DEFAULT
+		);
+		dict_set_item!(
+			"switch_case_brace_position",
+			&self.switch_case_brace_position,
+			&BRACE_POSITION_DEFAULT
+		);
+		dict_set_item!(
+			"switch_statement_brace_position",
+			&self.switch_statement_brace_position,
+			&BRACE_POSITION_DEFAULT
+		);
+		dict_set_item!(
+			"try_statement_brace_position",
+			&self.try_statement_brace_position,
+			&BRACE_POSITION_DEFAULT
+		);
+		dict_set_item!(
+			"while_statement_brace_position",
+			&self.while_statement_brace_position,
+			&BRACE_POSITION_DEFAULT
+		);
+		dict_set_item!(
+			"arguments_prefer_hanging",
+			&self.arguments_prefer_hanging,
+			&PREFER_HANGING_GRANULAR_DEFAULT
+		);
+		dict_set_item!(
+			"array_expression_prefer_hanging",
+			&self.array_expression_prefer_hanging,
+			&PREFER_HANGING_GRANULAR_DEFAULT
+		);
+		dict_set_item!(
+			"array_pattern_prefer_hanging",
+			self.array_pattern_prefer_hanging,
+			PREFER_HANGING_DEFAULT
+		);
+		dict_set_item!(
+			"do_while_statement_prefer_hanging",
+			self.do_while_statement_prefer_hanging,
+			PREFER_HANGING_DEFAULT
+		);
+		dict_set_item!(
+			"export_declaration_prefer_hanging",
+			self.export_declaration_prefer_hanging,
+			PREFER_HANGING_DEFAULT
+		);
+		dict_set_item!(
+			"extends_clause_prefer_hanging",
+			self.extends_clause_prefer_hanging,
+			PREFER_HANGING_DEFAULT
+		);
+		dict_set_item!(
+			"for_statement_prefer_hanging",
+			self.for_statement_prefer_hanging,
+			PREFER_HANGING_DEFAULT
+		);
+		dict_set_item!(
+			"for_in_statement_prefer_hanging",
+			self.for_in_statement_prefer_hanging,
+			PREFER_HANGING_DEFAULT
+		);
+		dict_set_item!(
+			"for_of_statement_prefer_hanging",
+			self.for_of_statement_prefer_hanging,
+			PREFER_HANGING_DEFAULT
+		);
+		dict_set_item!(
+			"if_statement_prefer_hanging",
+			self.if_statement_prefer_hanging,
+			PREFER_HANGING_DEFAULT
+		);
+		dict_set_item!(
+			"implements_clause_prefer_hanging",
+			self.implements_clause_prefer_hanging,
+			PREFER_HANGING_DEFAULT
+		);
+		dict_set_item!(
+			"import_declaration_prefer_hanging",
+			self.import_declaration_prefer_hanging,
+			PREFER_HANGING_DEFAULT
+		);
+		dict_set_item!(
+			"jsx_attributes_prefer_hanging",
+			self.jsx_attributes_prefer_hanging,
+			PREFER_HANGING_DEFAULT
+		);
+		dict_set_item!(
+			"object_expression_prefer_hanging",
+			self.object_expression_prefer_hanging,
+			PREFER_HANGING_DEFAULT
+		);
+		dict_set_item!(
+			"object_pattern_prefer_hanging",
+			self.object_pattern_prefer_hanging,
+			PREFER_HANGING_DEFAULT
+		);
+		dict_set_item!(
+			"parameters_prefer_hanging",
+			&self.parameters_prefer_hanging,
+			&PREFER_HANGING_GRANULAR_DEFAULT
+		);
+		dict_set_item!(
+			"sequence_expression_prefer_hanging",
+			self.sequence_expression_prefer_hanging,
+			PREFER_HANGING_DEFAULT
+		);
+		dict_set_item!(
+			"switch_statement_prefer_hanging",
+			self.switch_statement_prefer_hanging,
+			PREFER_HANGING_DEFAULT
+		);
+		dict_set_item!(
+			"tuple_type_prefer_hanging",
+			&self.tuple_type_prefer_hanging,
+			&PREFER_HANGING_GRANULAR_DEFAULT
+		);
+		dict_set_item!(
+			"type_literal_prefer_hanging",
+			self.type_literal_prefer_hanging,
+			PREFER_HANGING_DEFAULT
+		);
+		dict_set_item!(
+			"type_parameters_prefer_hanging",
+			&self.type_parameters_prefer_hanging,
+			&PREFER_HANGING_GRANULAR_DEFAULT
+		);
+		dict_set_item!(
+			"union_and_intersection_type_prefer_hanging",
+			self.union_and_intersection_type_prefer_hanging,
+			PREFER_HANGING_DEFAULT
+		);
+		dict_set_item!(
+			"variable_statement_prefer_hanging",
+			self.variable_statement_prefer_hanging,
+			PREFER_HANGING_DEFAULT
+		);
+		dict_set_item!(
+			"while_statement_prefer_hanging",
+			self.while_statement_prefer_hanging,
+			PREFER_HANGING_DEFAULT
+		);
+		dict_set_item!(
+			"enum_declaration_member_spacing",
+			&self.enum_declaration_member_spacing,
+			&ENUM_DECLARATION_MEMBER_SPACING_DEFAULT
+		);
+		dict_set_item!(
+			"if_statement_next_control_flow_position",
+			&self.if_statement_next_control_flow_position,
+			&NEXT_CONTROL_FLOW_POSITION_DEFAULT
+		);
+		dict_set_item!(
+			"try_statement_next_control_flow_position",
+			&self.try_statement_next_control_flow_position,
+			&NEXT_CONTROL_FLOW_POSITION_DEFAULT
+		);
+		dict_set_item!(
+			"do_while_statement_next_control_flow_position",
+			&self.do_while_statement_next_control_flow_position,
+			&NEXT_CONTROL_FLOW_POSITION_DEFAULT
+		);
+		dict_set_item!(
+			"binary_expression_operator_position",
+			&self.binary_expression_operator_position,
+			&OPERATOR_POSITION_DEFAULT
+		);
+		dict_set_item!(
+			"conditional_expression_operator_position",
+			&self.conditional_expression_operator_position,
+			&OPERATOR_POSITION_DEFAULT
+		);
+		dict_set_item!(
+			"conditional_type_operator_position",
+			&self.conditional_type_operator_position,
+			&OPERATOR_POSITION_DEFAULT
+		);
+		dict_set_item!(
+			"if_statement_single_body_position",
+			&self.if_statement_single_body_position,
+			&SINGLE_BODY_POSITION_DEFAULT
+		);
+		dict_set_item!(
+			"for_statement_single_body_position",
+			&self.for_statement_single_body_position,
+			&SINGLE_BODY_POSITION_DEFAULT
+		);
+		dict_set_item!(
+			"for_in_statement_single_body_position",
+			&self.for_in_statement_single_body_position,
+			&SINGLE_BODY_POSITION_DEFAULT
+		);
+		dict_set_item!(
+			"for_of_statement_single_body_position",
+			&self.for_of_statement_single_body_position,
+			&SINGLE_BODY_POSITION_DEFAULT
+		);
+		dict_set_item!(
+			"while_statement_single_body_position",
+			&self.while_statement_single_body_position,
+			&SINGLE_BODY_POSITION_DEFAULT
+		);
+		dict_set_item!(
+			"arguments_trailing_commas",
+			&self.arguments_trailing_commas,
+			&TRAILING_COMMAS_DEFAULT
+		);
+		dict_set_item!(
+			"parameters_trailing_commas",
+			&self.parameters_trailing_commas,
+			&TRAILING_COMMAS_DEFAULT
+		);
+		dict_set_item!(
+			"array_expression_trailing_commas",
+			&self.array_expression_trailing_commas,
+			&TRAILING_COMMAS_DEFAULT
+		);
+		dict_set_item!(
+			"array_pattern_trailing_commas",
+			&self.array_pattern_trailing_commas,
+			&TRAILING_COMMAS_DEFAULT
+		);
+		dict_set_item!(
+			"enum_declaration_trailing_commas",
+			&self.enum_declaration_trailing_commas,
+			&TRAILING_COMMAS_DEFAULT
+		);
+		dict_set_item!(
+			"export_declaration_trailing_commas",
+			&self.export_declaration_trailing_commas,
+			&TRAILING_COMMAS_DEFAULT
+		);
+		dict_set_item!(
+			"import_declaration_trailing_commas",
+			&self.import_declaration_trailing_commas,
+			&TRAILING_COMMAS_DEFAULT
+		);
+		dict_set_item!(
+			"object_pattern_trailing_commas",
+			&self.object_pattern_trailing_commas,
+			&TRAILING_COMMAS_DEFAULT
+		);
+		dict_set_item!(
+			"object_expression_trailing_commas",
+			&self.object_expression_trailing_commas,
+			&TRAILING_COMMAS_DEFAULT
+		);
+		dict_set_item!(
+			"tuple_type_trailing_commas",
+			&self.tuple_type_trailing_commas,
+			&TRAILING_COMMAS_DEFAULT
+		);
+		dict_set_item!(
+			"type_literal_trailing_commas",
+			&self.type_literal_trailing_commas,
+			&TRAILING_COMMAS_DEFAULT
+		);
+		dict_set_item!(
+			"type_parameters_trailing_commas",
+			&self.type_parameters_trailing_commas,
+			&TRAILING_COMMAS_DEFAULT
+		);
+		dict_set_item!(
+			"if_statement_use_braces",
+			&self.if_statement_use_braces,
+			&USE_BRACES_DEFAULT
+		);
+		dict_set_item!(
+			"for_statement_use_braces",
+			&self.for_statement_use_braces,
+			&USE_BRACES_DEFAULT
+		);
+		dict_set_item!(
+			"for_of_statement_use_braces",
+			&self.for_of_statement_use_braces,
+			&USE_BRACES_DEFAULT
+		);
+		dict_set_item!(
+			"for_in_statement_use_braces",
+			&self.for_in_statement_use_braces,
+			&USE_BRACES_DEFAULT
+		);
+		dict_set_item!(
+			"while_statement_use_braces",
+			&self.while_statement_use_braces,
+			&USE_BRACES_DEFAULT
+		);
+		dict_set_item!(
+			"array_expression_prefer_single_line",
+			self.array_expression_prefer_single_line,
+			PREFER_SINGLE_LINE_DEFAULT
+		);
+		dict_set_item!(
+			"array_pattern_prefer_single_line",
+			self.array_pattern_prefer_single_line,
+			PREFER_SINGLE_LINE_DEFAULT
+		);
+		dict_set_item!(
+			"arguments_prefer_single_line",
+			self.arguments_prefer_single_line,
+			PREFER_SINGLE_LINE_DEFAULT
+		);
+		dict_set_item!(
+			"binary_expression_prefer_single_line",
+			self.binary_expression_prefer_single_line,
+			PREFER_SINGLE_LINE_DEFAULT
+		);
+		dict_set_item!(
+			"computed_prefer_single_line",
+			self.computed_prefer_single_line,
+			PREFER_SINGLE_LINE_DEFAULT
+		);
+		dict_set_item!(
+			"conditional_expression_prefer_single_line",
+			self.conditional_expression_prefer_single_line,
+			PREFER_SINGLE_LINE_DEFAULT
+		);
+		dict_set_item!(
+			"conditional_type_prefer_single_line",
+			self.conditional_type_prefer_single_line,
+			PREFER_SINGLE_LINE_DEFAULT
+		);
+		dict_set_item!(
+			"decorators_prefer_single_line",
+			self.decorators_prefer_single_line,
+			PREFER_SINGLE_LINE_DEFAULT
+		);
+		dict_set_item!(
+			"export_declaration_prefer_single_line",
+			self.export_declaration_prefer_single_line,
+			PREFER_SINGLE_LINE_DEFAULT
+		);
+		dict_set_item!(
+			"for_statement_prefer_single_line",
+			self.for_statement_prefer_single_line,
+			PREFER_SINGLE_LINE_DEFAULT
+		);
+		dict_set_item!(
+			"import_declaration_prefer_single_line",
+			self.import_declaration_prefer_single_line,
+			PREFER_SINGLE_LINE_DEFAULT
+		);
+		dict_set_item!(
+			"jsx_attributes_prefer_single_line",
+			self.jsx_attributes_prefer_single_line,
+			PREFER_SINGLE_LINE_DEFAULT
+		);
+		dict_set_item!(
+			"jsx_element_prefer_single_line",
+			self.jsx_element_prefer_single_line,
+			PREFER_SINGLE_LINE_DEFAULT
+		);
+		dict_set_item!(
+			"mapped_type_prefer_single_line",
+			self.mapped_type_prefer_single_line,
+			PREFER_SINGLE_LINE_DEFAULT
+		);
+		dict_set_item!(
+			"member_expression_prefer_single_line",
+			self.member_expression_prefer_single_line,
+			PREFER_SINGLE_LINE_DEFAULT
+		);
+		dict_set_item!(
+			"object_expression_prefer_single_line",
+			self.object_expression_prefer_single_line,
+			PREFER_SINGLE_LINE_DEFAULT
+		);
+		dict_set_item!(
+			"object_pattern_prefer_single_line",
+			self.object_pattern_prefer_single_line,
+			PREFER_SINGLE_LINE_DEFAULT
+		);
+		dict_set_item!(
+			"parameters_prefer_single_line",
+			self.parameters_prefer_single_line,
+			PREFER_SINGLE_LINE_DEFAULT
+		);
+		dict_set_item!(
+			"parentheses_prefer_single_line",
+			self.parentheses_prefer_single_line,
+			PREFER_SINGLE_LINE_DEFAULT
+		);
+		dict_set_item!(
+			"tuple_type_prefer_single_line",
+			self.tuple_type_prefer_single_line,
+			PREFER_SINGLE_LINE_DEFAULT
+		);
+		dict_set_item!(
+			"type_literal_prefer_single_line",
+			self.type_literal_prefer_single_line,
+			PREFER_SINGLE_LINE_DEFAULT
+		);
+		dict_set_item!(
+			"type_parameters_prefer_single_line",
+			self.type_parameters_prefer_single_line,
+			PREFER_SINGLE_LINE_DEFAULT
+		);
+		dict_set_item!(
+			"union_and_intersection_type_prefer_single_line",
+			self.union_and_intersection_type_prefer_single_line,
+			PREFER_SINGLE_LINE_DEFAULT
+		);
+		dict_set_item!(
+			"variable_statement_prefer_single_line",
+			self.variable_statement_prefer_single_line,
+			PREFER_SINGLE_LINE_DEFAULT
+		);
+		dict_set_item!(
+			"import_declaration_force_single_line",
+			self.import_declaration_force_single_line,
+			IMPORT_DECLARATION_FORCE_SINGLE_LINE_DEFAULT
+		);
+		dict_set_item!(
+			"export_declaration_force_single_line",
+			self.export_declaration_force_single_line,
+			EXPORT_DECLARATION_FORCE_SINGLE_LINE_DEFAULT
+		);
+		dict_set_item!(
+			"export_declaration_force_multi_line",
+			&self.export_declaration_force_multi_line,
+			&EXPORT_DECLARATION_FORCE_MULTI_LINE_DEFAULT
+		);
+		dict_set_item!(
+			"import_declaration_force_multi_line",
+			&self.import_declaration_force_multi_line,
+			&IMPORT_DECLARATION_FORCE_MULTI_LINE_DEFAULT
+		);
+		dict_set_item!(
+			"binary_expression_space_surrounding_bitwise_and_arithmetic_operator",
+			self.binary_expression_space_surrounding_bitwise_and_arithmetic_operator,
+			BINARY_EXPRESSION_SPACE_SURROUNDING_BITWISE_AND_ARITHMETIC_OPERATOR_DEFAULT
+		);
+		dict_set_item!(
+			"comment_line_force_space_after_slashes",
+			self.comment_line_force_space_after_slashes,
+			COMMENT_LINE_FORCE_SPACE_AFTER_SLASHES_DEFAULT
+		);
+		dict_set_item!(
+			"construct_signature_space_after_new_keyword",
+			self.construct_signature_space_after_new_keyword,
+			CONSTRUCT_SIGNATURE_SPACE_AFTER_NEW_KEYWORD_DEFAULT
+		);
+		dict_set_item!(
+			"constructor_space_before_parentheses",
+			self.constructor_space_before_parentheses,
+			CONSTRUCTOR_SPACE_BEFORE_PARENTHESES_DEFAULT
+		);
+		dict_set_item!(
+			"constructor_type_space_after_new_keyword",
+			self.constructor_type_space_after_new_keyword,
+			CONSTRUCTOR_TYPE_SPACE_AFTER_NEW_KEYWORD_DEFAULT
+		);
+		dict_set_item!(
+			"do_while_statement_space_after_while_keyword",
+			self.do_while_statement_space_after_while_keyword,
+			DO_WHILE_STATEMENT_SPACE_AFTER_WHILE_KEYWORD_DEFAULT
+		);
+		dict_set_item!(
+			"export_declaration_space_surrounding_named_exports",
+			self.export_declaration_space_surrounding_named_exports,
+			EXPORT_DECLARATION_SPACE_SURROUNDING_NAMED_EXPORTS_DEFAULT
+		);
+		dict_set_item!(
+			"for_statement_space_after_for_keyword",
+			self.for_statement_space_after_for_keyword,
+			FOR_STATEMENT_SPACE_AFTER_FOR_KEYWORD_DEFAULT
+		);
+		dict_set_item!(
+			"for_statement_space_after_semi_colons",
+			self.for_statement_space_after_semi_colons,
+			FOR_STATEMENT_SPACE_AFTER_SEMI_COLONS_DEFAULT
+		);
+		dict_set_item!(
+			"for_in_statement_space_after_for_keyword",
+			self.for_in_statement_space_after_for_keyword,
+			FOR_IN_STATEMENT_SPACE_AFTER_FOR_KEYWORD_DEFAULT
+		);
+		dict_set_item!(
+			"for_of_statement_space_after_for_keyword",
+			self.for_of_statement_space_after_for_keyword,
+			FOR_OF_STATEMENT_SPACE_AFTER_FOR_KEYWORD_DEFAULT
+		);
+		dict_set_item!(
+			"function_declaration_space_before_parentheses",
+			self.function_declaration_space_before_parentheses,
+			FUNCTION_DECLARATION_SPACE_BEFORE_PARENTHESES_DEFAULT
+		);
+		dict_set_item!(
+			"function_expression_space_before_parentheses",
+			self.function_expression_space_before_parentheses,
+			FUNCTION_EXPRESSION_SPACE_BEFORE_PARENTHESES_DEFAULT
+		);
+		dict_set_item!(
+			"function_expression_space_after_function_keyword",
+			self.function_expression_space_after_function_keyword,
+			FUNCTION_EXPRESSION_SPACE_AFTER_FUNCTION_KEYWORD_DEFAULT
+		);
+		dict_set_item!(
+			"get_accessor_space_before_parentheses",
+			self.get_accessor_space_before_parentheses,
+			GET_ACCESSOR_SPACE_BEFORE_PARENTHESES_DEFAULT
+		);
+		dict_set_item!(
+			"if_statement_space_after_if_keyword",
+			self.if_statement_space_after_if_keyword,
+			IF_STATEMENT_SPACE_AFTER_IF_KEYWORD_DEFAULT
+		);
+		dict_set_item!(
+			"import_declaration_space_surrounding_named_imports",
+			self.import_declaration_space_surrounding_named_imports,
+			IMPORT_DECLARATION_SPACE_SURROUNDING_NAMED_IMPORTS_DEFAULT
+		);
+		dict_set_item!(
+			"jsx_expression_container_space_surrounding_expression",
+			self.jsx_expression_container_space_surrounding_expression,
+			JSX_EXPRESSION_CONTAINER_SPACE_SURROUNDING_EXPRESSION_DEFAULT
+		);
+		dict_set_item!(
+			"jsx_self_closing_element_space_before_slash",
+			self.jsx_self_closing_element_space_before_slash,
+			JSX_SELF_CLOSING_ELEMENT_SPACE_BEFORE_SLASH_DEFAULT
+		);
+		dict_set_item!(
+			"method_space_before_parentheses",
+			self.method_space_before_parentheses,
+			SPACE_SURROUNDING_PROPERTIES_DEFAULT
+		);
+		dict_set_item!(
+			"object_expression_space_surrounding_properties",
+			self.object_expression_space_surrounding_properties,
+			SPACE_SURROUNDING_PROPERTIES_DEFAULT
+		);
+		dict_set_item!(
+			"object_pattern_space_surrounding_properties",
+			self.object_pattern_space_surrounding_properties,
+			SPACE_SURROUNDING_PROPERTIES_DEFAULT
+		);
+		dict_set_item!(
+			"set_accessor_space_before_parentheses",
+			self.set_accessor_space_before_parentheses,
+			SET_ACCESSOR_SPACE_BEFORE_PARENTHESES_DEFAULT
+		);
+		dict_set_item!(
+			"space_surrounding_properties",
+			self.space_surrounding_properties,
+			SPACE_SURROUNDING_PROPERTIES_DEFAULT
+		);
+		dict_set_item!(
+			"tagged_template_space_before_literal",
+			self.tagged_template_space_before_literal,
+			TAGGED_TEMPLATE_SPACE_BEFORE_LITERAL_DEFAULT
+		);
+		dict_set_item!(
+			"type_annotation_space_before_colon",
+			self.type_annotation_space_before_colon,
+			TYPE_ANNOTATION_SPACE_BEFORE_COLON_DEFAULT
+		);
+		dict_set_item!(
+			"type_assertion_space_before_expression",
+			self.type_assertion_space_before_expression,
+			TYPE_ASSERTION_SPACE_BEFORE_EXPRESSION_DEFAULT
+		);
+		dict_set_item!(
+			"type_literal_space_surrounding_properties",
+			self.type_literal_space_surrounding_properties,
+			SPACE_SURROUNDING_PROPERTIES_DEFAULT
+		);
+		dict_set_item!(
+			"while_statement_space_after_while_keyword",
+			self.while_statement_space_after_while_keyword,
+			WHILE_STATEMENT_SPACE_AFTER_WHILE_KEYWORD_DEFAULT
+		);
+		dict_set_item!(
+			"arguments_space_around",
+			self.arguments_space_around,
+			SPACE_AROUND_DEFAULT
+		);
+		dict_set_item!(
+			"array_expression_space_around",
+			self.array_expression_space_around,
+			SPACE_AROUND_DEFAULT
+		);
+		dict_set_item!(
+			"array_pattern_space_around",
+			self.array_pattern_space_around,
+			SPACE_AROUND_DEFAULT
+		);
+		dict_set_item!(
+			"catch_clause_space_around",
+			self.catch_clause_space_around,
+			SPACE_AROUND_DEFAULT
+		);
+		dict_set_item!(
+			"do_while_statement_space_around",
+			self.do_while_statement_space_around,
+			SPACE_AROUND_DEFAULT
+		);
+		dict_set_item!(
+			"for_in_statement_space_around",
+			self.for_in_statement_space_around,
+			SPACE_AROUND_DEFAULT
+		);
+		dict_set_item!(
+			"for_of_statement_space_around",
+			self.for_of_statement_space_around,
+			SPACE_AROUND_DEFAULT
+		);
+		dict_set_item!(
+			"for_statement_space_around",
+			self.for_statement_space_around,
+			SPACE_AROUND_DEFAULT
+		);
+		dict_set_item!(
+			"if_statement_space_around",
+			self.if_statement_space_around,
+			SPACE_AROUND_DEFAULT
+		);
+		dict_set_item!(
+			"parameters_space_around",
+			self.parameters_space_around,
+			SPACE_AROUND_DEFAULT
+		);
+		dict_set_item!(
+			"paren_expression_space_around",
+			self.paren_expression_space_around,
+			SPACE_AROUND_DEFAULT
+		);
+		dict_set_item!(
+			"switch_statement_space_around",
+			self.switch_statement_space_around,
+			SPACE_AROUND_DEFAULT
+		);
+		dict_set_item!(
+			"tuple_type_space_around",
+			self.tuple_type_space_around,
+			SPACE_AROUND_DEFAULT
+		);
+		dict_set_item!(
+			"while_statement_space_around",
+			self.while_statement_space_around,
+			SPACE_AROUND_DEFAULT
+		);
+		Ok(as_dict)
 	}
 }
 
 impl<'py> IntoPyDict<'py> for PyConfiguration {
 	fn into_py_dict(self, py: Python<'py>) -> PyResult<Bound<'py, PyDict>> {
-		let as_dict = PyDict::new(py);
-		macro_rules! dict_set_item {
-			($key:literal, $value:expr) => {
-				as_dict
-					.set_item($key, $value)
-					.expect("Error setting dict item.");
-			};
-		}
-
-		dict_set_item!("indent_width", self.indent_width);
-		dict_set_item!("line_width", self.line_width);
-		dict_set_item!("use_tabs", self.use_tabs);
-		dict_set_item!("new_line_kind", self.new_line_kind);
-		dict_set_item!("quote_style", self.quote_style);
-		dict_set_item!("quote_props", self.quote_props);
-		dict_set_item!("semi_colons", self.semi_colons);
-		dict_set_item!("file_indent_level", self.file_indent_level);
-		dict_set_item!(
-			"arrow_function_use_parentheses",
-			self.arrow_function_use_parentheses
-		);
-		dict_set_item!(
-			"binary_expression_line_per_expression",
-			self.binary_expression_line_per_expression
-		);
-		dict_set_item!(
-			"conditional_expression_line_per_expression",
-			self.conditional_expression_line_per_expression
-		);
-		dict_set_item!("jsx_quote_style", self.jsx_quote_style);
-		dict_set_item!("jsx_multi_line_parens", self.jsx_multi_line_parens);
-		dict_set_item!(
-			"jsx_force_new_lines_surrounding_content",
-			self.jsx_force_new_lines_surrounding_content
-		);
-		dict_set_item!(
-			"jsx_opening_element_bracket_position",
-			self.jsx_opening_element_bracket_position
-		);
-		dict_set_item!(
-			"jsx_self_closing_element_bracket_position",
-			self.jsx_self_closing_element_bracket_position
-		);
-		dict_set_item!(
-			"member_expression_line_per_expression",
-			self.member_expression_line_per_expression
-		);
-		dict_set_item!(
-			"type_literal_separator_kind_single_line",
-			self.type_literal_separator_kind_single_line
-		);
-		dict_set_item!(
-			"type_literal_separator_kind_multi_line",
-			self.type_literal_separator_kind_multi_line
-		);
-		dict_set_item!(
-			"module_sort_import_declarations",
-			self.module_sort_import_declarations
-		);
-		dict_set_item!(
-			"module_sort_export_declarations",
-			self.module_sort_export_declarations
-		);
-		dict_set_item!(
-			"import_declaration_sort_named_imports",
-			self.import_declaration_sort_named_imports
-		);
-		dict_set_item!(
-			"import_declaration_sort_type_only_imports",
-			self.import_declaration_sort_type_only_imports
-		);
-		dict_set_item!(
-			"export_declaration_sort_named_exports",
-			self.export_declaration_sort_named_exports
-		);
-		dict_set_item!(
-			"export_declaration_sort_type_only_exports",
-			self.export_declaration_sort_type_only_exports
-		);
-		dict_set_item!("ignore_node_comment_text", self.ignore_node_comment_text);
-		dict_set_item!("ignore_file_comment_text", self.ignore_file_comment_text);
-		dict_set_item!(
-			"arrow_function_brace_position",
-			self.arrow_function_brace_position
-		);
-		dict_set_item!(
-			"class_declaration_brace_position",
-			self.class_declaration_brace_position
-		);
-		dict_set_item!(
-			"class_expression_brace_position",
-			self.class_expression_brace_position
-		);
-		dict_set_item!(
-			"constructor_brace_position",
-			self.constructor_brace_position
-		);
-		dict_set_item!(
-			"do_while_statement_brace_position",
-			self.do_while_statement_brace_position
-		);
-		dict_set_item!(
-			"enum_declaration_brace_position",
-			self.enum_declaration_brace_position
-		);
-		dict_set_item!(
-			"get_accessor_brace_position",
-			self.get_accessor_brace_position
-		);
-		dict_set_item!(
-			"if_statement_brace_position",
-			self.if_statement_brace_position
-		);
-		dict_set_item!(
-			"interface_declaration_brace_position",
-			self.interface_declaration_brace_position
-		);
-		dict_set_item!(
-			"for_statement_brace_position",
-			self.for_statement_brace_position
-		);
-		dict_set_item!(
-			"for_in_statement_brace_position",
-			self.for_in_statement_brace_position
-		);
-		dict_set_item!(
-			"for_of_statement_brace_position",
-			self.for_of_statement_brace_position
-		);
-		dict_set_item!(
-			"function_declaration_brace_position",
-			self.function_declaration_brace_position
-		);
-		dict_set_item!(
-			"function_expression_brace_position",
-			self.function_expression_brace_position
-		);
-		dict_set_item!("method_brace_position", self.method_brace_position);
-		dict_set_item!(
-			"module_declaration_brace_position",
-			self.module_declaration_brace_position
-		);
-		dict_set_item!(
-			"set_accessor_brace_position",
-			self.set_accessor_brace_position
-		);
-		dict_set_item!(
-			"static_block_brace_position",
-			self.static_block_brace_position
-		);
-		dict_set_item!(
-			"switch_case_brace_position",
-			self.switch_case_brace_position
-		);
-		dict_set_item!(
-			"switch_statement_brace_position",
-			self.switch_statement_brace_position
-		);
-		dict_set_item!(
-			"try_statement_brace_position",
-			self.try_statement_brace_position
-		);
-		dict_set_item!(
-			"while_statement_brace_position",
-			self.while_statement_brace_position
-		);
-		dict_set_item!("arguments_prefer_hanging", self.arguments_prefer_hanging);
-		dict_set_item!(
-			"array_expression_prefer_hanging",
-			self.array_expression_prefer_hanging
-		);
-		dict_set_item!(
-			"array_pattern_prefer_hanging",
-			self.array_pattern_prefer_hanging
-		);
-		dict_set_item!(
-			"do_while_statement_prefer_hanging",
-			self.do_while_statement_prefer_hanging
-		);
-		dict_set_item!(
-			"export_declaration_prefer_hanging",
-			self.export_declaration_prefer_hanging
-		);
-		dict_set_item!(
-			"extends_clause_prefer_hanging",
-			self.extends_clause_prefer_hanging
-		);
-		dict_set_item!(
-			"for_statement_prefer_hanging",
-			self.for_statement_prefer_hanging
-		);
-		dict_set_item!(
-			"for_in_statement_prefer_hanging",
-			self.for_in_statement_prefer_hanging
-		);
-		dict_set_item!(
-			"for_of_statement_prefer_hanging",
-			self.for_of_statement_prefer_hanging
-		);
-		dict_set_item!(
-			"if_statement_prefer_hanging",
-			self.if_statement_prefer_hanging
-		);
-		dict_set_item!(
-			"implements_clause_prefer_hanging",
-			self.implements_clause_prefer_hanging
-		);
-		dict_set_item!(
-			"import_declaration_prefer_hanging",
-			self.import_declaration_prefer_hanging
-		);
-		dict_set_item!(
-			"jsx_attributes_prefer_hanging",
-			self.jsx_attributes_prefer_hanging
-		);
-		dict_set_item!(
-			"object_expression_prefer_hanging",
-			self.object_expression_prefer_hanging
-		);
-		dict_set_item!(
-			"object_pattern_prefer_hanging",
-			self.object_pattern_prefer_hanging
-		);
-		dict_set_item!("parameters_prefer_hanging", self.parameters_prefer_hanging);
-		dict_set_item!(
-			"sequence_expression_prefer_hanging",
-			self.sequence_expression_prefer_hanging
-		);
-		dict_set_item!(
-			"switch_statement_prefer_hanging",
-			self.switch_statement_prefer_hanging
-		);
-		dict_set_item!("tuple_type_prefer_hanging", self.tuple_type_prefer_hanging);
-		dict_set_item!(
-			"type_literal_prefer_hanging",
-			self.type_literal_prefer_hanging
-		);
-		dict_set_item!(
-			"type_parameters_prefer_hanging",
-			self.type_parameters_prefer_hanging
-		);
-		dict_set_item!(
-			"union_and_intersection_type_prefer_hanging",
-			self.union_and_intersection_type_prefer_hanging
-		);
-		dict_set_item!(
-			"variable_statement_prefer_hanging",
-			self.variable_statement_prefer_hanging
-		);
-		dict_set_item!(
-			"while_statement_prefer_hanging",
-			self.while_statement_prefer_hanging
-		);
-		dict_set_item!(
-			"enum_declaration_member_spacing",
-			self.enum_declaration_member_spacing
-		);
-		dict_set_item!(
-			"if_statement_next_control_flow_position",
-			self.if_statement_next_control_flow_position
-		);
-		dict_set_item!(
-			"try_statement_next_control_flow_position",
-			self.try_statement_next_control_flow_position
-		);
-		dict_set_item!(
-			"do_while_statement_next_control_flow_position",
-			self.do_while_statement_next_control_flow_position
-		);
-		dict_set_item!(
-			"binary_expression_operator_position",
-			self.binary_expression_operator_position
-		);
-		dict_set_item!(
-			"conditional_expression_operator_position",
-			self.conditional_expression_operator_position
-		);
-		dict_set_item!(
-			"conditional_type_operator_position",
-			self.conditional_type_operator_position
-		);
-		dict_set_item!(
-			"if_statement_single_body_position",
-			self.if_statement_single_body_position
-		);
-		dict_set_item!(
-			"for_statement_single_body_position",
-			self.for_statement_single_body_position
-		);
-		dict_set_item!(
-			"for_in_statement_single_body_position",
-			self.for_in_statement_single_body_position
-		);
-		dict_set_item!(
-			"for_of_statement_single_body_position",
-			self.for_of_statement_single_body_position
-		);
-		dict_set_item!(
-			"while_statement_single_body_position",
-			self.while_statement_single_body_position
-		);
-		dict_set_item!("arguments_trailing_commas", self.arguments_trailing_commas);
-		dict_set_item!(
-			"parameters_trailing_commas",
-			self.parameters_trailing_commas
-		);
-		dict_set_item!(
-			"array_expression_trailing_commas",
-			self.array_expression_trailing_commas
-		);
-		dict_set_item!(
-			"array_pattern_trailing_commas",
-			self.array_pattern_trailing_commas
-		);
-		dict_set_item!(
-			"enum_declaration_trailing_commas",
-			self.enum_declaration_trailing_commas
-		);
-		dict_set_item!(
-			"export_declaration_trailing_commas",
-			self.export_declaration_trailing_commas
-		);
-		dict_set_item!(
-			"import_declaration_trailing_commas",
-			self.import_declaration_trailing_commas
-		);
-		dict_set_item!(
-			"object_pattern_trailing_commas",
-			self.object_pattern_trailing_commas
-		);
-		dict_set_item!(
-			"object_expression_trailing_commas",
-			self.object_expression_trailing_commas
-		);
-		dict_set_item!(
-			"tuple_type_trailing_commas",
-			self.tuple_type_trailing_commas
-		);
-		dict_set_item!(
-			"type_literal_trailing_commas",
-			self.type_literal_trailing_commas
-		);
-		dict_set_item!(
-			"type_parameters_trailing_commas",
-			self.type_parameters_trailing_commas
-		);
-		dict_set_item!("if_statement_use_braces", self.if_statement_use_braces);
-		dict_set_item!("for_statement_use_braces", self.for_statement_use_braces);
-		dict_set_item!(
-			"for_of_statement_use_braces",
-			self.for_of_statement_use_braces
-		);
-		dict_set_item!(
-			"for_in_statement_use_braces",
-			self.for_in_statement_use_braces
-		);
-		dict_set_item!(
-			"while_statement_use_braces",
-			self.while_statement_use_braces
-		);
-		dict_set_item!(
-			"array_expression_prefer_single_line",
-			self.array_expression_prefer_single_line
-		);
-		dict_set_item!(
-			"array_pattern_prefer_single_line",
-			self.array_pattern_prefer_single_line
-		);
-		dict_set_item!(
-			"arguments_prefer_single_line",
-			self.arguments_prefer_single_line
-		);
-		dict_set_item!(
-			"binary_expression_prefer_single_line",
-			self.binary_expression_prefer_single_line
-		);
-		dict_set_item!(
-			"computed_prefer_single_line",
-			self.computed_prefer_single_line
-		);
-		dict_set_item!(
-			"conditional_expression_prefer_single_line",
-			self.conditional_expression_prefer_single_line
-		);
-		dict_set_item!(
-			"conditional_type_prefer_single_line",
-			self.conditional_type_prefer_single_line
-		);
-		dict_set_item!(
-			"decorators_prefer_single_line",
-			self.decorators_prefer_single_line
-		);
-		dict_set_item!(
-			"export_declaration_prefer_single_line",
-			self.export_declaration_prefer_single_line
-		);
-		dict_set_item!(
-			"for_statement_prefer_single_line",
-			self.for_statement_prefer_single_line
-		);
-		dict_set_item!(
-			"import_declaration_prefer_single_line",
-			self.import_declaration_prefer_single_line
-		);
-		dict_set_item!(
-			"jsx_attributes_prefer_single_line",
-			self.jsx_attributes_prefer_single_line
-		);
-		dict_set_item!(
-			"jsx_element_prefer_single_line",
-			self.jsx_element_prefer_single_line
-		);
-		dict_set_item!(
-			"mapped_type_prefer_single_line",
-			self.mapped_type_prefer_single_line
-		);
-		dict_set_item!(
-			"member_expression_prefer_single_line",
-			self.member_expression_prefer_single_line
-		);
-		dict_set_item!(
-			"object_expression_prefer_single_line",
-			self.object_expression_prefer_single_line
-		);
-		dict_set_item!(
-			"object_pattern_prefer_single_line",
-			self.object_pattern_prefer_single_line
-		);
-		dict_set_item!(
-			"parameters_prefer_single_line",
-			self.parameters_prefer_single_line
-		);
-		dict_set_item!(
-			"parentheses_prefer_single_line",
-			self.parentheses_prefer_single_line
-		);
-		dict_set_item!(
-			"tuple_type_prefer_single_line",
-			self.tuple_type_prefer_single_line
-		);
-		dict_set_item!(
-			"type_literal_prefer_single_line",
-			self.type_literal_prefer_single_line
-		);
-		dict_set_item!(
-			"type_parameters_prefer_single_line",
-			self.type_parameters_prefer_single_line
-		);
-		dict_set_item!(
-			"union_and_intersection_type_prefer_single_line",
-			self.union_and_intersection_type_prefer_single_line
-		);
-		dict_set_item!(
-			"variable_statement_prefer_single_line",
-			self.variable_statement_prefer_single_line
-		);
-		dict_set_item!(
-			"import_declaration_force_single_line",
-			self.import_declaration_force_single_line
-		);
-		dict_set_item!(
-			"export_declaration_force_single_line",
-			self.export_declaration_force_single_line
-		);
-		dict_set_item!(
-			"export_declaration_force_multi_line",
-			self.export_declaration_force_multi_line
-		);
-		dict_set_item!(
-			"import_declaration_force_multi_line",
-			self.import_declaration_force_multi_line
-		);
-		dict_set_item!(
-			"binary_expression_space_surrounding_bitwise_and_arithmetic_operator",
-			self.binary_expression_space_surrounding_bitwise_and_arithmetic_operator
-		);
-		dict_set_item!(
-			"comment_line_force_space_after_slashes",
-			self.comment_line_force_space_after_slashes
-		);
-		dict_set_item!(
-			"construct_signature_space_after_new_keyword",
-			self.construct_signature_space_after_new_keyword
-		);
-		dict_set_item!(
-			"constructor_space_before_parentheses",
-			self.constructor_space_before_parentheses
-		);
-		dict_set_item!(
-			"constructor_type_space_after_new_keyword",
-			self.constructor_type_space_after_new_keyword
-		);
-		dict_set_item!(
-			"do_while_statement_space_after_while_keyword",
-			self.do_while_statement_space_after_while_keyword
-		);
-		dict_set_item!(
-			"export_declaration_space_surrounding_named_exports",
-			self.export_declaration_space_surrounding_named_exports
-		);
-		dict_set_item!(
-			"for_statement_space_after_for_keyword",
-			self.for_statement_space_after_for_keyword
-		);
-		dict_set_item!(
-			"for_statement_space_after_semi_colons",
-			self.for_statement_space_after_semi_colons
-		);
-		dict_set_item!(
-			"for_in_statement_space_after_for_keyword",
-			self.for_in_statement_space_after_for_keyword
-		);
-		dict_set_item!(
-			"for_of_statement_space_after_for_keyword",
-			self.for_of_statement_space_after_for_keyword
-		);
-		dict_set_item!(
-			"function_declaration_space_before_parentheses",
-			self.function_declaration_space_before_parentheses
-		);
-		dict_set_item!(
-			"function_expression_space_before_parentheses",
-			self.function_expression_space_before_parentheses
-		);
-		dict_set_item!(
-			"function_expression_space_after_function_keyword",
-			self.function_expression_space_after_function_keyword
-		);
-		dict_set_item!(
-			"get_accessor_space_before_parentheses",
-			self.get_accessor_space_before_parentheses
-		);
-		dict_set_item!(
-			"if_statement_space_after_if_keyword",
-			self.if_statement_space_after_if_keyword
-		);
-		dict_set_item!(
-			"import_declaration_space_surrounding_named_imports",
-			self.import_declaration_space_surrounding_named_imports
-		);
-		dict_set_item!(
-			"jsx_expression_container_space_surrounding_expression",
-			self.jsx_expression_container_space_surrounding_expression
-		);
-		dict_set_item!(
-			"jsx_self_closing_element_space_before_slash",
-			self.jsx_self_closing_element_space_before_slash
-		);
-		dict_set_item!(
-			"method_space_before_parentheses",
-			self.method_space_before_parentheses
-		);
-		dict_set_item!(
-			"object_expression_space_surrounding_properties",
-			self.object_expression_space_surrounding_properties
-		);
-		dict_set_item!(
-			"object_pattern_space_surrounding_properties",
-			self.object_pattern_space_surrounding_properties
-		);
-		dict_set_item!(
-			"set_accessor_space_before_parentheses",
-			self.set_accessor_space_before_parentheses
-		);
-		dict_set_item!(
-			"space_surrounding_properties",
-			self.space_surrounding_properties
-		);
-		dict_set_item!(
-			"tagged_template_space_before_literal",
-			self.tagged_template_space_before_literal
-		);
-		dict_set_item!(
-			"type_annotation_space_before_colon",
-			self.type_annotation_space_before_colon
-		);
-		dict_set_item!(
-			"type_assertion_space_before_expression",
-			self.type_assertion_space_before_expression
-		);
-		dict_set_item!(
-			"type_literal_space_surrounding_properties",
-			self.type_literal_space_surrounding_properties
-		);
-		dict_set_item!(
-			"while_statement_space_after_while_keyword",
-			self.while_statement_space_after_while_keyword
-		);
-		dict_set_item!("arguments_space_around", self.arguments_space_around);
-		dict_set_item!(
-			"array_expression_space_around",
-			self.array_expression_space_around
-		);
-		dict_set_item!(
-			"array_pattern_space_around",
-			self.array_pattern_space_around
-		);
-		dict_set_item!("catch_clause_space_around", self.catch_clause_space_around);
-		dict_set_item!(
-			"do_while_statement_space_around",
-			self.do_while_statement_space_around
-		);
-		dict_set_item!(
-			"for_in_statement_space_around",
-			self.for_in_statement_space_around
-		);
-		dict_set_item!(
-			"for_of_statement_space_around",
-			self.for_of_statement_space_around
-		);
-		dict_set_item!(
-			"for_statement_space_around",
-			self.for_statement_space_around
-		);
-		dict_set_item!("if_statement_space_around", self.if_statement_space_around);
-		dict_set_item!("parameters_space_around", self.parameters_space_around);
-		dict_set_item!(
-			"paren_expression_space_around",
-			self.paren_expression_space_around
-		);
-		dict_set_item!(
-			"switch_statement_space_around",
-			self.switch_statement_space_around
-		);
-		dict_set_item!("tuple_type_space_around", self.tuple_type_space_around);
-		dict_set_item!(
-			"while_statement_space_around",
-			self.while_statement_space_around
-		);
-		Ok(as_dict)
+		self.to_dict(py, false)
 	}
 }
