@@ -3,7 +3,7 @@ use dprint_plugin_typescript::{FormatTextOptions, format_text};
 use pyo3::{exceptions::PyValueError, prelude::*};
 use std::path::PathBuf;
 
-#[pyclass(name = "FormatTextOptions", module = "formate_js")]
+#[pyclass(name = "FormatTextOptions", module = "_formate_js")]
 // #[repr(transparent)]
 #[derive(Clone)]
 // A wrapper around a [`FormatTextOptions`] that can be converted to and from python with `pyo3`.

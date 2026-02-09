@@ -14,7 +14,7 @@ fn _formate_js(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
 	m.add_class::<PyFormatTextOptions>().unwrap();
 
 	let format_text = wrap_pyfunction!(format_text_py, m)?;
-	format_text.setattr("__module__", "formate_js")?;
+	format_text.setattr("__module__", "_formate_js")?;
 	m.add_function(format_text).unwrap();
 
 	Ok(())

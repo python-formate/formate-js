@@ -47,6 +47,7 @@ def javascript_hook(
 	Reformat JavaScript and TypeScript with dprint.
 
 	:param source: The source to reformat.
+	:param formate_filename: The name of the file being formatted.
 	:param \*\*kwargs:
 
 	:returns: The reformatted source.
