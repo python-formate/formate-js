@@ -34,3 +34,8 @@ exclude_files:
 
 tox_unmanaged:
   - testenv:build
+
+
+entry_points:
+  formate_hooks:
+   - "formate_js=formate_js:formate_js_hook"

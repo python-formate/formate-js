@@ -23,7 +23,7 @@ classifiers = [
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Rust",
 ]
-dependencies = []
+dependencies = [ "formate>=1.1.2",]
 dynamic = []
 
 [project.license]
@@ -37,6 +37,9 @@ email = "dominic@davis-foster.co.uk"
 Homepage = "https://github.com/python-formate/formate-js"
 "Issue Tracker" = "https://github.com/python-formate/formate-js/issues"
 "Source Code" = "https://github.com/python-formate/formate-js"
+
+[project.entry-points.formate_hooks]
+formate_js = "formate_js:formate_js_hook"
 
 [tool.whey]
 base-classifiers = [ "Programming Language :: Rust",]
