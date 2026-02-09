@@ -8,10 +8,10 @@ use dprint_plugin_typescript::configuration::{
 	TrailingCommas, UseBraces, UseParentheses,
 };
 use pyo3::prelude::*;
-use pyo3::types::{IntoPyDict, PyDict};
+use pyo3::types::{IntoPyDict, PyDict, PyIterator, PyList};
 use std::str::FromStr;
 
-#[pyclass(name = "Configuration", module = "formate_js")]
+#[pyclass(name = "Configuration", module = "formate_js", mapping)]
 // #[repr(transparent)]
 #[derive(Clone)]
 /// Formatting configuration knobs.
@@ -2438,6 +2438,34 @@ impl PyConfiguration {
 			SPACE_AROUND_DEFAULT
 		);
 		Ok(as_dict)
+	}
+
+	fn __iter__<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyIterator>> {
+		self.to_dict(py, false)?.try_iter()
+	}
+
+	fn __getitem__<'py>(&self, py: Python<'py>, value: &str) -> PyResult<Bound<'py, PyAny>> {
+		self.to_dict(py, false)?.as_any().get_item(value)
+	}
+
+	fn __contains__<'py>(&self, py: Python<'py>, key: &str) -> PyResult<bool> {
+		self.to_dict(py, false)?.contains(key)
+	}
+
+	fn __len__<'py>(&self, py: Python<'py>) -> PyResult<usize> {
+		Ok(self.to_dict(py, false)?.len())
+	}
+
+	fn keys<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyList>> {
+		Ok(self.to_dict(py, false)?.keys())
+	}
+
+	fn values<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyList>> {
+		Ok(self.to_dict(py, false)?.values())
+	}
+
+	fn items<'py>(&self, py: Python<'py>) -> PyResult<Bound<'py, PyList>> {
+		Ok(self.to_dict(py, false)?.items())
 	}
 }
 
