@@ -78,3 +78,6 @@ reformat = true
 [tool.maturin]
 python-source = "python"
 module-name = "formate_js._formate_js"
+
+[tool.cibuildwheel.environment]
+CFLAGS_s390x_unknown_linux_gnu = "-march=z10"
