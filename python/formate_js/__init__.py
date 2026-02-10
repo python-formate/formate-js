@@ -68,7 +68,9 @@ def javascript_hook(
 		if "indent" in (formate_global_config or {}):
 			indent_setting = formate_global_config["indent"]
 			if indent_setting == '\t':
-				kwargs["use_tabs"] = True
+				if "indent_width" not in kwargs:
+					kwargs["use_tabs"] = True
+					kwargs["indent_width"] = 4
 			else:
 				kwargs["use_tabs"] = False
 				if set(indent_setting) == {' '}:

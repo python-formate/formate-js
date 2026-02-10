@@ -973,6 +973,7 @@ const USE_BRACES_DEFAULT: &str = "whenNotSingleLine";
 const PREFER_HANGING_DEFAULT: bool = false;
 const PREFER_HANGING_GRANULAR_DEFAULT: &str = "never";
 const PREFER_SINGLE_LINE_DEFAULT: bool = false;
+const METHOD_SPACE_BEFORE_PARENTHESES_DEFAULT: bool = false;
 const SPACE_SURROUNDING_PROPERTIES_DEFAULT: bool = true;
 const TYPE_LITERAL_SEPARATOR_KIND_DEFAULT: &str = "semiColon";
 const QUOTE_STYLE_DEFAULT: &str = "alwaysDouble";
@@ -1180,7 +1181,7 @@ impl PyConfiguration {
 		import_declaration_space_surrounding_named_imports: "bool" = IMPORT_DECLARATION_SPACE_SURROUNDING_NAMED_IMPORTS_DEFAULT,
 		jsx_expression_container_space_surrounding_expression: "bool" = JSX_EXPRESSION_CONTAINER_SPACE_SURROUNDING_EXPRESSION_DEFAULT,
 		jsx_self_closing_element_space_before_slash: "bool" = JSX_SELF_CLOSING_ELEMENT_SPACE_BEFORE_SLASH_DEFAULT,
-		method_space_before_parentheses: "bool" = SPACE_SURROUNDING_PROPERTIES_DEFAULT,
+		method_space_before_parentheses: "bool" = METHOD_SPACE_BEFORE_PARENTHESES_DEFAULT,
 		object_expression_space_surrounding_properties: "bool" = SPACE_SURROUNDING_PROPERTIES_DEFAULT,
 		object_pattern_space_surrounding_properties: "bool" = SPACE_SURROUNDING_PROPERTIES_DEFAULT,
 		set_accessor_space_before_parentheses: "bool" = SET_ACCESSOR_SPACE_BEFORE_PARENTHESES_DEFAULT,
@@ -2320,7 +2321,7 @@ impl PyConfiguration {
 		dict_set_item!(
 			"method_space_before_parentheses",
 			self.method_space_before_parentheses,
-			SPACE_SURROUNDING_PROPERTIES_DEFAULT
+			METHOD_SPACE_BEFORE_PARENTHESES_DEFAULT
 		);
 		dict_set_item!(
 			"object_expression_space_surrounding_properties",
