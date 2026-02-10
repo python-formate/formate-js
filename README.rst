@@ -16,7 +16,7 @@ formate-js
 	:widths: 10 90
 
 	* - Tests
-	  - |actions_linux| |actions_windows| |actions_macos|
+	  - |actions_linux| |actions_windows| |actions_macos| |coveralls|
 	* - PyPI
 	  - |pypi-version| |supported-versions| |supported-implementations| |wheel|
 	* - Activity
@@ -49,6 +49,10 @@ formate-js
 .. |requires| image:: https://dependency-dash.repo-helper.uk/github/python-formate/formate-js/badge.svg
 	:target: https://dependency-dash.repo-helper.uk/github/python-formate/formate-js/
 	:alt: Requirements Status
+
+.. |coveralls| image:: https://img.shields.io/coveralls/github/python-formate/formate-js/master?logo=coveralls
+	:target: https://coveralls.io/github/python-formate/formate-js?branch=master
+	:alt: Coverage
 
 .. |codefactor| image:: https://img.shields.io/codefactor/grade/github/python-formate/formate-js?logo=codefactor
 	:target: https://www.codefactor.io/repository/github/python-formate/formate-js

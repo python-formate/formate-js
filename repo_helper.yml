@@ -11,9 +11,10 @@ license: 'MIT'
 short_desc: 'Formate plugin for reformatting JavaScript and TypeScript files with dprint.'
 
 enable_conda: false
-enable_tests: false
+checkout_submodules: true
 enable_docs: false
 use_maturin: true
+pre_commit_exclude: "^tests/specs/"
 
 python_versions:
   - 3.8
@@ -39,3 +40,4 @@ tox_unmanaged:
 entry_points:
   formate_hooks:
    - "format_js=formate_js:javascript_hook"
+
