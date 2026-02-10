@@ -29,7 +29,7 @@ Formate plugin for reformatting JavaScript and TypeScript files with dprint.
 # 3rd party
 from domdf_python_tools.paths import PathPlus
 from domdf_python_tools.typing import PathLike
-from formate.config import wants_filename
+from formate.config import formats_filetypes, wants_filename
 
 # this package
 from ._formate_js import Configuration, ConfigurationBuilder, FormatTextOptions, format_text
@@ -37,6 +37,7 @@ from ._formate_js import Configuration, ConfigurationBuilder, FormatTextOptions,
 __all__ = ["javascript_hook", "Configuration", "ConfigurationBuilder"]
 
 
+@formats_filetypes(".ts", ".js")
 @wants_filename
 def javascript_hook(
 		source: str,

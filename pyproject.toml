@@ -23,7 +23,7 @@ classifiers = [
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Rust",
 ]
-dependencies = [ "formate>=1.1.2",]
+dependencies = [ "formate>=1.2.0.b1",]
 dynamic = []
 
 [project.license]
