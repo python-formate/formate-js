@@ -39,7 +39,7 @@ Homepage = "https://github.com/python-formate/formate-js"
 "Source Code" = "https://github.com/python-formate/formate-js"
 
 [project.entry-points.formate_hooks]
-formate_js = "formate_js:formate_js_hook"
+format_js = "formate_js:javascript_hook"
 
 [tool.whey]
 base-classifiers = [ "Programming Language :: Rust",]

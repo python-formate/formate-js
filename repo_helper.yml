@@ -38,4 +38,4 @@ tox_unmanaged:
 
 entry_points:
   formate_hooks:
-   - "formate_js=formate_js:formate_js_hook"
+   - "format_js=formate_js:javascript_hook"
