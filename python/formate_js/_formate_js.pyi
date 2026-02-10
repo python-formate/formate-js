@@ -240,54 +240,54 @@ class Configuration:
 	indent_width: int
 	line_width: int
 	use_tabs: bool
-	new_line_kind: str
-	quote_style: str
-	quote_props: str
-	semi_colons: str
+	new_line_kind: NewLineKind
+	quote_style: QuoteStyle
+	quote_props: QuoteProps
+	semi_colons: SemiColons
 	file_indent_level: int
-	arrow_function_use_parentheses: str
+	arrow_function_use_parentheses: UseParentheses
 	binary_expression_line_per_expression: bool
 	conditional_expression_line_per_expression: bool
-	jsx_quote_style: str
-	jsx_multi_line_parens: str
+	jsx_quote_style: JsxQuoteStyle
+	jsx_multi_line_parens: JsxMultiLineParens
 	jsx_force_new_lines_surrounding_content: bool
-	jsx_opening_element_bracket_position: str
-	jsx_self_closing_element_bracket_position: str
+	jsx_opening_element_bracket_position: SameOrNextLinePosition
+	jsx_self_closing_element_bracket_position: SameOrNextLinePosition
 	member_expression_line_per_expression: bool
-	type_literal_separator_kind_single_line: str
-	type_literal_separator_kind_multi_line: str
-	module_sort_import_declarations: str
-	module_sort_export_declarations: str
-	import_declaration_sort_named_imports: str
-	import_declaration_sort_type_only_imports: str
-	export_declaration_sort_named_exports: str
-	export_declaration_sort_type_only_exports: str
+	type_literal_separator_kind_single_line: SemiColonOrComma
+	type_literal_separator_kind_multi_line: SemiColonOrComma
+	module_sort_import_declarations: SortOrder
+	module_sort_export_declarations: SortOrder
+	import_declaration_sort_named_imports: SortOrder
+	import_declaration_sort_type_only_imports: NamedTypeImportsExportsOrder
+	export_declaration_sort_named_exports: SortOrder
+	export_declaration_sort_type_only_exports: NamedTypeImportsExportsOrder
 	ignore_node_comment_text: str
 	ignore_file_comment_text: str
-	arrow_function_brace_position: str
-	class_declaration_brace_position: str
-	class_expression_brace_position: str
-	constructor_brace_position: str
-	do_while_statement_brace_position: str
-	enum_declaration_brace_position: str
-	get_accessor_brace_position: str
-	if_statement_brace_position: str
-	interface_declaration_brace_position: str
-	for_statement_brace_position: str
-	for_in_statement_brace_position: str
-	for_of_statement_brace_position: str
-	function_declaration_brace_position: str
-	function_expression_brace_position: str
-	method_brace_position: str
-	module_declaration_brace_position: str
-	set_accessor_brace_position: str
-	static_block_brace_position: str
-	switch_case_brace_position: str
-	switch_statement_brace_position: str
-	try_statement_brace_position: str
-	while_statement_brace_position: str
-	arguments_prefer_hanging: str
-	array_expression_prefer_hanging: str
+	arrow_function_brace_position: BracePosition
+	class_declaration_brace_position: BracePosition
+	class_expression_brace_position: BracePosition
+	constructor_brace_position: BracePosition
+	do_while_statement_brace_position: BracePosition
+	enum_declaration_brace_position: BracePosition
+	get_accessor_brace_position: BracePosition
+	if_statement_brace_position: BracePosition
+	interface_declaration_brace_position: BracePosition
+	for_statement_brace_position: BracePosition
+	for_in_statement_brace_position: BracePosition
+	for_of_statement_brace_position: BracePosition
+	function_declaration_brace_position: BracePosition
+	function_expression_brace_position: BracePosition
+	method_brace_position: BracePosition
+	module_declaration_brace_position: BracePosition
+	set_accessor_brace_position: BracePosition
+	static_block_brace_position: BracePosition
+	switch_case_brace_position: BracePosition
+	switch_statement_brace_position: BracePosition
+	try_statement_brace_position: BracePosition
+	while_statement_brace_position: BracePosition
+	arguments_prefer_hanging: PreferHanging
+	array_expression_prefer_hanging: PreferHanging
 	array_pattern_prefer_hanging: bool
 	do_while_statement_prefer_hanging: bool
 	export_declaration_prefer_hanging: bool
@@ -301,44 +301,44 @@ class Configuration:
 	jsx_attributes_prefer_hanging: bool
 	object_expression_prefer_hanging: bool
 	object_pattern_prefer_hanging: bool
-	parameters_prefer_hanging: str
+	parameters_prefer_hanging: PreferHanging
 	sequence_expression_prefer_hanging: bool
 	switch_statement_prefer_hanging: bool
-	tuple_type_prefer_hanging: str
+	tuple_type_prefer_hanging: PreferHanging
 	type_literal_prefer_hanging: bool
-	type_parameters_prefer_hanging: str
+	type_parameters_prefer_hanging: PreferHanging
 	union_and_intersection_type_prefer_hanging: bool
 	variable_statement_prefer_hanging: bool
 	while_statement_prefer_hanging: bool
-	enum_declaration_member_spacing: str
-	if_statement_next_control_flow_position: str
-	try_statement_next_control_flow_position: str
-	do_while_statement_next_control_flow_position: str
-	binary_expression_operator_position: str
-	conditional_expression_operator_position: str
-	conditional_type_operator_position: str
-	if_statement_single_body_position: str
-	for_statement_single_body_position: str
-	for_in_statement_single_body_position: str
-	for_of_statement_single_body_position: str
-	while_statement_single_body_position: str
-	arguments_trailing_commas: str
-	parameters_trailing_commas: str
-	array_expression_trailing_commas: str
-	array_pattern_trailing_commas: str
-	enum_declaration_trailing_commas: str
-	export_declaration_trailing_commas: str
-	import_declaration_trailing_commas: str
-	object_pattern_trailing_commas: str
-	object_expression_trailing_commas: str
-	tuple_type_trailing_commas: str
-	type_literal_trailing_commas: str
-	type_parameters_trailing_commas: str
-	if_statement_use_braces: str
-	for_statement_use_braces: str
-	for_of_statement_use_braces: str
-	for_in_statement_use_braces: str
-	while_statement_use_braces: str
+	enum_declaration_member_spacing: MemberSpacing
+	if_statement_next_control_flow_position: NextControlFlowPosition
+	try_statement_next_control_flow_position: NextControlFlowPosition
+	do_while_statement_next_control_flow_position: NextControlFlowPosition
+	binary_expression_operator_position: OperatorPosition
+	conditional_expression_operator_position: OperatorPosition
+	conditional_type_operator_position: OperatorPosition
+	if_statement_single_body_position: SameOrNextLinePosition
+	for_statement_single_body_position: SameOrNextLinePosition
+	for_in_statement_single_body_position: SameOrNextLinePosition
+	for_of_statement_single_body_position: SameOrNextLinePosition
+	while_statement_single_body_position: SameOrNextLinePosition
+	arguments_trailing_commas: TrailingCommas
+	parameters_trailing_commas: TrailingCommas
+	array_expression_trailing_commas: TrailingCommas
+	array_pattern_trailing_commas: TrailingCommas
+	enum_declaration_trailing_commas: TrailingCommas
+	export_declaration_trailing_commas: TrailingCommas
+	import_declaration_trailing_commas: TrailingCommas
+	object_pattern_trailing_commas: TrailingCommas
+	object_expression_trailing_commas: TrailingCommas
+	tuple_type_trailing_commas: TrailingCommas
+	type_literal_trailing_commas: TrailingCommas
+	type_parameters_trailing_commas: TrailingCommas
+	if_statement_use_braces: UseBraces
+	for_statement_use_braces: UseBraces
+	for_of_statement_use_braces: UseBraces
+	for_in_statement_use_braces: UseBraces
+	while_statement_use_braces: UseBraces
 	array_expression_prefer_single_line: bool
 	array_pattern_prefer_single_line: bool
 	arguments_prefer_single_line: bool
@@ -365,8 +365,8 @@ class Configuration:
 	variable_statement_prefer_single_line: bool
 	import_declaration_force_single_line: bool
 	export_declaration_force_single_line: bool
-	export_declaration_force_multi_line: str
-	import_declaration_force_multi_line: str
+	export_declaration_force_multi_line: ForceMultiLine
+	import_declaration_force_multi_line: ForceMultiLine
 	binary_expression_space_surrounding_bitwise_and_arithmetic_operator: bool
 	comment_line_force_space_after_slashes: bool
 	construct_signature_space_after_new_keyword: bool
@@ -416,54 +416,54 @@ class Configuration:
 			indent_width: int = ...,
 			line_width: int = ...,
 			use_tabs: bool = ...,
-			new_line_kind: str = ...,
-			quote_style: str = ...,
-			quote_props: str = ...,
-			semi_colons: str = ...,
+			new_line_kind: NewLineKind = ...,
+			quote_style: QuoteStyle = ...,
+			quote_props: QuoteProps = ...,
+			semi_colons: SemiColons = ...,
 			file_indent_level: int = ...,
-			arrow_function_use_parentheses: str = ...,
+			arrow_function_use_parentheses: UseParentheses = ...,
 			binary_expression_line_per_expression: bool = ...,
 			conditional_expression_line_per_expression: bool = ...,
-			jsx_quote_style: str = ...,
-			jsx_multi_line_parens: str = ...,
+			jsx_quote_style: JsxQuoteStyle = ...,
+			jsx_multi_line_parens: JsxMultiLineParens = ...,
 			jsx_force_new_lines_surrounding_content: bool = ...,
-			jsx_opening_element_bracket_position: str = ...,
-			jsx_self_closing_element_bracket_position: str = ...,
+			jsx_opening_element_bracket_position: SameOrNextLinePosition = ...,
+			jsx_self_closing_element_bracket_position: SameOrNextLinePosition = ...,
 			member_expression_line_per_expression: bool = ...,
-			type_literal_separator_kind_single_line: str = ...,
-			type_literal_separator_kind_multi_line: str = ...,
-			module_sort_import_declarations: str = ...,
-			module_sort_export_declarations: str = ...,
-			import_declaration_sort_named_imports: str = ...,
-			import_declaration_sort_type_only_imports: str = ...,
-			export_declaration_sort_named_exports: str = ...,
-			export_declaration_sort_type_only_exports: str = ...,
+			type_literal_separator_kind_single_line: SemiColonOrComma = ...,
+			type_literal_separator_kind_multi_line: SemiColonOrComma = ...,
+			module_sort_import_declarations: SortOrder = ...,
+			module_sort_export_declarations: SortOrder = ...,
+			import_declaration_sort_named_imports: SortOrder = ...,
+			import_declaration_sort_type_only_imports: NamedTypeImportsExportsOrder = ...,
+			export_declaration_sort_named_exports: SortOrder = ...,
+			export_declaration_sort_type_only_exports: NamedTypeImportsExportsOrder = ...,
 			ignore_node_comment_text: str = ...,
 			ignore_file_comment_text: str = ...,
-			arrow_function_brace_position: str = ...,
-			class_declaration_brace_position: str = ...,
-			class_expression_brace_position: str = ...,
-			constructor_brace_position: str = ...,
-			do_while_statement_brace_position: str = ...,
-			enum_declaration_brace_position: str = ...,
-			get_accessor_brace_position: str = ...,
-			if_statement_brace_position: str = ...,
-			interface_declaration_brace_position: str = ...,
-			for_statement_brace_position: str = ...,
-			for_in_statement_brace_position: str = ...,
-			for_of_statement_brace_position: str = ...,
-			function_declaration_brace_position: str = ...,
-			function_expression_brace_position: str = ...,
-			method_brace_position: str = ...,
-			module_declaration_brace_position: str = ...,
-			set_accessor_brace_position: str = ...,
-			static_block_brace_position: str = ...,
-			switch_case_brace_position: str = ...,
-			switch_statement_brace_position: str = ...,
-			try_statement_brace_position: str = ...,
-			while_statement_brace_position: str = ...,
-			arguments_prefer_hanging: str = ...,
-			array_expression_prefer_hanging: str = ...,
+			arrow_function_brace_position: BracePosition = ...,
+			class_declaration_brace_position: BracePosition = ...,
+			class_expression_brace_position: BracePosition = ...,
+			constructor_brace_position: BracePosition = ...,
+			do_while_statement_brace_position: BracePosition = ...,
+			enum_declaration_brace_position: BracePosition = ...,
+			get_accessor_brace_position: BracePosition = ...,
+			if_statement_brace_position: BracePosition = ...,
+			interface_declaration_brace_position: BracePosition = ...,
+			for_statement_brace_position: BracePosition = ...,
+			for_in_statement_brace_position: BracePosition = ...,
+			for_of_statement_brace_position: BracePosition = ...,
+			function_declaration_brace_position: BracePosition = ...,
+			function_expression_brace_position: BracePosition = ...,
+			method_brace_position: BracePosition = ...,
+			module_declaration_brace_position: BracePosition = ...,
+			set_accessor_brace_position: BracePosition = ...,
+			static_block_brace_position: BracePosition = ...,
+			switch_case_brace_position: BracePosition = ...,
+			switch_statement_brace_position: BracePosition = ...,
+			try_statement_brace_position: BracePosition = ...,
+			while_statement_brace_position: BracePosition = ...,
+			arguments_prefer_hanging: PreferHanging = ...,
+			array_expression_prefer_hanging: PreferHanging = ...,
 			array_pattern_prefer_hanging: bool = ...,
 			do_while_statement_prefer_hanging: bool = ...,
 			export_declaration_prefer_hanging: bool = ...,
@@ -477,44 +477,44 @@ class Configuration:
 			jsx_attributes_prefer_hanging: bool = ...,
 			object_expression_prefer_hanging: bool = ...,
 			object_pattern_prefer_hanging: bool = ...,
-			parameters_prefer_hanging: str = ...,
+			parameters_prefer_hanging: PreferHanging = ...,
 			sequence_expression_prefer_hanging: bool = ...,
 			switch_statement_prefer_hanging: bool = ...,
-			tuple_type_prefer_hanging: str = ...,
+			tuple_type_prefer_hanging: PreferHanging = ...,
 			type_literal_prefer_hanging: bool = ...,
-			type_parameters_prefer_hanging: str = ...,
+			type_parameters_prefer_hanging: PreferHanging = ...,
 			union_and_intersection_type_prefer_hanging: bool = ...,
 			variable_statement_prefer_hanging: bool = ...,
 			while_statement_prefer_hanging: bool = ...,
-			enum_declaration_member_spacing: str = ...,
-			if_statement_next_control_flow_position: str = ...,
-			try_statement_next_control_flow_position: str = ...,
-			do_while_statement_next_control_flow_position: str = ...,
-			binary_expression_operator_position: str = ...,
-			conditional_expression_operator_position: str = ...,
-			conditional_type_operator_position: str = ...,
-			if_statement_single_body_position: str = ...,
-			for_statement_single_body_position: str = ...,
-			for_in_statement_single_body_position: str = ...,
-			for_of_statement_single_body_position: str = ...,
-			while_statement_single_body_position: str = ...,
-			arguments_trailing_commas: str = ...,
-			parameters_trailing_commas: str = ...,
-			array_expression_trailing_commas: str = ...,
-			array_pattern_trailing_commas: str = ...,
-			enum_declaration_trailing_commas: str = ...,
-			export_declaration_trailing_commas: str = ...,
-			import_declaration_trailing_commas: str = ...,
-			object_pattern_trailing_commas: str = ...,
-			object_expression_trailing_commas: str = ...,
-			tuple_type_trailing_commas: str = ...,
-			type_literal_trailing_commas: str = ...,
-			type_parameters_trailing_commas: str = ...,
-			if_statement_use_braces: str = ...,
-			for_statement_use_braces: str = ...,
-			for_of_statement_use_braces: str = ...,
-			for_in_statement_use_braces: str = ...,
-			while_statement_use_braces: str = ...,
+			enum_declaration_member_spacing: MemberSpacing = ...,
+			if_statement_next_control_flow_position: NextControlFlowPosition = ...,
+			try_statement_next_control_flow_position: NextControlFlowPosition = ...,
+			do_while_statement_next_control_flow_position: NextControlFlowPosition = ...,
+			binary_expression_operator_position: OperatorPosition = ...,
+			conditional_expression_operator_position: OperatorPosition = ...,
+			conditional_type_operator_position: OperatorPosition = ...,
+			if_statement_single_body_position: SameOrNextLinePosition = ...,
+			for_statement_single_body_position: SameOrNextLinePosition = ...,
+			for_in_statement_single_body_position: SameOrNextLinePosition = ...,
+			for_of_statement_single_body_position: SameOrNextLinePosition = ...,
+			while_statement_single_body_position: SameOrNextLinePosition = ...,
+			arguments_trailing_commas: TrailingCommas = ...,
+			parameters_trailing_commas: TrailingCommas = ...,
+			array_expression_trailing_commas: TrailingCommas = ...,
+			array_pattern_trailing_commas: TrailingCommas = ...,
+			enum_declaration_trailing_commas: TrailingCommas = ...,
+			export_declaration_trailing_commas: TrailingCommas = ...,
+			import_declaration_trailing_commas: TrailingCommas = ...,
+			object_pattern_trailing_commas: TrailingCommas = ...,
+			object_expression_trailing_commas: TrailingCommas = ...,
+			tuple_type_trailing_commas: TrailingCommas = ...,
+			type_literal_trailing_commas: TrailingCommas = ...,
+			type_parameters_trailing_commas: TrailingCommas = ...,
+			if_statement_use_braces: UseBraces = ...,
+			for_statement_use_braces: UseBraces = ...,
+			for_of_statement_use_braces: UseBraces = ...,
+			for_in_statement_use_braces: UseBraces = ...,
+			while_statement_use_braces: UseBraces = ...,
 			array_expression_prefer_single_line: bool = ...,
 			array_pattern_prefer_single_line: bool = ...,
 			arguments_prefer_single_line: bool = ...,
@@ -541,8 +541,8 @@ class Configuration:
 			variable_statement_prefer_single_line: bool = ...,
 			import_declaration_force_single_line: bool = ...,
 			export_declaration_force_single_line: bool = ...,
-			export_declaration_force_multi_line: str = ...,
-			import_declaration_force_multi_line: str = ...,
+			export_declaration_force_multi_line: ForceMultiLine = ...,
+			import_declaration_force_multi_line: ForceMultiLine = ...,
 			binary_expression_space_surrounding_bitwise_and_arithmetic_operator: bool = ...,
 			comment_line_force_space_after_slashes: bool = ...,
 			construct_signature_space_after_new_keyword: bool = ...,
