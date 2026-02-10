@@ -26,10 +26,13 @@ Formate plugin for reformatting JavaScript and TypeScript files with dprint.
 #  OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+# stdlib
+from typing import Mapping, Optional
+
 # 3rd party
 from domdf_python_tools.paths import PathPlus
 from domdf_python_tools.typing import PathLike
-from formate.config import formats_filetypes, wants_filename
+from formate.config import formats_filetypes, wants_filename, wants_global_config
 
 # this package
 from ._formate_js import Configuration, ConfigurationBuilder, FormatTextOptions, format_text
@@ -39,9 +42,11 @@ __all__ = ["javascript_hook", "Configuration", "ConfigurationBuilder"]
 
 @formats_filetypes(".ts", ".js")
 @wants_filename
+@wants_global_config
 def javascript_hook(
 		source: str,
 		formate_filename: PathLike,
+		formate_global_config: Optional[Mapping] = None,
 		**kwargs,
 		) -> str:
 	r"""
@@ -49,10 +54,26 @@ def javascript_hook(
 
 	:param source: The source to reformat.
 	:param formate_filename: The name of the file being formatted.
+	:param formate_global_config: The global configuration dictionary. Optional.
 	:param \*\*kwargs:
 
 	:returns: The reformatted source.
 	"""
+
+	if "line_width" not in kwargs and formate_global_config:
+		if "line_length" in (formate_global_config or {}):
+			kwargs["line_width"] = formate_global_config["line_length"]
+
+	if "use_tabs" not in kwargs and formate_global_config:
+		if "indent" in (formate_global_config or {}):
+			indent_setting = formate_global_config["indent"]
+			if indent_setting == '\t':
+				kwargs["use_tabs"] = True
+			else:
+				kwargs["use_tabs"] = False
+				if set(indent_setting) == {' '}:
+					# All spaces
+					kwargs.setdefault("indent_width", len(indent_setting))
 
 	config = Configuration(**kwargs)
 
