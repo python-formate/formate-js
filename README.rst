@@ -81,7 +81,7 @@ formate-js
 .. |language| image:: https://img.shields.io/github/languages/top/python-formate/formate-js
 	:alt: GitHub top language
 
-.. |commits-since| image:: https://img.shields.io/github/commits-since/python-formate/formate-js/v0.0.0
+.. |commits-since| image:: https://img.shields.io/github/commits-since/python-formate/formate-js/v0.1.0
 	:target: https://github.com/python-formate/formate-js/pulse
 	:alt: GitHub commits since tagged version
 

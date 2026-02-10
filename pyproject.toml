@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "formate-js"
-version = "0.0.0"
+version = "0.1.0"
 description = "Formate plugin for reformatting JavaScript and TypeScript files with dprint."
 readme = "README.rst"
 requires-python = ">=3.8"
