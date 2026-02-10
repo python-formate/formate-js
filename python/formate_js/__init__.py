@@ -76,11 +76,8 @@ def javascript_hook(
 					kwargs.setdefault("indent_width", len(indent_setting))
 
 	config = Configuration(**kwargs)
-
 	filename_p = PathPlus(formate_filename)
-
 	options = FormatTextOptions(filename_p.as_posix(), filename_p.suffix, source, config)
-
 	result = format_text(options)
 
 	if result is None:

@@ -89,7 +89,7 @@ def parse_single_spec(file_name: PathPlus, message_line: str, lines: List[str]) 
 specs = get_specs()
 
 
-def param_for_spec(spec: Spec, **kwargs):
+def param_for_spec(spec: Spec, **kwargs):  # noqa: MAN002
 	return pytest.param(spec, id=spec.message, **kwargs)
 
 
